@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/api/venv
+/api/__pycache__/
 /.pnp
 .pnp.js
 
@@ -10,6 +12,10 @@
 
 # production
 /build
+/api.spec
+/dist
+/logs/*
+/backend/*
 
 # misc
 .DS_Store
@@ -21,3 +27,5 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+yarn.lock
+package-lock.json
