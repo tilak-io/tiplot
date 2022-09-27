@@ -6,20 +6,20 @@ function Paper() {
   const [graphNbr, setGraphNbr] = useState(0);
   const [rows, setRows] = useState([]);
   const addXT = (index) => {
-    var graph = <Graph key={index} graphNbr={graphNbr} index={index} />;
+    var graph = <Graph key={index} index={index} />;
     setRows([...rows, graph]);
     setGraphNbr(graphNbr + 1);
   };
 
   const addXY = (index) => {
-    var graph = <GraphXY key={index} graphNbr={graphNbr} index={index} />;
+    var graph = <GraphXY key={index} index={index} />;
     setRows([...rows, graph]);
     setGraphNbr(graphNbr + 1);
   };
 
   const handleRemove = () => {
-    const index = 1;
-    setRows(rows.filter((item) => item.index !== index));
+    setRows(rows.slice(0, -1));
+    setGraphNbr(graphNbr - 1);
   };
 
   return (

@@ -1,4 +1,7 @@
 import { Component } from "react";
+import Controls from "./Controls";
+import "../css/cesium.css";
+
 class CesiumComponent extends Component {
   async componentDidMount() {
     var data, oData;
@@ -19,6 +22,7 @@ class CesiumComponent extends Component {
     Cesium.Ion.defaultAccessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiY2JkNjc2MS0yMWQwLTQ3MDMtOTg1NS0yZTBiZTgyNTI4YzgiLCJpZCI6MTA3MTk5LCJpYXQiOjE2NjI0NjUzMjh9.fQ0ozGXNo7UtrbFUFqQ6GXKfPJDepn16mgHcKM5OBJQ";
 
+    // Cesium Viewer
     viewer = new Cesium.Viewer("cesiumContainer", {
       //terrainProvider: Cesium.createWorldTerrain(),
       terrainProvider: [],
@@ -26,6 +30,8 @@ class CesiumComponent extends Component {
       selectionIndicator: false, //Disable selection indicator
       navigationInstructionsInitiallyVisible: false,
     });
+
+    // cleaning up the interface
     viewer.animation.container.style.visibility = "hidden";
     viewer.baseLayerPicker.container.style.visibility = "hidden";
     viewer.timeline.container.style.visibility = "hidden";
@@ -34,8 +40,13 @@ class CesiumComponent extends Component {
 
     viewer.forceResize();
 
-    // // const osmBuildings = viewer.scene.primitives.add(Cesium.createOsmBuildings());
+    // Uncomment the line below to display buildings
+    //const osmBuildings = viewer.scene.primitives.add(
+    //Cesium.createOsmBuildings()
+    //jlk);
 
+    // TODO: use takeoff_position from LOG
+    //
     var takeoff_position = {
       longitude: 0.15495517777138937,
       latitude: 0.8692510743941999,
@@ -79,6 +90,7 @@ class CesiumComponent extends Component {
     viewer.timeline.zoomTo(startTime, stopTime);
     viewer.clock.multiplier = 1;
     viewer.clock.shouldAnimate = false;
+
     const positionProperty = new Cesium.SampledPositionProperty();
 
     for (let i = 0; i < data.length - 1; i++) {
@@ -142,6 +154,15 @@ class CesiumComponent extends Component {
 
     viewer.trackedEntity = airplaneEntity;
 
+    // mimic hover when the clock is ticking
+
+    viewer.clock.onTick.addEventListener(function (clock) {
+      if (clock.shouldAnimate) {
+        console.log(clock.currentTime.secondsOfDay * totalSeconds);
+        //var plot = document.getElementById(`plot-${i}`);
+        //Plotly.Fx.hover(plot, { xval: x });
+      }
+    });
     // exporting variables to the window
     window.startTime = startTime;
     window.stopTime = stopTime;
@@ -154,6 +175,9 @@ class CesiumComponent extends Component {
     return (
       <>
         <div id="cesiumContainer"></div>
+        <div id="controls">
+          <Controls />
+        </div>
       </>
     );
   }

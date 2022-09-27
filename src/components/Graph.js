@@ -8,7 +8,7 @@ const defaultLayout = {
     t: 0,
   },
   hovermode: "x unified",
-  width: window.innerWidth,
+  width: window.innerWidth * 0.6,
 };
 
 function Graph(props) {
@@ -68,6 +68,9 @@ function Graph(props) {
       case "remove-value":
         removeData(actionMeta.removedValue.key, actionMeta.removedValue.nested);
         break;
+      case "pop-value":
+        removeData(actionMeta.removedValue.key, actionMeta.removedValue.nested);
+        break;
       case "clear":
         setData([]);
         break;
@@ -76,6 +79,7 @@ function Graph(props) {
     }
   };
 
+  // find the closest point to 'x' in 'array'
   const findClosest = (x, array) => {
     return array.x.reduce((a, b) => {
       return Math.abs(b - x) < Math.abs(a - x) ? b : a;
@@ -89,7 +93,8 @@ function Graph(props) {
       event["xaxis.range[0]"] !== undefined &&
       event["yaxis.range[0]"] === undefined
     ) {
-      for (let i = 0; i < props.graphNbr; i++) {
+      let i = 0;
+      while (document.getElementById(`plot-${i}`)) {
         var plot = document.getElementById(`plot-${i}`);
         var max_values = [];
         var min_values = [];
@@ -117,6 +122,7 @@ function Graph(props) {
         };
 
         Plotly.update(plot, data, update);
+        i++;
       }
     }
 
@@ -125,14 +131,17 @@ function Graph(props) {
       event["xaxis.autorange"] !== undefined &&
       event["yaxis.autorange"] !== undefined
     ) {
-      for (let i = 0; i < props.graphNbr; i++) {
+      let i = 0;
+      while (document.getElementById(`plot-${i}`)) {
         plot = document.getElementById(`plot-${i}`);
         Plotly.update(plot, data, event);
+        i++;
       }
     }
   };
 
   const handleHover = (event) => {
+    let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
     const x = event.points[0].x;
@@ -146,21 +155,33 @@ function Graph(props) {
       if (event.event.altKey) window.viewer.clock.currentTime = curr.clone();
     }
 
-    for (let i = 0; i < props.graphNbr; i++) {
-      Plotly.Fx.hover(`plot-${i}`, { xval: x });
+    while (document.getElementById(`plot-${i}`)) {
+      var plot = document.getElementById(`plot-${i}`);
+      //Plotly.Fx.hover(plot, { xval: x });
+      i++;
+      if (plot.data.length == 0) continue;
+      Plotly.Fx.hover(plot, {
+        xval: plot.data[0].x[index],
+        yval: plot.data[0].y[index],
+      });
     }
+    /*
+    for (let i = 0; i < props.graphNbr; i++) {
+      console.log(props.graphNbr);
+    }
+    */
   };
 
   useEffect(() => {
     getKeys();
     function handleResize() {
       var update = {
-        width: window.innerWidth,
+        width: window.innerWidth * 0.6,
       };
       Plotly.update(`plot-${props.index}`, data, update);
     }
     window.addEventListener("resize", handleResize);
-  });
+  }, []);
 
   return (
     <div>

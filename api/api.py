@@ -89,6 +89,16 @@ def creat_app():
         data = datadict[key][[x,y]].fillna(0).to_dict('records')
         return {'data': data}
 
+    @app.route('/logged_messages')
+    def get_logged_messages():
+        messages = [({'log_level':x.log_level,'msg':x.message,'timestamp': x.timestamp}) for x in ulg.logged_messages] 
+        return {'messages': messages}
+
+    @app.route('/msg_info')
+    def get_msg_info():
+        msg_info = ulg.msg_info_dict
+        return {'info': msg_info}
+
     return app
 
 def run_http_server():
@@ -102,6 +112,7 @@ socket.bind("tcp://*:%s" % port)
 lock = threading.Lock()
 
 datadict = None 
+ulg = None 
 logs_dir = os.path.expanduser("~/Documents/tiplot/logs/")
 if not os.path.exists(logs_dir):
     os.makedirs(logs_dir)
@@ -109,8 +120,8 @@ if not os.path.exists(logs_dir):
 if __name__ == '__main__':
     httpthread = threading.Thread(target=run_http_server)
     httpthread.start()
-    while True:
-        msg = recv_zipped_pickle(socket)
-        datadict = msg
-        print(msg)
-        send_zipped_pickle(socket,'hi')
+    #while True:
+    #    msg = recv_zipped_pickle(socket)
+    #    datadict = msg
+    #    print(msg)
+    #    send_zipped_pickle(socket,'hi')
