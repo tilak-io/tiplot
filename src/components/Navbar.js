@@ -5,7 +5,7 @@ function LoggedMessagesModal(props) {
   const [loggedMessages, setLoggedMessages] = useState([]);
 
   useEffect(() => {
-    getLoggedMessages();
+    //getLoggedMessages();
   }, []);
 
   const getLoggedMessages = () => {
@@ -68,7 +68,7 @@ function MsgInfoModal(props) {
   const [msgInfo, setMsgInfo] = useState({});
 
   useEffect(() => {
-    getMsgInfo();
+    //getMsgInfo();
   }, []);
 
   const getMsgInfo = () => {

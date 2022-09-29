@@ -42,7 +42,7 @@ function Graph(props) {
       .then((res) => {
         var x = [],
           y = [];
-        res.data.forEach((e) => {
+        res.values.forEach((e) => {
           x.push(e["timestamp"]);
           y.push(e[nested]);
         });

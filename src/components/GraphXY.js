@@ -50,7 +50,7 @@ function GraphXY(props) {
       .then((res) => {
         var x = [],
           y = [];
-        res.data.forEach((e) => {
+        res.values.forEach((e) => {
           x.push(e[nested_x]);
           y.push(e[nested_y]);
         });

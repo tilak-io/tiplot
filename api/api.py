@@ -105,11 +105,11 @@ def run_http_server():
     app = creat_app()
     app.run(host="0.0.0.0", port=5000)
 
-port = '5555'
-context = zmq.Context()
-socket = context.socket(zmq.REP)
-socket.bind("tcp://*:%s" % port)
-lock = threading.Lock()
+#port = '5555'
+#context = zmq.Context()
+#socket = context.socket(zmq.REP)
+#socket.bind("tcp://*:%s" % port)
+#lock = threading.Lock()
 
 datadict = None 
 ulg = None 
@@ -117,9 +117,10 @@ logs_dir = os.path.expanduser("~/Documents/tiplot/logs/")
 if not os.path.exists(logs_dir):
     os.makedirs(logs_dir)
 
-if __name__ == '__main__':
-    httpthread = threading.Thread(target=run_http_server)
-    httpthread.start()
+run_http_server()
+#if __name__ == '__main__':
+#    httpthread = threading.Thread(target=run_http_server)
+#    httpthread.start()
     #while True:
     #    msg = recv_zipped_pickle(socket)
     #    datadict = msg
