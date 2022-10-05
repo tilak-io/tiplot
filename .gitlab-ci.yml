@@ -16,5 +16,5 @@ build:
   artifacts:
     paths:
       - dist/*.AppImage
-  only:
-    - main
+#  only:
+#    - main
