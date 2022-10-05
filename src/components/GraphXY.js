@@ -113,16 +113,17 @@ function GraphXY(props) {
       i++;
       if (plot.data.length === 0) continue;
       //Plotly.Fx.hover(plot, { xval: x });
+      const factor = plot.data[0].x.length / nbrPoints;
+      const mapped_index = parseInt(factor * index);
       Plotly.Fx.hover(plot, {
-        xval: plot.data[0].x[index],
-        yval: plot.data[0].y[index],
+        xval: plot.data[0].x[mapped_index],
+        yval: plot.data[0].y[mapped_index],
       });
     }
   };
 
   useEffect(() => {
     getKeys();
-    console.log(props.index);
     function handleResize() {
       var update = {
         width: window.innerWidth * 0.6,

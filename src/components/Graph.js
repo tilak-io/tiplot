@@ -171,9 +171,11 @@ function Graph(props) {
       //Plotly.Fx.hover(plot, { xval: x });
       i++;
       if (plot.data.length == 0) continue;
+      const factor = plot.data[0].x.length / nbrPoints;
+      const mapped_index = parseInt(factor * index);
       Plotly.Fx.hover(plot, {
-        xval: plot.data[0].x[index],
-        yval: plot.data[0].y[index],
+        xval: plot.data[0].x[mapped_index],
+        yval: plot.data[0].y[mapped_index],
       });
     }
     /*
