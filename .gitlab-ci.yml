@@ -6,6 +6,9 @@ build:
   stage: build
   image: registry.gitlab.com/tilak.io/tiplotci
   before_script:
+    - ls
+    - rm package.json
+    - ls
     - mv /docker_tiplot/* .
     - pwd
     - cat package.json
