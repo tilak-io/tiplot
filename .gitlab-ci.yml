@@ -7,6 +7,7 @@ build:
   image: registry.gitlab.com/tilak.io/tiplotci
   before_script:
     - mv /docker_tiplot/* .
+    - CI= yarn clean
     - CI= yarn install
   script:
     - CI= yarn build:api
