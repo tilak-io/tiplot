@@ -7,6 +7,8 @@ build:
   image: registry.gitlab.com/tilak.io/tiplotci
   before_script:
     - mv /docker_tiplot/* .
+    - pwd
+    - cat package.json
     - CI= yarn install
   script:
     - CI= yarn build:api
@@ -16,22 +18,3 @@ build:
       - dist/*.AppImage
   only:
     - main
-#production:
-#  stage: build
-#  image: registry.gitlab.com/gitlab-org/release-cli
-#  script:
-#    - echo 'running release_job'
-#    - echo 'Previous Job ID is printed below'
-#    - GE_JOB_ID="`cat build.env`"
-#    - echo $GE_JOB_ID
-#  needs:
-#    - job: build
-#      artifacts: true
-#  release:
-#    name: "Release Executables $CI_COMMIT_SHORT_SHA"
-#    description: "Created using the release-cli"
-#    tag_name: "$CI_COMMIT_SHORT_SHA"
-#    assets:
-#      links:
-#        - name: "Linux executable"
-#          url: "https://gitlab.com/HmZyyy/ti-test/-/jobs/${GE_JOB_ID}/artifacts/download?file_type=archive"
