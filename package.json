@@ -40,7 +40,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start:api": "cd api && python3 main.py",
-    "build:api": ". api/venv/bin/activate && node package_python.js",
+    "build:api": "node package_python.js",
     "serve:electron": "concurrently -k \"yarn api:start \" \"cross-env BROWSER=none yarn start\" \"yarn electron:start\"",
     "build:electron": "yarn build && electron-builder",
     "start:electron": "wait-on tcp:3000 && electron .",
