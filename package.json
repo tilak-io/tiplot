@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "./",
+  "proxy": "http://localhost:5000",
   "author": "Hamza <hamza@tilak.io> tilak.io",
   "main": "public/electron.js",
   "build": {
@@ -38,12 +39,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "api:start": "cd api && python3 api.py",
-    "api:build": "node api/package_python.js",
-    "electron:serve": "concurrently -k \"yarn api:start \" \"cross-env BROWSER=none yarn start\" \"yarn electron:start\"",
-    "electron:build": "yarn build && electron-builder",
-    "electron:start": "wait-on tcp:3000 && electron .",
-    "clean": "rm -rf dist/ api.spec build/ backend"
+    "start:api": "cd api && python3 main.py",
+    "build:api": ". api/venv/bin/activate && node package_python.js",
+    "serve:electron": "concurrently -k \"yarn api:start \" \"cross-env BROWSER=none yarn start\" \"yarn electron:start\"",
+    "build:electron": "yarn build && electron-builder",
+    "start:electron": "wait-on tcp:3000 && electron .",
+    "clean": "rm -rf dist/ main.spec build/ backend"
   },
   "eslintConfig": {
     "extends": [

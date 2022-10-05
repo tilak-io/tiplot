@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const { app, BrowserWindow } = require("electron");
 
-const api = path.join(process.resourcesPath, "api/api");
+const api = path.join(process.resourcesPath, "api/main");
 
 var execfile = require("child_process").execFile;
 var start = execfile(api, { windowsHide: true }, (err, stdout, stderr) => {

@@ -44,20 +44,30 @@ function GraphXY(props) {
       });
   };
 
-  const addData = async (key, nested_x, nested_y) => {
-    await fetch(`http://localhost:5000/valuesxy/${key}/${nested_x}/${nested_y}`)
+  const addData = async (table, key_x, key_y) => {
+    await fetch("http://localhost:5000/values", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+
+      body: JSON.stringify({
+        table: table,
+        keys: [key_x, key_y],
+      }),
+    })
       .then((res) => res.json())
       .then((res) => {
         var x = [],
           y = [];
         res.values.forEach((e) => {
-          x.push(e[nested_x]);
-          y.push(e[nested_y]);
+          x.push(e[key_x]);
+          y.push(e[key_y]);
         });
         var line = {
           x: x,
           y: y,
-          name: `${key}/${nested_x}:${nested_y}`,
+          name: `${table}/${key_x}:${key_y}`,
         };
         setData([line]);
       });
@@ -88,20 +98,20 @@ function GraphXY(props) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
-    const x = event.points[0].x;
 
-    if (window.startTime !== undefined) {
-      const curr = window.Cesium.JulianDate.addSeconds(
-        window.startTime,
-        (window.totalSeconds * index) / nbrPoints,
-        new window.Cesium.JulianDate()
-      );
-      if (event.event.altKey) window.viewer.clock.currentTime = curr.clone();
+    if (window.time_array !== undefined) {
+      const start = window.time_array[0];
+      const stop = window.time_array[window.time_array.length - 1];
+      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
+      if (event.event.altKey)
+        window.viewer.clock.currentTime.secondsOfDay =
+          window.viewer.clock.startTime.secondsOfDay +
+          (index / nbrPoints) * totalSecs;
     }
     while (document.getElementById(`plot-${i}`)) {
       var plot = document.getElementById(`plot-${i}`);
       i++;
-      if (plot.data.length == 0) continue;
+      if (plot.data.length === 0) continue;
       //Plotly.Fx.hover(plot, { xval: x });
       Plotly.Fx.hover(plot, {
         xval: plot.data[0].x[index],

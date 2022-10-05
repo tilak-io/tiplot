@@ -1,2 +1,2 @@
-FLASK_APP=api.py
-FLASK_DEBUG=true
+FLASK_APP=main.py
+FLASK_DEBUG=false

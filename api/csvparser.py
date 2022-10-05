@@ -13,14 +13,14 @@ class CSVParser(Parser):
     def parse(self,filename):
         csv = pd.read_csv(filename)
         csv['timestamp'] = pd.to_datetime(csv["timestamp"]).values.astype(np.int64) / 1e4
-        csv['q3'] = 1
         self.datadict = {"data": csv} 
-
+        return [self.datadict, self.entities]
 
     def initDefaultEntities(self):
         entity = CesiumEntity(
-            name='drone1', 
+            name='csv default entity', 
             alpha=1,
+            useRPY=True,
             position={
                 'table':'data',
                 'longitude':'lon_x',
@@ -29,9 +29,8 @@ class CSVParser(Parser):
             },
             attitude={
                 'table':'data',
-                'q0':'roll_x',
-                'q1':'pitch_x',
-                'q2':'yaw_x',
-                'q3':'q3_x',
+                'roll':'roll_x',
+                'pitch':'pitch_x',
+                'yaw':'yaw_x',
             })
         self.addEntity(entity) 

@@ -36,8 +36,18 @@ function Graph(props) {
       });
   };
 
-  const addData = async (key, nested) => {
-    await fetch(`http://localhost:5000/values/${key}/${nested}`)
+  const addData = async (table, nested) => {
+    await fetch("http://localhost:5000/values", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+
+      body: JSON.stringify({
+        table: table,
+        keys: [nested],
+      }),
+    })
       .then((res) => res.json())
       .then((res) => {
         var x = [],
@@ -49,7 +59,7 @@ function Graph(props) {
         var line = {
           x: x,
           y: y,
-          name: `${key}/${nested}`,
+          name: `${table}/${nested}`,
         };
         setData([...data, line]);
       });
@@ -146,13 +156,14 @@ function Graph(props) {
     const nbrPoints = event.points[0].data.x.length;
     const x = event.points[0].x;
 
-    if (window.startTime !== undefined) {
-      const curr = window.Cesium.JulianDate.addSeconds(
-        window.startTime,
-        (window.totalSeconds * index) / nbrPoints,
-        new window.Cesium.JulianDate()
-      );
-      if (event.event.altKey) window.viewer.clock.currentTime = curr.clone();
+    if (window.time_array !== undefined) {
+      const start = window.time_array[0];
+      const stop = window.time_array[window.time_array.length - 1];
+      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
+      if (event.event.altKey)
+        window.viewer.clock.currentTime.secondsOfDay =
+          window.viewer.clock.startTime.secondsOfDay +
+          (index / nbrPoints) * totalSecs;
     }
 
     while (document.getElementById(`plot-${i}`)) {
