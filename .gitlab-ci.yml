@@ -6,7 +6,13 @@ build:
   stage: build
   image: registry.gitlab.com/tilak.io/tiplotci
   before_script:
+    - ls
     - mv /docker_tiplot/* .
+<<<<<<< HEAD
+=======
+    - ls
+    - pwd
+>>>>>>> bb48ad2a5c6029f77847b1be8dda78ae44e65306
     - CI= yarn install
   script:
     - CI= yarn build:api
