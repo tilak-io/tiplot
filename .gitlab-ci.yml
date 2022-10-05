@@ -7,8 +7,6 @@ build:
   image: registry.gitlab.com/tilak.io/tiplotci
   before_script:
     - mv /docker_tiplot/* .
-    - pwd
-    - cat package.json
     - CI= yarn install
   script:
     - CI= yarn build:api
@@ -16,5 +14,5 @@ build:
   artifacts:
     paths:
       - dist/*.AppImage
-#  only:
-#    - main
+  only:
+    - main
