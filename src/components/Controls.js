@@ -1,17 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPlay, FaPause, FaForward, FaBackward } from "react-icons/fa";
 import { IoMdRadioButtonOff, IoMdCheckmarkCircleOutline } from "react-icons/io";
 
+const update_ms = 1000;
+
 function Controls() {
+  const [isPlaying, setPlaying] = useState(false);
   const [track, setTrack] = useState(true);
   const [speed, setSpeed] = useState(1);
 
+  useEffect(() => {}, []);
+
   const play = () => {
     window.viewer.clock.shouldAnimate = true;
+    setPlaying(true);
   };
 
   const pause = () => {
     window.viewer.clock.shouldAnimate = false;
+    setPlaying(false);
   };
 
   const backward = () => {
@@ -49,29 +56,39 @@ function Controls() {
     }
   };
 
+  function PlayOrPause() {
+    if (!isPlaying)
+      return (
+        <button className="btn btn-info btn-lg" onClick={play}>
+          <FaPlay />
+        </button>
+      );
+    else
+      return (
+        <button className="btn btn-warning btn-lg" onClick={pause}>
+          <FaPause />
+        </button>
+      );
+  }
+
   return (
     <div className="container">
       <center>
-        <button variant="secondary" onClick={backward}>
+        <button className="btn btn-secondary btn-lg" onClick={backward}>
           <FaBackward />
         </button>
-        <button variant="info" onClick={play}>
-          <FaPlay />
-        </button>
-        <button variant="warning" onClick={pause}>
-          <FaPause />
-        </button>
-        <button variant="secondary" onClick={forward}>
+        <PlayOrPause />
+        <button className="btn btn-secondary btn-lg" onClick={forward}>
           <FaForward />
         </button>
-        <button variant="danger" onClick={toggleTrack}>
+        <button className="btn btn-danger btn-lg" onClick={toggleTrack}>
           {track === true ? (
             <IoMdCheckmarkCircleOutline />
           ) : (
             <IoMdRadioButtonOff />
           )}
         </button>
-        <button variant="success" onClick={toggleSpeed}>
+        <button className="btn btn-success btn-lg" onClick={toggleSpeed}>
           {speed}x
         </button>
       </center>

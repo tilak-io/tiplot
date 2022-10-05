@@ -1,0 +1,29 @@
+html,
+body {
+  overflow-y: hidden;
+}
+.Pane1 {
+  background-color: #ddd;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: calc(100% - 54px);
+}
+
+.Pane2 {
+  background-color: #000;
+  overflow-x: hidden;
+  height: calc(100% - 54px);
+}
+
+.Resizer {
+  background: #000;
+  width: 10px;
+  opacity: 0.2;
+  z-index: 1;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding;
+  background-clip: padding-box;
+}

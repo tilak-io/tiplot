@@ -3,7 +3,13 @@ const path = require("path");
 const spawn = require("child_process").spawn,
   ls = spawn(
     "python3 -m PyInstaller",
-    ["-w", "--onefile", "--distpath backend", "api/api.py"],
+    [
+      "-w",
+      "--onefile",
+      "--distpath backend",
+      "--add-data api:api",
+      "api/main.py",
+    ],
     {
       shell: true,
     }

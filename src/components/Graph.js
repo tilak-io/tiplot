@@ -8,7 +8,7 @@ const defaultLayout = {
     t: 0,
   },
   hovermode: "x unified",
-  width: window.innerWidth,
+  width: window.innerWidth * 0.6,
 };
 
 function Graph(props) {
@@ -36,20 +36,30 @@ function Graph(props) {
       });
   };
 
-  const addData = async (key, nested) => {
-    await fetch(`http://localhost:5000/values/${key}/${nested}`)
+  const addData = async (table, nested) => {
+    await fetch("http://localhost:5000/values", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+
+      body: JSON.stringify({
+        table: table,
+        keys: [nested],
+      }),
+    })
       .then((res) => res.json())
       .then((res) => {
         var x = [],
           y = [];
-        res.data.forEach((e) => {
+        res.values.forEach((e) => {
           x.push(e["timestamp"]);
           y.push(e[nested]);
         });
         var line = {
           x: x,
           y: y,
-          name: `${key}/${nested}`,
+          name: `${table}/${nested}`,
         };
         setData([...data, line]);
       });
@@ -68,6 +78,9 @@ function Graph(props) {
       case "remove-value":
         removeData(actionMeta.removedValue.key, actionMeta.removedValue.nested);
         break;
+      case "pop-value":
+        removeData(actionMeta.removedValue.key, actionMeta.removedValue.nested);
+        break;
       case "clear":
         setData([]);
         break;
@@ -76,6 +89,7 @@ function Graph(props) {
     }
   };
 
+  // find the closest point to 'x' in 'array'
   const findClosest = (x, array) => {
     return array.x.reduce((a, b) => {
       return Math.abs(b - x) < Math.abs(a - x) ? b : a;
@@ -89,7 +103,8 @@ function Graph(props) {
       event["xaxis.range[0]"] !== undefined &&
       event["yaxis.range[0]"] === undefined
     ) {
-      for (let i = 0; i < props.graphNbr; i++) {
+      let i = 0;
+      while (document.getElementById(`plot-${i}`)) {
         var plot = document.getElementById(`plot-${i}`);
         var max_values = [];
         var min_values = [];
@@ -117,6 +132,7 @@ function Graph(props) {
         };
 
         Plotly.update(plot, data, update);
+        i++;
       }
     }
 
@@ -125,42 +141,60 @@ function Graph(props) {
       event["xaxis.autorange"] !== undefined &&
       event["yaxis.autorange"] !== undefined
     ) {
-      for (let i = 0; i < props.graphNbr; i++) {
+      let i = 0;
+      while (document.getElementById(`plot-${i}`)) {
         plot = document.getElementById(`plot-${i}`);
         Plotly.update(plot, data, event);
+        i++;
       }
     }
   };
 
   const handleHover = (event) => {
+    let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
     const x = event.points[0].x;
 
-    if (window.startTime !== undefined) {
-      const curr = window.Cesium.JulianDate.addSeconds(
-        window.startTime,
-        (window.totalSeconds * index) / nbrPoints,
-        new window.Cesium.JulianDate()
-      );
-      if (event.event.altKey) window.viewer.clock.currentTime = curr.clone();
+    if (window.time_array !== undefined) {
+      const start = window.time_array[0];
+      const stop = window.time_array[window.time_array.length - 1];
+      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
+      if (event.event.altKey)
+        window.viewer.clock.currentTime.secondsOfDay =
+          window.viewer.clock.startTime.secondsOfDay +
+          (index / nbrPoints) * totalSecs;
     }
 
-    for (let i = 0; i < props.graphNbr; i++) {
-      Plotly.Fx.hover(`plot-${i}`, { xval: x });
+    while (document.getElementById(`plot-${i}`)) {
+      var plot = document.getElementById(`plot-${i}`);
+      //Plotly.Fx.hover(plot, { xval: x });
+      i++;
+      if (plot.data.length == 0) continue;
+      const factor = plot.data[0].x.length / nbrPoints;
+      const mapped_index = parseInt(factor * index);
+      Plotly.Fx.hover(plot, {
+        xval: plot.data[0].x[mapped_index],
+        yval: plot.data[0].y[mapped_index],
+      });
     }
+    /*
+    for (let i = 0; i < props.graphNbr; i++) {
+      console.log(props.graphNbr);
+    }
+    */
   };
 
   useEffect(() => {
     getKeys();
     function handleResize() {
       var update = {
-        width: window.innerWidth,
+        width: window.innerWidth * 0.6,
       };
       Plotly.update(`plot-${props.index}`, data, update);
     }
     window.addEventListener("resize", handleResize);
-  });
+  }, []);
 
   return (
     <div>

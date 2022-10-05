@@ -2,6 +2,7 @@ import "../css/loader.css";
 import React, { useEffect, useState } from "react";
 import { FcOpenedFolder, FcFile } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
+import { Table } from "react-bootstrap";
 
 function Loader() {
   const [files, setFiles] = useState([]);
@@ -17,51 +18,53 @@ function Loader() {
       });
   }, []);
 
-  const onOpen = (file) => {
-    fetch(`http://localhost:5000/select/${file[0]}`)
+  const parse = (file) => {
+    fetch("http://localhost:5000/select", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+
+      body: JSON.stringify({
+        file: file[0],
+      }),
+    })
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
         if (res.ok) navigate("/home");
         else alert("unsupported format");
       });
   };
 
   return (
-    <div className="container">
+    <div className="container-fluid">
       <div className="break jumbotron" />
       <div className="row h-100">
         <div className="col-sm-12 my-auto">
-          <table className="table">
+          <Table striped bordered hover>
             <tbody>
-              <tr className="clickable">
-                <td className="icon-row">
+              <tr>
+                <th className="align-middle">
                   <FcOpenedFolder />
-                </td>
-                <td>{logsDir}</td>
-                <td></td>
-                <td></td>
+                </th>
+                <th className="align-middle">{logsDir}</th>
+                <th className="align-middle">Size</th>
+                <th className="align-middle">Modified</th>
               </tr>
               {files.map((file, i) => {
                 return (
-                  <tr
-                    key={i}
-                    className="clickable"
-                    onClick={() => onOpen(file)}
-                  >
+                  <tr key={i} className="clickable" onClick={() => parse(file)}>
                     <td className="icon-row">
                       <FcFile />
                     </td>
                     <td>{file[0]}</td>
                     <td>{file[1]} Mb</td>
-                    <td>
-                      <span className="float-end">{file[2]}</span>
-                    </td>
+                    <td>{file[2]}</td>
                   </tr>
                 );
               })}
             </tbody>
-          </table>
+          </Table>
         </div>
       </div>
     </div>
