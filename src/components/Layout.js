@@ -22,7 +22,7 @@ function Layout() {
   };
   return (
     <>
-      <TopBar />
+      <TopBar page="home" />
       <SplitPane
         split="vertical"
         defaultSize="60%"

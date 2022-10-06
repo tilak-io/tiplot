@@ -3,6 +3,7 @@ from cesium_entity import CesiumEntity
 from parser import Parser
 from ulgparser import ULGParser
 import threading
+import socketio
 #from store import Store
 import store
 

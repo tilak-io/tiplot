@@ -8,6 +8,7 @@ from parser import Parser
 #from store import Store
 import store
 
+
 class HttpServer():
     def __init__(self, parser=Parser()):
         self.app = Flask(__name__)
@@ -15,6 +16,7 @@ class HttpServer():
         self.app.config['CORS_HEADERS'] = 'Content-Type'
         self.app.use_reloader = False
         self.create_routes()
+        
 
     def run(self, port=5000):
         self.app.run(host="0.0.0.0", port=port) 
@@ -32,6 +34,7 @@ class HttpServer():
                 print("wrong format")
                 ok = False
         return ok
+
 
     def create_routes(self):
         app = self.app

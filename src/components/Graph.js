@@ -200,6 +200,7 @@ function Graph(props) {
     <div>
       <Select options={keys} isMulti onChange={handleChange} />
       <Plot
+        style={{ width: "100%" }}
         divId={`plot-${props.index}`}
         data={data}
         layout={defaultLayout}
