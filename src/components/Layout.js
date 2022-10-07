@@ -7,7 +7,7 @@ import TopBar from "./Navbar";
 import { useState, useEffect } from "react";
 import SplitPane from "react-split-pane";
 
-function Layout() {
+function Layout({ socket }) {
   //  document.body.style.zoom = 0.75;
   const handleChange = (event) => {
     var i = 0;
@@ -28,8 +28,8 @@ function Layout() {
         defaultSize="60%"
         onDragFinished={handleChange}
       >
-        <Paper />
-        <Cesium />
+        <Paper socket={socket} />
+        <Cesium socket={socket} />
       </SplitPane>
     </>
   );

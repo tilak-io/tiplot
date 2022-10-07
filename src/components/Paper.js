@@ -2,17 +2,17 @@ import { useState } from "react";
 import Graph from "./Graph";
 import GraphXY from "./GraphXY";
 
-function Paper() {
+function Paper({ socket }) {
   const [graphNbr, setGraphNbr] = useState(0);
   const [rows, setRows] = useState([]);
   const addXT = (index) => {
-    var graph = <Graph key={index} index={index} />;
+    var graph = <Graph key={index} graphIndex={index} socket={socket} />;
     setRows([...rows, graph]);
     setGraphNbr(graphNbr + 1);
   };
 
   const addXY = (index) => {
-    var graph = <GraphXY key={index} index={index} />;
+    var graph = <GraphXY key={index} graphIndex={index} socket={socket} />;
     setRows([...rows, graph]);
     setGraphNbr(graphNbr + 1);
   };

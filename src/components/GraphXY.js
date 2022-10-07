@@ -16,77 +16,106 @@ const defaultLayout = {
     spikemode: "across",
   },
 };
-function GraphXY(props) {
+function GraphXY({ socket, graphIndex }) {
   const [xs, setXs] = useState([]);
   const [ys, setYs] = useState([]);
   const [data, setData] = useState([]);
   const [selected_x, setSelected_X] = useState();
 
-  const getKeys = () => {
-    fetch("http://localhost:5000/keys")
-      .then((res) => res.json())
-      .then((res) => {
-        var options = [];
-        res.forEach((value, index) => {
-          var key = Object.keys(value)[0];
-          var nested_keys = Object.values(value)[0];
-          nested_keys.forEach((nested, idx) => {
-            options.push({
-              label: `${key}/${nested}`,
-              value: `${key}/${nested}`,
-              key: key,
-              nested: nested,
-            });
+  useEffect(() => {
+    // request table keys
+    socket.emit("get_table_keys", graphIndex);
+
+    // set the X array
+    socket.on("table_keys", (response) => {
+      const index = response["index"];
+      const keys = response["keys"];
+      console.log(response);
+
+      // return if its not the components that made the request
+      if (index !== graphIndex) return;
+      var options = [];
+      keys.forEach((value, index) => {
+        var key = Object.keys(value)[0];
+        var nested_keys = Object.values(value)[0];
+        nested_keys.forEach((nested, idx) => {
+          options.push({
+            label: `${key}/${nested}`,
+            value: `${key}/${nested}`,
+            key: key,
+            nested: nested,
           });
         });
-        setXs(options);
       });
-  };
+      setXs(options);
+    });
+
+    // set the Y array
+    socket.on("table_columns", (response) => {
+      const index = response["index"];
+      const table = response["table"];
+      const columns = response["columns"];
+
+      // return if its not the components that made the request
+      if (index !== graphIndex) return;
+
+      var mapped_y = columns.map((col) => {
+        return {
+          key: table,
+          nested: col,
+          label: `${table}/${col}`,
+          value: `${table}/${col}`,
+        };
+      });
+      setYs(mapped_y);
+    });
+
+    // set the data array
+
+    socket.on("table_values", (response) => {
+      const index = response["index"];
+      const table = response["table"];
+      const key_x = response["x"];
+      const key_y = response["y"];
+      const values = response["values"];
+
+      // return if its not the components that made the request
+      if (index !== graphIndex) return;
+
+      var x = [],
+        y = [];
+      values.forEach((e) => {
+        x.push(e[key_x]);
+        y.push(e[key_y]);
+      });
+      var line = {
+        x: x,
+        y: y,
+        name: `${table}/${key_x}:${key_y}`,
+      };
+      setData([line]);
+    });
+
+    function handleResize() {
+      var update = {
+        width: window.innerWidth * 0.6,
+      };
+      Plotly.update(`plot-${graphIndex}`, data, update);
+    }
+    window.addEventListener("resize", handleResize);
+  }, []);
 
   const addData = async (table, key_x, key_y) => {
-    await fetch("http://localhost:5000/values", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-
-      body: JSON.stringify({
-        table: table,
-        keys: [key_x, key_y],
-      }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        var x = [],
-          y = [];
-        res.values.forEach((e) => {
-          x.push(e[key_x]);
-          y.push(e[key_y]);
-        });
-        var line = {
-          x: x,
-          y: y,
-          name: `${table}/${key_x}:${key_y}`,
-        };
-        setData([line]);
-      });
+    socket.emit("get_table_values", {
+      index: graphIndex,
+      table: table,
+      keys: [key_y, key_x],
+    });
   };
 
   const handleChangeX = (value) => {
     setSelected_X(value);
-    fetch(`http://localhost:5000/key/${value.key}`)
-      .then((res) => res.json())
-      .then((res) => {
-        var mapped_y = res.map((nested) => {
-          return {
-            key: value.key,
-            nested: nested,
-            label: `${value.key}/${nested}`,
-            value: `${value.key}/${nested}`,
-          };
-        });
-        setYs(mapped_y);
-      });
+    socket.emit("get_table_columns", { index: graphIndex, table: value.key });
   };
 
   const handleChangeY = (selected_y) => {
@@ -121,27 +150,16 @@ function GraphXY(props) {
     }
   };
 
-  useEffect(() => {
-    getKeys();
-    function handleResize() {
-      var update = {
-        width: window.innerWidth * 0.6,
-      };
-      Plotly.update(`plot-${props.index}`, data, update);
-    }
-    window.addEventListener("resize", handleResize);
-  }, []);
-
   return (
     <div>
       <Select options={xs} onChange={handleChangeX} />
       <Select options={ys} onChange={handleChangeY} />
       <Plot
         style={{ width: "100%" }}
-        divId={`plot-${props.index}`}
+        divId={`plot-${graphIndex}`}
         data={data}
         onHover={handleHover}
-        //layout={defaultLayout}
+        layout={defaultLayout}
         config={{
           displayModeBar: false,
         }}

@@ -1,27 +1,27 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-import time
-import glob
-import os
+from flask_socketio import SocketIO,emit
+import time, glob,os
 import pandas as pd
 from ulgparser import ULGParser
 from csvparser import CSVParser
 from parser import Parser
-#from store import Store
 import store
 
 
 class HttpServer():
     def __init__(self, parser=Parser()):
         self.app = Flask(__name__)
-        self.cors = CORS(self.app)
-        self.app.config['CORS_HEADERS'] = 'Content-Type'
-        self.app.use_reloader = False
+        # self.cors = CORS(self.app)
+        CORS(self.app,resources={r"/*":{"origins":"*"}})
+        # self.app.config['CORS_HEADERS'] = 'Content-Type'
+        self.socketio = SocketIO(self.app,cors_allowed_origins="*")
         self.entities = []
         self.create_routes()
 
     def run(self, port=5000):
-        self.app.run(host="0.0.0.0", port=port)
+        # self.app.run(host="0.0.0.0", port=port)
+        self.socketio.run(self.app, debug=True, port=port)
 
     def choose_parser(self, file, logs_dir):
         full_path = logs_dir + file
@@ -39,58 +39,67 @@ class HttpServer():
 
     def create_routes(self):
         app = self.app
+        io = self.socketio
         logs_dir = os.path.expanduser("~/Documents/tiplot/logs/")
         if not os.path.exists(logs_dir):
             os.makedirs(logs_dir)
 
-        @cross_origin()
-        @app.route("/list_dir")
-        def list_dir():
+        @io.on("connect")
+        def connected():
+            print("client has connected " + request.sid)
+            # emit("connect",{"data":f"id: {request.sid} is connected"})
+
+        @io.on('get_log_files')
+        def get_logs():
             files = [(os.path.basename(x), os.path.getsize(x) >> 20, time.strftime(
                 '%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(x)))) for x in glob.glob(logs_dir + '/*')]
-            return {'path': logs_dir, 'files': files}
+            data = {'path': logs_dir, 'files': files}
+            emit('log_files', data)
 
-        @cross_origin()
-        @app.route("/select", methods=['POST'])
-        def select_log():
-            file = request.json['file']
-            ok = self.choose_parser(file, logs_dir)
+
+        @io.on('select_log_file')
+        def select_log_file(file):
+            ok = self.choose_parser(file[0], logs_dir)
             self.entities = store.Store.get().getEntities()
-            return {'ok': ok}
+            emit('log_selected', ok)
 
-        @cross_origin()
-        @app.route('/entities')
+        @io.on('get_entities_props')
         def get_entities():
             props = store.Store.get().getEntitiesProps()
-            return props
+            emit('entities_props', props)
 
-        @cross_origin()
-        @app.route('/keys')
-        def get_nested_keys():
-            result = store.Store.get().getNestedKeys()
-            return result
+        @io.on('get_table_keys')
+        def get_table_keys(index):
+            keys = store.Store.get().getNestedKeys()
+            response = {"index": index, "keys":keys}
+            print(response)
+            emit('table_keys', response)
 
-        @cross_origin()
-        @app.route('/key/<key>')
-        def get_nested(key):
-            nested_keys = store.Store.get().getNestedFromKey(key)
-            return nested_keys
-
-        @cross_origin()
-        @app.route('/values', methods=['POST'])
-        def get_values():
-            table = request.json['table']
-            keys = request.json['keys']
+        @io.on('get_table_values')
+        def get_table_values(data):
+            index = data['index']
+            table = data['table']
+            keys = data['keys']
             keys.append('timestamp')
-            data = store.Store.get().datadict[table][keys].fillna(
+            values = store.Store.get().datadict[table][keys].fillna(
                 0).to_dict('records')
-            return {'values': data}
+            response = {"index": index,"y": keys[0], "x": keys[1],"table": table, "values": values}
+            emit('table_values', response)
 
-        @cross_origin()
-        @app.route('/listen')
-        def get_listen():
-            entities = store.Store.get().getEntities()
-            changed = self.entities != entities
-            if changed:
-                self.entities = entities
-            return {'entities_changed': changed}
+        @io.on('get_table_columns')
+        def get_table_columns(data):
+            index = data['index']
+            table = data['table']
+            columns = store.Store.get().getTableColumns(table)
+            data = {"index": index,"table": table, "columns": columns}
+            emit('table_columns', data)
+
+        @io.on('data')
+        def handle_message(data):
+            print("data recieved from front: ",str(data))
+            # emit("data",{'data':'hehehehehe','id':request.sid},broadcast=True)
+            #emit("data",{'data':'hehehehehe','id':request.sid})
+
+        @io.on("disconnect")
+        def disconnected():
+            print("client has disconnected " + request.sid)

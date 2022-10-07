@@ -59,7 +59,7 @@ class Store:
             data.append({"id": e.id, "name": e.name})
         return data
 
-    def getNestedFromKey(self,key):
+    def getTableColumns(self,key):
         nested = list(self.datadict[key].keys())
         return nested
 

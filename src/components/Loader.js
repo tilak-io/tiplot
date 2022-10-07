@@ -5,37 +5,30 @@ import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
 import TopBar from "./Navbar";
 
-function Loader() {
+function Loader({ socket }) {
   const [files, setFiles] = useState([]);
   const [x, setX] = useState([]);
   const [logsDir, setLogsDir] = useState("..");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/list_dir")
-      .then((res) => res.json())
-      .then((res) => {
-        setLogsDir(res.path);
-        setFiles(res.files);
-      });
+    // requesting the log files
+    socket.emit("get_log_files");
+
+    // handling the signals
+    socket.on("log_files", (logs) => {
+      setLogsDir(logs.path);
+      setFiles(logs.files);
+    });
+
+    socket.on("log_selected", (ok) => {
+      if (ok) navigate("/home");
+      else alert("unsupported format");
+    });
   }, []);
 
   const parse = (file) => {
-    fetch("http://localhost:5000/select", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-
-      body: JSON.stringify({
-        file: file[0],
-      }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.ok) navigate("/home");
-        else alert("unsupported format");
-      });
+    socket.emit("select_log_file", file);
   };
 
   return (
