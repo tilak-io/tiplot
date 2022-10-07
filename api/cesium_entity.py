@@ -1,6 +1,8 @@
 class CesiumEntity:
-    def __init__(self,name, 
-                 position, 
+    next_id = 0
+    def __init__(self,
+                 name,
+                 position,
                  attitude,
                  alpha=1,
                  useRPY=False,
@@ -8,11 +10,13 @@ class CesiumEntity:
 
         self.name = name
         self.position = position
-        self.attitude = attitude 
-        self.alpha = alpha 
-        self.useRPY = useRPY 
+        self.attitude = attitude
+        self.alpha = alpha
+        self.useRPY = useRPY
         #self.takeoffKey = takeoff_key
         self.viewModel = viewModel
+        self.id = CesiumEntity.next_id
+        CesiumEntity.next_id += 1
 
     @classmethod
     def fromJson(cls, json):
@@ -34,7 +38,8 @@ class CesiumEntity:
         else:
             viewModel = None
 
-        return cls(name=name,
+        return cls(
+                   name=name,
                    position=position,
                    attitude=attitude,
                    alpha=alpha,

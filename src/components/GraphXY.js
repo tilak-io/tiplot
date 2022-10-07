@@ -16,7 +16,6 @@ const defaultLayout = {
     spikemode: "across",
   },
 };
-
 function GraphXY(props) {
   const [xs, setXs] = useState([]);
   const [ys, setYs] = useState([]);
@@ -138,10 +137,11 @@ function GraphXY(props) {
       <Select options={xs} onChange={handleChangeX} />
       <Select options={ys} onChange={handleChangeY} />
       <Plot
+        style={{ width: "100%" }}
         divId={`plot-${props.index}`}
         data={data}
         onHover={handleHover}
-        layout={defaultLayout}
+        //layout={defaultLayout}
         config={{
           displayModeBar: false,
         }}

@@ -11,6 +11,21 @@ function Cesium() {
   const [isLoaded, setLoaded] = useState(false);
   const [isInitialized, setInitialized] = useState(false);
 
+  // listen for entity change and reload if true
+  useEffect(() => {
+    const id = setInterval(
+      () =>
+        fetch("/listen")
+          .then((rep) => rep.json())
+          .then((rep) => {
+            if (rep["entities_changed"]) window.location.reload();
+          })
+          .catch((err) => console.log(err)),
+      500
+    );
+    return () => clearInterval(id);
+  });
+
   useEffect(() => {
     // get position and orientation arrays
     fetchData();
@@ -43,6 +58,9 @@ function Cesium() {
     //      Cesium.createOsmBuildings()
     //    );
     for (let i = 0; i < entitiesArray.length; i++) drawEntity(i);
+    return () => {
+      window.location.reload();
+    };
   }, [isLoaded]);
 
   const fetchData = async () => {
@@ -220,8 +238,9 @@ function Cesium() {
       path: {
         resolution: 1,
         material: new Cesium.PolylineGlowMaterialProperty({
-          glowPower: 0.1,
-          color: Cesium.Color.fromRandom(),
+          glowPower: 0.2,
+          //color: Cesium.Color.fromRandom(),
+          color: Cesium.Color.RED,
         }),
         width: 10,
       },

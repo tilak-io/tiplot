@@ -21,7 +21,7 @@ class ULGParser(Parser):
         return [self.datadict, self.entities]
 
     def initDefaultEntities(self):
-        entity = CesiumEntity(name='ulg default entity', 
+        entity = CesiumEntity(name='ulg default entity',
                               position={
                                   'table':'vehicle_global_position',
                                   'longitude':'lon',
