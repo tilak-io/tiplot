@@ -11,6 +11,21 @@ function Cesium() {
   const [isLoaded, setLoaded] = useState(false);
   const [isInitialized, setInitialized] = useState(false);
 
+  // listen for entity change and reload if true
+  useEffect(() => {
+    const id = setInterval(
+      () =>
+        fetch("/listen")
+          .then((rep) => rep.json())
+          .then((rep) => {
+            if (rep["entities_changed"]) window.location.reload();
+          })
+          .catch((err) => console.log(err)),
+      500
+    );
+    return () => clearInterval(id);
+  });
+
   useEffect(() => {
     // get position and orientation arrays
     fetchData();

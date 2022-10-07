@@ -7,6 +7,7 @@ import TopBar from "./Navbar";
 
 function Loader() {
   const [files, setFiles] = useState([]);
+  const [x, setX] = useState([]);
   const [logsDir, setLogsDir] = useState("..");
   const navigate = useNavigate();
 

@@ -45,12 +45,18 @@ class Store:
                 merged = pd.merge_asof(self.datadict[e.position['table']], self.datadict[e.attitude['table']], on='timestamp').bfill()
                 raw = merged[[e.position['altitude'], e.position['lattitude'], e.position['longitude'],e.attitude['roll'],e.attitude['pitch'],e.attitude['yaw'],'timestamp']]
                 renamed = raw.rename(columns={e.position['longitude']: 'longitude', e.position['altitude']: 'altitude',e.position['lattitude']: 'lattitude', e.attitude['roll'] : 'roll',e.attitude['pitch'] : 'pitch',e.attitude['yaw'] : 'yaw'}).to_dict('records')
-                data.append({"entity_name": e.name,"alpha": e.alpha,  "useRPY": e.useRPY,"props": renamed})
+                data.append({ "id": e.id,"entity_name": e.name,"alpha": e.alpha,  "useRPY": e.useRPY,"props": renamed})
             else:
                 merged = pd.merge_asof(self.datadict[e.position['table']], self.datadict[e.attitude['table']], on='timestamp').bfill()
                 raw = merged[[e.position['altitude'], e.position['lattitude'], e.position['longitude'],e.attitude['q0'],e.attitude['q1'],e.attitude['q2'], e.attitude['q3'],'timestamp']]
                 renamed = raw.rename(columns={e.position['longitude']: 'longitude', e.position['altitude']: 'altitude',e.position['lattitude']: 'lattitude', e.attitude['q0'] : 'q0',e.attitude['q1'] : 'q1',e.attitude['q2'] : 'q2',e.attitude['q3'] : 'q3'}).to_dict('records')
-                data.append({"entity_name": e.name,"alpha": e.alpha,  "useRPY": e.useRPY,"props": renamed})
+                data.append({"id": e.id,"entity_name": e.name,"alpha": e.alpha,  "useRPY": e.useRPY,"props": renamed})
+        return data
+
+    def getEntities(self):
+        data = []
+        for e in self.entities:
+            data.append({"id": e.id, "name": e.name})
         return data
 
     def getNestedFromKey(self,key):
