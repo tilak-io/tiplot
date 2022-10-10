@@ -1,81 +1,58 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import "../css/cesium.css";
 
-function Cesium() {
+function Cesium({ socket }) {
   // access window variables to use the Cesium API
   var Cesium = window.Cesium;
   var viewer = window.viewer;
 
-  // States
-  const [entitiesArray, setEntities] = useState([]);
-  const [isLoaded, setLoaded] = useState(false);
-  const [isInitialized, setInitialized] = useState(false);
-
-  // listen for entity change and reload if true
   useEffect(() => {
-    const id = setInterval(
-      () =>
-        fetch("/listen")
-          .then((rep) => rep.json())
-          .then((rep) => {
-            if (rep["entities_changed"]) window.location.reload();
-          })
-          .catch((err) => console.log(err)),
-      500
-    );
-    return () => clearInterval(id);
-  });
+    // requesting the entities position and orientation
+    socket.emit("get_entities_props");
 
-  useEffect(() => {
-    // get position and orientation arrays
-    fetchData();
-    if (!isLoaded) return;
-    if (!isInitialized) {
-      Cesium.Ion.defaultAccessToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiY2JkNjc2MS0yMWQwLTQ3MDMtOTg1NS0yZTBiZTgyNTI4YzgiLCJpZCI6MTA3MTk5LCJpYXQiOjE2NjI0NjUzMjh9.fQ0ozGXNo7UtrbFUFqQ6GXKfPJDepn16mgHcKM5OBJQ";
+    // signal handeling
+    socket.on("entities_props", (entities) => {
+      entities.forEach((entity) => drawEntity(entity));
+    });
 
-      // Cesium Viewer
-      viewer = new Cesium.Viewer("cesiumContainer", {
-        //terrainProvider: Cesium.createWorldTerrain(),
-        terrainProvider: [],
-        infoBox: false, //Disable InfoBox widget
-        selectionIndicator: false, //Disable selection indicator
-        navigationInstructionsInitiallyVisible: false,
-      });
+    socket.on("entities_loaded", () => {
+      window.location.reload();
+    });
 
-      // cleaning up the interface
-      viewer.animation.container.style.visibility = "hidden";
-      viewer.baseLayerPicker.container.style.visibility = "hidden";
-      viewer.timeline.container.style.visibility = "hidden";
-      viewer.bottomContainer.style.visibility = "hidden";
-      viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //Loop at the end
-      viewer.forceResize();
-      window.viewer = viewer;
-      setInitialized(true);
-    }
+    // Cesium access token
+    Cesium.Ion.defaultAccessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiY2JkNjc2MS0yMWQwLTQ3MDMtOTg1NS0yZTBiZTgyNTI4YzgiLCJpZCI6MTA3MTk5LCJpYXQiOjE2NjI0NjUzMjh9.fQ0ozGXNo7UtrbFUFqQ6GXKfPJDepn16mgHcKM5OBJQ";
+
+    // Cesium Viewer
+    // eslint-disable-next-line
+    viewer = new Cesium.Viewer("cesiumContainer", {
+      //terrainProvider: Cesium.createWorldTerrain(),
+      terrainProvider: [],
+      infoBox: false, //Disable InfoBox widget
+      selectionIndicator: false, //Disable selection indicator
+      navigationInstructionsInitiallyVisible: false,
+    });
+
+    // cleaning up the interface
+    viewer.animation.container.style.visibility = "hidden";
+    viewer.baseLayerPicker.container.style.visibility = "hidden";
+    viewer.timeline.container.style.visibility = "hidden";
+    viewer.bottomContainer.style.visibility = "hidden";
+    viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //Loop at the end
+    viewer.forceResize();
+    window.viewer = viewer;
 
     //    const osmBuildings = viewer.scene.primitives.add(
     //      Cesium.createOsmBuildings()
     //    );
-    for (let i = 0; i < entitiesArray.length; i++) drawEntity(i);
     return () => {
       window.location.reload();
     };
-  }, [isLoaded]);
+  }, []);
 
-  const fetchData = async () => {
-    // fetch position and orientation data from backend
-    await fetch("http://localhost:5000/entities")
-      .then((res) => res.json())
-      .then((res) => {
-        setEntities(res);
-      });
-    setLoaded(true);
-  };
-
-  const calculateTimeArray = (entity_index) => {
+  const calculateTimeArray = (entity) => {
     var time_array = [];
-    var entity_data = entitiesArray[entity_index].props;
+    var entity_data = entity.props;
     const timeStepInSeconds =
       (entity_data[1].timestamp - entity_data[0].timestamp) / 1e6;
     const startTime = new Cesium.JulianDate();
@@ -90,15 +67,10 @@ function Cesium() {
     return time_array;
   };
 
-  const calculatePostitionProperty = (
-    time_array,
-    entity_index,
-    altitude_offset
-  ) => {
+  const calculatePostitionProperty = (time_array, entity, altitude_offset) => {
     var property = new Cesium.SampledPositionProperty();
-    if (!isLoaded) return; // return if the data is not loaded yet
     var position;
-    var entity_data = entitiesArray[entity_index].props;
+    var entity_data = entity.props;
 
     for (var i = 0; i < entity_data.length; ++i) {
       var cur_pos = entity_data[i];
@@ -114,8 +86,8 @@ function Cesium() {
     return property;
   };
 
-  const calculateOrientationPropertyWithRollPitchYaw = (time_array, index) => {
-    var entity_data = entitiesArray[index].props;
+  const calculateOrientationPropertyWithRollPitchYaw = (time_array, entity) => {
+    var entity_data = entity.props;
     var orientationProperty = new Cesium.SampledProperty(Cesium.Quaternion);
 
     for (var i = 0; i < entity_data.length; ++i) {
@@ -142,9 +114,7 @@ function Cesium() {
     return orientationProperty;
   };
 
-  const calculateOrientationPropertyWithQuaternions = (time_array, index) => {
-    if (!isLoaded) return; // return if the data is not loaded yet
-
+  const calculateOrientationPropertyWithQuaternions = (time_array, entity) => {
     /*
     var takeoff = await fetch("http://localhost:5000/takeoff_position")
       .then((res) => res.json())
@@ -161,7 +131,7 @@ function Cesium() {
       takeoff.lat * 1e-7
     );
 
-    var entity_data = entitiesArray[index].props;
+    var entity_data = entity.props;
     var orientationProperty = new Cesium.TimeIntervalCollectionProperty();
     var origin = Cesium.Cartesian3.fromRadians(
       takeoff_position.longitude,
@@ -206,14 +176,12 @@ function Cesium() {
     return orientationProperty;
   };
 
-  const drawEntity = async (index) => {
-    if (!isLoaded) return; // return if the data is not loaded yet
-    var entity = entitiesArray[index];
-    var time_array = calculateTimeArray(0);
-    var positionProperty = calculatePostitionProperty(time_array, index, 122);
+  const drawEntity = async (entity) => {
+    var time_array = calculateTimeArray(entity);
+    var positionProperty = calculatePostitionProperty(time_array, entity, 122);
     var orientationProperty = entity.useRPY
-      ? calculateOrientationPropertyWithRollPitchYaw(time_array, index)
-      : calculateOrientationPropertyWithQuaternions(time_array, index);
+      ? calculateOrientationPropertyWithRollPitchYaw(time_array, entity)
+      : calculateOrientationPropertyWithQuaternions(time_array, entity);
     //var orientationProperty = await calculateOrientationProperty(index);
     var startTime = time_array[0];
     var stopTime = time_array[time_array.length - 1];
@@ -233,7 +201,7 @@ function Cesium() {
       orientation: orientationProperty,
       model: {
         uri: airplaneUri,
-        color: Cesium.Color.WHITE.withAlpha(entitiesArray[index]["alpha"]),
+        color: Cesium.Color.WHITE.withAlpha(entity["alpha"]),
       },
       path: {
         resolution: 1,

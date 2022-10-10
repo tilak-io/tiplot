@@ -8,61 +8,69 @@ const defaultLayout = {
     t: 0,
   },
   hovermode: "x unified",
-  width: window.innerWidth * 0.6,
 };
 
-function Graph(props) {
+function Graph({ graphIndex, socket }) {
   const [keys, setKeys] = useState([]);
   const [data, setData] = useState([]);
 
-  const getKeys = () => {
-    fetch("http://localhost:5000/keys")
-      .then((res) => res.json())
-      .then((res) => {
-        var options = [];
-        res.forEach((value, index) => {
-          var key = Object.keys(value)[0];
-          var nested_keys = Object.values(value)[0];
-          nested_keys.forEach((nested, idx) => {
-            options.push({
-              label: `${key}/${nested}`,
-              value: `${key}/${nested}`,
-              key: key,
-              nested: nested,
-            });
+  useEffect(() => {
+    socket.emit("get_table_keys", graphIndex);
+
+    // map and set the keys when recieved from backend
+    socket.on("table_keys", (response) => {
+      const index = response["index"];
+      const keys = response["keys"];
+
+      // return if its not the components that made the request
+      if (index !== graphIndex) return;
+      var options = [];
+      keys.forEach((value, index) => {
+        var key = Object.keys(value)[0];
+        var nested_keys = Object.values(value)[0];
+        nested_keys.forEach((nested, idx) => {
+          options.push({
+            label: `${key}/${nested}`,
+            value: `${key}/${nested}`,
+            key: key,
+            nested: nested,
           });
         });
-        setKeys(options);
       });
-  };
+      setKeys(options);
+    });
+    // eslint-disable-next-line
+  }, []);
 
-  const addData = async (table, nested) => {
-    await fetch("http://localhost:5000/values", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
+  const addData = async (table, key) => {
+    socket.emit("get_table_values", {
+      index: graphIndex,
+      table: table,
+      keys: [key],
+    });
 
-      body: JSON.stringify({
-        table: table,
-        keys: [nested],
-      }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        var x = [],
-          y = [];
-        res.values.forEach((e) => {
-          x.push(e["timestamp"]);
-          y.push(e[nested]);
-        });
-        var line = {
-          x: x,
-          y: y,
-          name: `${table}/${nested}`,
-        };
-        setData([...data, line]);
+    socket.on("table_values", (response) => {
+      const index = response["index"];
+      const table = response["table"];
+      const key = response["y"];
+      const values = response["values"];
+
+      // return if its not the components that made the request
+      if (index !== graphIndex) return;
+
+      var x = [],
+        y = [];
+      values.forEach((e) => {
+        x.push(e["timestamp"]);
+        y.push(e[key]);
       });
+      var line = {
+        x: x,
+        y: y,
+        name: `${table}/${key}`,
+      };
+      setData([...data, line]);
+    });
   };
 
   const removeData = async (key, nested) => {
@@ -106,6 +114,7 @@ function Graph(props) {
       let i = 0;
       while (document.getElementById(`plot-${i}`)) {
         var plot = document.getElementById(`plot-${i}`);
+
         var max_values = [];
         var min_values = [];
         for (let j = 0; j < plot.data.length; j++) {
@@ -131,8 +140,10 @@ function Graph(props) {
           },
         };
 
-        Plotly.update(plot, data, update);
         i++;
+        // only zoom on y/t plots
+        if (plot.classList.contains("plot-yt"))
+          Plotly.update(plot, data, update);
       }
     }
 
@@ -154,7 +165,7 @@ function Graph(props) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
-    const x = event.points[0].x;
+    //const x = event.points[0].x;
 
     if (window.time_array !== undefined) {
       const start = window.time_array[0];
@@ -170,7 +181,7 @@ function Graph(props) {
       var plot = document.getElementById(`plot-${i}`);
       //Plotly.Fx.hover(plot, { xval: x });
       i++;
-      if (plot.data.length == 0) continue;
+      if (plot.data.length === 0) continue;
       const factor = plot.data[0].x.length / nbrPoints;
       const mapped_index = parseInt(factor * index);
       Plotly.Fx.hover(plot, {
@@ -178,30 +189,15 @@ function Graph(props) {
         yval: plot.data[0].y[mapped_index],
       });
     }
-    /*
-    for (let i = 0; i < props.graphNbr; i++) {
-      console.log(props.graphNbr);
-    }
-    */
   };
-
-  useEffect(() => {
-    getKeys();
-    function handleResize() {
-      var update = {
-        width: window.innerWidth * 0.6,
-      };
-      Plotly.update(`plot-${props.index}`, data, update);
-    }
-    window.addEventListener("resize", handleResize);
-  }, []);
 
   return (
     <div>
       <Select options={keys} isMulti onChange={handleChange} />
       <Plot
+        className="plot-yt"
         style={{ width: "100%" }}
-        divId={`plot-${props.index}`}
+        divId={`plot-${graphIndex}`}
         data={data}
         layout={defaultLayout}
         onRelayout={relayoutHandler}

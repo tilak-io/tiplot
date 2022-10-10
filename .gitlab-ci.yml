@@ -8,6 +8,7 @@ build:
   before_script:
     - mv /docker_tiplot/* .
     - CI= yarn install
+    - CI= pip install -r api/requirement.txt
   script:
     - CI= yarn build:api
     - CI= yarn build:electron
@@ -16,3 +17,4 @@ build:
       - dist/*.AppImage
   only:
     - main
+    - tag
