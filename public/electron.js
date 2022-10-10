@@ -17,7 +17,7 @@ var start = execfile(api, { windowsHide: true }, (err, stdout, stderr) => {
   }
 });
 
-console.log(path.resolve(__dirname));
+//console.log(path.resolve(__dirname));
 
 function createWindow() {
   // Create the browser window.
