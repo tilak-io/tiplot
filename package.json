@@ -41,12 +41,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start:api": "cd api && python3 main.py",
+    "start:api": "cd api && python3 server.py",
     "build:api": "node package_python.js",
     "serve:electron": "concurrently -k \"yarn api:start \" \"cross-env BROWSER=none yarn start\" \"yarn electron:start\"",
     "build:electron": "yarn build && electron-builder",
     "start:electron": "wait-on tcp:3000 && electron .",
-    "clean": "rm -rf dist/ main.spec build/ backend"
+    "clean": "rm -rf dist/ server.spec main.spec build/ backend"
   },
   "eslintConfig": {
     "extends": [

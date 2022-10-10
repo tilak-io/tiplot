@@ -1,24 +1,20 @@
-import zmq
-import zlib
+from flask import signals
+import zmq, zlib, time
 import pickle5 as pickle
 from cesium_entity import CesiumEntity
 from parser import Parser
 from ulgparser import ULGParser
-import threading
-import socket
-#from store import Store
+from threading import Thread
 import store
 
-
-class Comm(threading.Thread):
-    def __init__(self, server=None, port=5555):
-        threading.Thread.__init__(self)
-        # setting daemon to true => kill the thread on exit
-        self.setDaemon(True)
-        self.server = server
+class Comm(Thread):
+    def __init__(self, io=None, port=5555):
+        self.delay = 0.5
+        super(Comm, self).__init__()
         self.port = port
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.REP)
+        self.io = io
         try:
             self.socket.bind("tcp://*:%s" % port)
             print('-> binded')
@@ -32,7 +28,7 @@ class Comm(threading.Thread):
         return self.socket.send(z, flags=flags)
 
     def recv_zipped_pickle(self, flags=0, protocol=-1):
-        print('-> waiting for data')
+        # print('-> waiting for data')
         z = self.socket.recv(flags)
         p = zlib.decompress(z)
         return pickle.loads(p)
@@ -43,11 +39,20 @@ class Comm(threading.Thread):
             mapped.append(CesiumEntity.fromJson(entity))
         return mapped
 
-    def run(self):
+
+    def listen_for_data(self):
         parser = ULGParser()
         while True:
-            [datadict, entities] = self.recv_zipped_pickle()
-            entities = self.map_entities(entities)
-            print('-> data recieved...')
-            store.Store.get().setStore(datadict, entities)
-            self.send_zipped_pickle('hi')
+            try:
+                [datadict, json_entities] = self.recv_zipped_pickle(zmq.NOBLOCK)
+                entities = self.map_entities(json_entities)
+                print('-> data recieved...')
+                self.io.emit('entities_loaded', json_entities)
+                store.Store.get().setStore(datadict, entities)
+                self.send_zipped_pickle('hi')
+            except zmq.Again as e:
+                pass
+            time.sleep(self.delay)
+
+    def run(self):
+        self.listen_for_data()

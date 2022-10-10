@@ -7,7 +7,6 @@ import TopBar from "./Navbar";
 
 function Loader({ socket }) {
   const [files, setFiles] = useState([]);
-  const [x, setX] = useState([]);
   const [logsDir, setLogsDir] = useState("..");
   const navigate = useNavigate();
 
@@ -25,7 +24,12 @@ function Loader({ socket }) {
       if (ok) navigate("/home");
       else alert("unsupported format");
     });
-  }, []);
+
+    // when recieving entities from jupyter notebook
+    socket.on("entities_loaded", () => {
+      navigate("/home");
+    });
+  });
 
   const parse = (file) => {
     socket.emit("select_log_file", file);

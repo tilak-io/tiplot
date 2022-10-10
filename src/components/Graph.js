@@ -8,7 +8,6 @@ const defaultLayout = {
     t: 0,
   },
   hovermode: "x unified",
-  width: window.innerWidth * 0.6,
 };
 
 function Graph({ graphIndex, socket }) {
@@ -40,6 +39,15 @@ function Graph({ graphIndex, socket }) {
       });
       setKeys(options);
     });
+    // eslint-disable-next-line
+  }, []);
+
+  const addData = async (table, key) => {
+    socket.emit("get_table_values", {
+      index: graphIndex,
+      table: table,
+      keys: [key],
+    });
 
     socket.on("table_values", (response) => {
       const index = response["index"];
@@ -62,23 +70,6 @@ function Graph({ graphIndex, socket }) {
         name: `${table}/${key}`,
       };
       setData([...data, line]);
-    });
-
-    // plot update on window resize
-    function handleResize() {
-      var update = {
-        width: window.innerWidth * 0.6,
-      };
-      Plotly.update(`plot-${graphIndex}`, data, update);
-    }
-    window.addEventListener("resize", handleResize);
-  }, []);
-
-  const addData = async (table, key) => {
-    socket.emit("get_table_values", {
-      index: graphIndex,
-      table: table,
-      keys: [key],
     });
   };
 
@@ -123,6 +114,7 @@ function Graph({ graphIndex, socket }) {
       let i = 0;
       while (document.getElementById(`plot-${i}`)) {
         var plot = document.getElementById(`plot-${i}`);
+
         var max_values = [];
         var min_values = [];
         for (let j = 0; j < plot.data.length; j++) {
@@ -148,8 +140,10 @@ function Graph({ graphIndex, socket }) {
           },
         };
 
-        Plotly.update(plot, data, update);
         i++;
+        // only zoom on y/t plots
+        if (plot.classList.contains("plot-yt"))
+          Plotly.update(plot, data, update);
       }
     }
 
@@ -171,7 +165,7 @@ function Graph({ graphIndex, socket }) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
-    const x = event.points[0].x;
+    //const x = event.points[0].x;
 
     if (window.time_array !== undefined) {
       const start = window.time_array[0];
@@ -187,7 +181,7 @@ function Graph({ graphIndex, socket }) {
       var plot = document.getElementById(`plot-${i}`);
       //Plotly.Fx.hover(plot, { xval: x });
       i++;
-      if (plot.data.length == 0) continue;
+      if (plot.data.length === 0) continue;
       const factor = plot.data[0].x.length / nbrPoints;
       const mapped_index = parseInt(factor * index);
       Plotly.Fx.hover(plot, {
@@ -201,6 +195,7 @@ function Graph({ graphIndex, socket }) {
     <div>
       <Select options={keys} isMulti onChange={handleChange} />
       <Plot
+        className="plot-yt"
         style={{ width: "100%" }}
         divId={`plot-${graphIndex}`}
         data={data}

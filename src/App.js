@@ -9,11 +9,11 @@ function App() {
   const [socketInstance, setSocketInstance] = useState("");
 
   useEffect(() => {
-    const socket = io("localhost:5000/", {
+    const socket = io("http://localhost:5000/", {
       transports: ["websocket"],
-      cors: {
-        origin: "http://localhost:3000/",
-      },
+      // cors: {
+      //   origin: "http://localhost:3000/",
+      // },
     });
 
     setSocketInstance(socket);

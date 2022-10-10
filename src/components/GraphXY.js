@@ -7,7 +7,6 @@ const defaultLayout = {
   margin: {
     t: 0,
   },
-  width: window.innerWidth * 0.6,
   //hovermode: "x unified",
   xaxis: {
     spikemode: "across",
@@ -30,7 +29,6 @@ function GraphXY({ socket, graphIndex }) {
     socket.on("table_keys", (response) => {
       const index = response["index"];
       const keys = response["keys"];
-      console.log(response);
 
       // return if its not the components that made the request
       if (index !== graphIndex) return;
@@ -95,14 +93,7 @@ function GraphXY({ socket, graphIndex }) {
       };
       setData([line]);
     });
-
-    function handleResize() {
-      var update = {
-        width: window.innerWidth * 0.6,
-      };
-      Plotly.update(`plot-${graphIndex}`, data, update);
-    }
-    window.addEventListener("resize", handleResize);
+    // eslint-disable-next-line
   }, []);
 
   const addData = async (table, key_x, key_y) => {
@@ -155,6 +146,7 @@ function GraphXY({ socket, graphIndex }) {
       <Select options={xs} onChange={handleChangeX} />
       <Select options={ys} onChange={handleChangeY} />
       <Plot
+        className="plot-xy"
         style={{ width: "100%" }}
         divId={`plot-${graphIndex}`}
         data={data}

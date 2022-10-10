@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import "../css/cesium.css";
 
 function Cesium({ socket }) {
@@ -15,11 +15,16 @@ function Cesium({ socket }) {
       entities.forEach((entity) => drawEntity(entity));
     });
 
+    socket.on("entities_loaded", () => {
+      window.location.reload();
+    });
+
     // Cesium access token
     Cesium.Ion.defaultAccessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiY2JkNjc2MS0yMWQwLTQ3MDMtOTg1NS0yZTBiZTgyNTI4YzgiLCJpZCI6MTA3MTk5LCJpYXQiOjE2NjI0NjUzMjh9.fQ0ozGXNo7UtrbFUFqQ6GXKfPJDepn16mgHcKM5OBJQ";
 
     // Cesium Viewer
+    // eslint-disable-next-line
     viewer = new Cesium.Viewer("cesiumContainer", {
       //terrainProvider: Cesium.createWorldTerrain(),
       terrainProvider: [],

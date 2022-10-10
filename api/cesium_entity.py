@@ -18,6 +18,7 @@ class CesiumEntity:
         self.id = CesiumEntity.next_id
         CesiumEntity.next_id += 1
 
+
     @classmethod
     def fromJson(cls, json):
         name = json['name']
