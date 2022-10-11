@@ -1,11 +1,7 @@
-html,
-body {
-  height: 100%;
-}
-
-.break {
-  height: 200px;
-}
+/* html, */
+/* body { */
+/*   overflow-y: auto; */
+/* } */
 
 .clickable {
   cursor: pointer;

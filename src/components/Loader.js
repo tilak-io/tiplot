@@ -1,9 +1,9 @@
-import "../css/loader.css";
 import React, { useEffect, useState } from "react";
 import { FcOpenedFolder, FcFile } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
 import TopBar from "./Navbar";
+import "../css/loader.css";
 
 function Loader({ socket }) {
   const [files, setFiles] = useState([]);
@@ -39,8 +39,7 @@ function Loader({ socket }) {
     <>
       <TopBar page="loader" />
       <div className="container-fluid">
-        <div className="break jumbotron" />
-        <div className="row h-100">
+        <div className="row">
           <div className="col-sm-12 my-auto">
             <Table striped bordered hover>
               <tbody>
@@ -63,7 +62,11 @@ function Loader({ socket }) {
                         <FcFile />
                       </td>
                       <td>{file[0]}</td>
-                      <td>{file[1]} Mb</td>
+                      <td>
+                        {file[1] < 1048576
+                          ? (file[1] / 1024).toFixed(2) + " KB"
+                          : (file[1] / 1048576).toFixed(2) + " MB"}
+                      </td>
                       <td>{file[2]}</td>
                     </tr>
                   );

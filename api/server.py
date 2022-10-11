@@ -10,6 +10,7 @@ from time import localtime, strftime
 from os import makedirs, path
 from glob import glob
 from communication import Comm
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -52,7 +53,7 @@ def connected():
 
 @socketio.on('get_log_files')
 def get_logs():
-    files = [(path.basename(x), path.getsize(x) >> 20, strftime(
+    files = [(path.basename(x), path.getsize(x), strftime(
         '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
     data = {'path': logs_dir, 'files': files}
     emit('log_files', data)
@@ -65,8 +66,16 @@ def select_log_file(file):
 
 @socketio.on('get_entities_props')
 def get_entities():
+    global currentTime
+    currentTime = datetime.now()
     props = store.Store.get().getEntitiesProps()
     emit('entities_props', props)
+    print('time to emit: {}'.format(datetime.now() - currentTime))
+
+@socketio.on('entities_recieved')
+def entities_recieved():
+    print('time to recieve data: {}'.format(datetime.now() - currentTime))
+
 
 @socketio.on('get_table_keys')
 def get_table_keys(index):
@@ -92,6 +101,21 @@ def get_table_columns(data):
     columns = store.Store.get().getTableColumns(table)
     data = {"index": index,"table": table, "columns": columns}
     emit('table_columns', data)
+
+@app.route('/takeoff_position')
+def get_takeoff_position():
+    try:
+        values = store.Store.get().datadict['vehicle_gps_position'][['lon', 'lat', 'alt']].to_dict('records')
+        data = {'takeoff': values[0]}
+    except:
+        # dummy data for tests
+        takeoff = {
+            "alt": 270840,
+            "lat": 498044179,
+            "lon": 88782777,
+          }
+        data = {'takeoff': takeoff}
+    return data
 
 @socketio.on("disconnect")
 def disconnected():
