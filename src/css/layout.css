@@ -30,3 +30,7 @@ body {
   -webkit-background-clip: padding;
   background-clip: padding-box;
 }
+
+.break {
+  height: 54px;
+}

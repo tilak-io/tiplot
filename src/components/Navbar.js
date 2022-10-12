@@ -159,7 +159,7 @@ function TopBar(props) {
       </Modal>
 
       {/* Actual Navbar */}
-      <Navbar bg="dark" variant="dark" sticky="bottom">
+      <Navbar bg="dark" variant="dark" fixed="top">
         <a id="export-layout" style={{ display: "none" }}></a>
         <input id="import-layout" type="file" style={{ display: "none" }} />
         <Container>

@@ -104,6 +104,7 @@ function Paper({ socket }) {
 
   return (
     <>
+      <div className="break"></div>
       {rows}
       <center>
         <br />
