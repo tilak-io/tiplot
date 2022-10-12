@@ -39,9 +39,15 @@ function Paper({ socket }) {
   };
 
   const parseLocalStorage = (key) => {
-    var value = localStorage.getItem(key);
-    if (value == "" || value == null) value = [];
-    else value = JSON.parse(value);
+    try {
+      var value = localStorage.getItem(key);
+      if (value == "" || value == null) value = [];
+      else value = JSON.parse(value);
+    } catch {
+      alert("Please import a valid json file");
+      localStorage.setItem("current_layout", "[]");
+      var value = [];
+    }
     return value;
   };
 

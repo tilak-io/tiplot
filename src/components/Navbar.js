@@ -97,6 +97,10 @@ function TopBar(props) {
 
     input.onchange = (event) => {
       const file = event.target.files[0];
+      if (file.type !== "application/json") {
+        alert("Please import a JSON file");
+        return;
+      }
       fr.readAsText(file);
     };
 
@@ -132,7 +136,7 @@ function TopBar(props) {
   return (
     <>
       {/* Pop up for setting layout name */}
-      <Modal show={showSaveMsg} onHide={handleClose}>
+      <Modal show={showSaveMsg} onHide={handleClose} animation={false} centered>
         <Modal.Header closeButton>
           <Modal.Title>Save Layout</Modal.Title>
         </Modal.Header>
