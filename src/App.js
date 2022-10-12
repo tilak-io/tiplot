@@ -1,6 +1,7 @@
-import Loader from "./components/Loader";
+import "./css/overlay.css";
 import Layout from "./components/Layout";
-import Post from "./components/Post";
+import Loader from "./components/Loader";
+// import Test from "./components/Test";
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
@@ -19,17 +20,19 @@ function App() {
     setSocketInstance(socket);
 
     socket.on("connect", () => {
-      console.log("Connected");
+      // console.log("Connected");
     });
 
     socket.on("disconnect", () => {
-      console.log("Disconnected");
+      // console.log("Disconnected");
     });
 
     return function cleanup() {
       socket.disconnect();
     };
   }, []);
+
+  // return <Test />;
 
   if (socketInstance == "") return <div>Loading</div>;
   else
@@ -45,11 +48,7 @@ function App() {
             <Route
               exact
               path="/home"
-              element={
-                <>
-                  <Layout socket={socketInstance} />
-                </>
-              }
+              element={<Layout socket={socketInstance} />}
             />
             <Route path="*" element={"not found"} />
           </Routes>

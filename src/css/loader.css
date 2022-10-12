@@ -1,12 +1,24 @@
-html,
-body {
-  height: 100%;
-}
-
-.break {
-  height: 200px;
-}
+/* html, */
+/* body { */
+/*   overflow-y: auto; */
+/* } */
 
 .clickable {
   cursor: pointer;
+}
+
+.file-upload input[type="file"] {
+  display: none;
+}
+
+.rounded-lg {
+  border-radius: 1rem;
+}
+
+.custom-file-label.rounded-pill {
+  border-radius: 50rem;
+}
+
+.custom-file-label.rounded-pill::after {
+  border-radius: 0 50rem 50rem 0;
 }

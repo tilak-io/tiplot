@@ -1,0 +1,81 @@
+.navbar-nav > .active > a {
+  border: 1px solid #333;
+}
+
+body {
+  margin: 0;
+  padding-top: 50px;
+  background-color: #222;
+}
+
+#content {
+  height: calc(100vh - 64px);
+}
+
+.tab {
+  float: left;
+  height: 100%;
+}
+
+#nav,
+#form,
+#map {
+  border-width: 0 5px 0 0;
+  border-style: solid;
+  -webkit-border-image: -webkit-gradient(
+      linear,
+      100% 0,
+      0 0,
+      from(rgba(0, 0, 0, 1)),
+      to(rgba(84, 84, 84, 0.8))
+    )
+    1 100%;
+  -webkit-border-image: -webkit-linear-gradient(
+      left,
+      rgba(0, 0, 0, 1),
+      rgba(84, 84, 84, 0.8)
+    )
+    1 100%;
+  -moz-border-image: -moz-linear-gradient(
+      left,
+      rgba(0, 0, 0, 1),
+      rgba(84, 84, 84, 0.8)
+    )
+    1 100%;
+  -o-border-image: -o-linear-gradient(
+      left,
+      rgba(0, 0, 0, 1),
+      rgba(84, 84, 84, 0.8)
+    )
+    1 100%;
+  border-image: linear-gradient(
+      to left,
+      rgba(0, 0, 0, 1),
+      rgba(84, 84, 84, 0.8)
+    )
+    1 100%;
+}
+
+#nav {
+  background-color: yellow;
+  width: 10%;
+}
+
+#form {
+  background-color: orange;
+  width: 35%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#map {
+  background-color: green;
+  width: 45%;
+}
+
+#utils {
+  background-color: brown;
+  /* wenn nicht -1px */
+  /* bricht utils beim Schieben auf die nächste Zeile */
+  width: calc(10% - 1px);
+}

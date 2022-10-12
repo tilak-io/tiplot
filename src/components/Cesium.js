@@ -1,18 +1,21 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import "../css/cesium.css";
 
 function Cesium({ socket }) {
   // access window variables to use the Cesium API
   var Cesium = window.Cesium;
   var viewer = window.viewer;
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     // requesting the entities position and orientation
     socket.emit("get_entities_props");
 
-    // signal handeling
-    socket.on("entities_props", (entities) => {
-      entities.forEach((entity) => drawEntity(entity));
+    // draw the entities
+    socket.on("entities_props", async (entities) => {
+      await entities.forEach((entity) => drawEntity(entity));
+      setLoading(false);
+      socket.emit("entities_recieved");
     });
 
     socket.on("entities_loaded", () => {
@@ -26,7 +29,7 @@ function Cesium({ socket }) {
     // Cesium Viewer
     // eslint-disable-next-line
     viewer = new Cesium.Viewer("cesiumContainer", {
-      //terrainProvider: Cesium.createWorldTerrain(),
+      // terrainProvider: Cesium.createWorldTerrain(),
       terrainProvider: [],
       infoBox: false, //Disable InfoBox widget
       selectionIndicator: false, //Disable selection indicator
@@ -53,13 +56,12 @@ function Cesium({ socket }) {
   const calculateTimeArray = (entity) => {
     var time_array = [];
     var entity_data = entity.props;
-    const timeStepInSeconds =
-      (entity_data[1].timestamp - entity_data[0].timestamp) / 1e6;
     const startTime = new Cesium.JulianDate();
     for (let i = 0; i < entity_data.length; i++) {
       const time = Cesium.JulianDate.addSeconds(
         startTime,
-        timeStepInSeconds * i,
+        // timeStepInSeconds * i,
+        (entity_data[i].timestamp - entity_data[0].timestamp) / 1e6,
         new Cesium.JulianDate()
       );
       time_array.push(time);
@@ -114,21 +116,18 @@ function Cesium({ socket }) {
     return orientationProperty;
   };
 
-  const calculateOrientationPropertyWithQuaternions = (time_array, entity) => {
-    /*
-    var takeoff = await fetch("http://localhost:5000/takeoff_position")
+  const calculateOrientationPropertyWithQuaternions = async (
+    time_array,
+    entity
+  ) => {
+    var takeoff;
+    await fetch("http://localhost:5000/takeoff_position")
       .then((res) => res.json())
-      .then((res) => res[index].takeoff_position);
-    */
-    var takeoff = {
-      alt: 270840,
-      lat: 498044179,
-      lon: 88782777,
-      timestamp: 2360857556,
-    };
+      .then((res) => (takeoff = res.takeoff));
+
     var takeoff_position = Cesium.Cartographic.fromDegrees(
-      takeoff.lon * 1e-7,
-      takeoff.lat * 1e-7
+      takeoff["lon"] * 1e-7,
+      takeoff["lat"] * 1e-7
     );
 
     var entity_data = entity.props;
@@ -178,10 +177,10 @@ function Cesium({ socket }) {
 
   const drawEntity = async (entity) => {
     var time_array = calculateTimeArray(entity);
-    var positionProperty = calculatePostitionProperty(time_array, entity, 122);
+    var positionProperty = calculatePostitionProperty(time_array, entity, 40);
     var orientationProperty = entity.useRPY
       ? calculateOrientationPropertyWithRollPitchYaw(time_array, entity)
-      : calculateOrientationPropertyWithQuaternions(time_array, entity);
+      : await calculateOrientationPropertyWithQuaternions(time_array, entity);
     //var orientationProperty = await calculateOrientationProperty(index);
     var startTime = time_array[0];
     var stopTime = time_array[time_array.length - 1];
@@ -217,8 +216,14 @@ function Cesium({ socket }) {
     window.time_array = time_array;
   };
 
+  const show = isLoading ? "show" : "";
   return (
     <>
+      <div className={`overlay ${show}`}></div>
+      <div className={`spanner ${show}`}>
+        <div className="loader"></div>
+        <p>Loading data...</p>
+      </div>
       <div id="cesiumContainer"></div>
     </>
   );

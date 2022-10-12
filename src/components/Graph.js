@@ -10,11 +10,13 @@ const defaultLayout = {
   hovermode: "x unified",
 };
 
-function Graph({ graphIndex, socket }) {
+function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
   const [keys, setKeys] = useState([]);
   const [data, setData] = useState([]);
+  const [selectedValue, setSelected] = useState();
 
   useEffect(() => {
+    plotInitialData();
     socket.emit("get_table_keys", graphIndex);
 
     // map and set the keys when recieved from backend
@@ -43,6 +45,7 @@ function Graph({ graphIndex, socket }) {
   }, []);
 
   const addData = async (table, key) => {
+    socket.off("table_values");
     socket.emit("get_table_values", {
       index: graphIndex,
       table: table,
@@ -79,6 +82,8 @@ function Graph({ graphIndex, socket }) {
   };
 
   const handleChange = (keysList, actionMeta) => {
+    updateKeys(graphIndex, keysList);
+    setSelected(keysList);
     switch (actionMeta.action) {
       case "select-option":
         addData(actionMeta.option.key, actionMeta.option.nested);
@@ -191,9 +196,52 @@ function Graph({ graphIndex, socket }) {
     }
   };
 
+  const plotInitialData = () => {
+    if (initialKeys == undefined) return; // return if we have no initial keys
+
+    setSelected(initialKeys);
+    var initialData = [];
+    initialKeys.forEach((option, index) => {
+      socket.emit("get_table_values", {
+        index: graphIndex,
+        table: option.key,
+        keys: [option.nested],
+      });
+    });
+
+    socket.on("table_values", (response) => {
+      const index = response["index"];
+      const table = response["table"];
+      const key = response["y"];
+      const values = response["values"];
+
+      // return if its not the components that made the request
+      if (index !== graphIndex) return;
+
+      var x = [],
+        y = [];
+      values.forEach((e) => {
+        x.push(e["timestamp"]);
+        y.push(e[key]);
+      });
+      var line = {
+        x: x,
+        y: y,
+        name: `${table}/${key}`,
+      };
+      initialData.push(line);
+    });
+    setData(initialData);
+  };
+
   return (
     <div>
-      <Select options={keys} isMulti onChange={handleChange} />
+      <Select
+        options={keys}
+        isMulti
+        onChange={handleChange}
+        value={selectedValue}
+      />
       <Plot
         className="plot-yt"
         style={{ width: "100%" }}

@@ -15,13 +15,15 @@ const defaultLayout = {
     spikemode: "across",
   },
 };
-function GraphXY({ socket, graphIndex }) {
+function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
   const [xs, setXs] = useState([]);
   const [ys, setYs] = useState([]);
   const [data, setData] = useState([]);
   const [selected_x, setSelected_X] = useState();
+  const [selected_y, setSelected_Y] = useState();
 
   useEffect(() => {
+    plotInitialData();
     // request table keys
     socket.emit("get_table_keys", graphIndex);
 
@@ -109,8 +111,10 @@ function GraphXY({ socket, graphIndex }) {
     socket.emit("get_table_columns", { index: graphIndex, table: value.key });
   };
 
-  const handleChangeY = (selected_y) => {
-    addData(selected_x.key, selected_x.nested, selected_y.nested);
+  const handleChangeY = (value) => {
+    setSelected_Y(value);
+    addData(selected_x.key, selected_x.nested, value.nested);
+    updateKeys(graphIndex, [selected_x, value]);
   };
 
   const handleHover = (event) => {
@@ -141,10 +145,18 @@ function GraphXY({ socket, graphIndex }) {
     }
   };
 
+  const plotInitialData = () => {
+    if (initialKeys === undefined) return; // return if we have no initial keys
+    if (initialKeys === []) return; // return if we have no initial keys
+    setSelected_X(initialKeys[0]);
+    setSelected_Y(initialKeys[1]);
+    addData(initialKeys[0].key, initialKeys[0].nested, initialKeys[1].nested);
+  };
+
   return (
     <div>
-      <Select options={xs} onChange={handleChangeX} />
-      <Select options={ys} onChange={handleChangeY} />
+      <Select options={xs} onChange={handleChangeX} value={selected_x} />
+      <Select options={ys} onChange={handleChangeY} value={selected_y} />
       <Plot
         className="plot-xy"
         style={{ width: "100%" }}

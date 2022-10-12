@@ -1,18 +1,21 @@
 html,
 body {
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
+
 .Pane1 {
   background-color: #ddd;
   overflow-x: hidden;
   overflow-y: scroll;
-  height: calc(100% - 54px);
+  height: 100%;
+  /* height: calc(100% - 54px); */
 }
 
 .Pane2 {
   background-color: #000;
   overflow-x: hidden;
-  height: calc(100% - 54px);
+  height: 100%;
+  /* height: calc(100% - 54px); */
 }
 
 .Resizer {
