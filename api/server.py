@@ -12,7 +12,6 @@ from glob import glob
 from communication import Comm
 from datetime import datetime
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 CORS(app,resources={r"/*":{"origins":"*"}})
@@ -63,6 +62,19 @@ def get_logs():
 def select_log_file(file):
     ok = choose_parser(file[0], logs_dir)
     emit('log_selected', ok)
+
+@app.route('/upload_log', methods=['POST'])
+def upload_log():
+    try:
+        file = request.files['log']
+        if file:
+            file.save(path.join(logs_dir, file.filename))
+            ok = choose_parser(file.filename, logs_dir)
+    except:
+        ok = False
+
+    return {'ok': ok}
+
 
 @socketio.on('get_entities_props')
 def get_entities():
