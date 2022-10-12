@@ -189,12 +189,6 @@ function TopBar(props) {
                 Clear layouts
               </NavDropdown.Item>
             </NavDropdown>
-            <NavDropdown title="Options" id="navbarScrollingDropdown">
-              <NavDropdown.Item href="#">do something</NavDropdown.Item>
-              <NavDropdown.Item href="#">do something else</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#">Refresh</NavDropdown.Item>
-            </NavDropdown>
             <Nav.Link onClick={() => toggle(!isPlaying)}>
               <TogglePlay />
             </Nav.Link>
