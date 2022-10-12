@@ -1,4 +1,5 @@
 import "../css/layout.css";
+import { useEffect } from "react";
 import Plotly from "plotly.js/dist/plotly";
 import Paper from "./Paper";
 import Cesium from "./Cesium";
@@ -8,6 +9,8 @@ import SplitPane from "react-split-pane";
 
 function Layout({ socket }) {
   //document.body.style.zoom = 0.75;
+  useEffect(() => {}, []);
+
   const handleChange = (event) => {
     var i = 0;
     while (document.getElementById(`plot-${i}`)) {

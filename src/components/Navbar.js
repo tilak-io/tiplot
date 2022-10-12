@@ -1,10 +1,21 @@
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import {
+  Container,
+  Nav,
+  Navbar,
+  NavDropdown,
+  Modal,
+  Button,
+} from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { FaPlay, FaPause } from "react-icons/fa";
 
 function TopBar(props) {
   const [isPlaying, setPlaying] = useState(false);
   const [layouts, setLayouts] = useState([]);
+  const [showSaveMsg, setShowSaveMsg] = useState(false);
+
+  const handleClose = () => setShowSaveMsg(false);
+  const saveCurrentLayoutNamed = () => setShowSaveMsg(true);
 
   useEffect(() => {
     mapLayouts();
@@ -19,7 +30,8 @@ function TopBar(props) {
 
   const parseLocalStorage = (key) => {
     var value = localStorage.getItem(key);
-    if (value == "" || value == null) value = [];
+    if (value == "" || value == null)
+      value = {}; // {} instead of [] so we can use associative arrays
     else value = JSON.parse(value);
     return value;
   };
@@ -29,23 +41,35 @@ function TopBar(props) {
     var currentLayout = parseLocalStorage("current_layout");
     savedLayouts.push(currentLayout);
     localStorage.setItem("saved_layouts", JSON.stringify(savedLayouts));
-
     mapLayouts();
+  };
+
+  const onSave = () => {
+    var name = document.getElementById("layout-name").value;
+    var savedLayouts = parseLocalStorage("saved_layouts");
+    var currentLayout = parseLocalStorage("current_layout");
+    savedLayouts[name] = currentLayout;
+    localStorage.setItem("saved_layouts", JSON.stringify(savedLayouts));
+    mapLayouts();
+    setShowSaveMsg(false);
   };
 
   const mapLayouts = () => {
     const savedLayouts = parseLocalStorage("saved_layouts");
-    var rows = savedLayouts.map((e, i) => (
-      <NavDropdown.Item key={i} onClick={() => selectLayout(i)}>
-        Layout {i + 1}
-      </NavDropdown.Item>
-    ));
+    var rows = [];
+    Object.keys(savedLayouts).forEach((layout_name, i) => {
+      rows.push(
+        <NavDropdown.Item key={i} onClick={() => selectLayout(layout_name)}>
+          {layout_name}
+        </NavDropdown.Item>
+      );
+    });
     setLayouts(rows);
   };
 
-  const selectLayout = (index) => {
+  const selectLayout = (name) => {
     var savedLayouts = parseLocalStorage("saved_layouts");
-    var selectedLayout = savedLayouts[index];
+    var selectedLayout = savedLayouts[name];
     localStorage.setItem("current_layout", JSON.stringify(selectedLayout));
     window.location.reload();
   };
@@ -80,7 +104,7 @@ function TopBar(props) {
   };
 
   const clearLayouts = () => {
-    localStorage.setItem("saved_layouts", "[]");
+    localStorage.setItem("saved_layouts", "{}");
     localStorage.setItem("current_layout", "[]");
     window.location.reload();
   };
@@ -107,9 +131,33 @@ function TopBar(props) {
   const page = props.page;
   return (
     <>
-      <a id="export-layout" style={{ display: "none" }}></a>
-      <input id="import-layout" type="file" style={{ display: "none" }} />
-      <Navbar bg="dark" variant="dark">
+      {/* Pop up for setting layout name */}
+      <Modal show={showSaveMsg} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Save Layout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-group">
+            <label htmlFor="layout-name" className="col-form-label">
+              Name:
+            </label>
+            <input type="text" className="form-control" id="layout-name" />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={onSave}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Actual Navbar */}
+      <Navbar bg="dark" variant="dark" sticky="bottom">
+        <a id="export-layout" style={{ display: "none" }}></a>
+        <input id="import-layout" type="file" style={{ display: "none" }} />
         <Container>
           <Navbar.Brand>TiPlot</Navbar.Brand>
           <Nav className="me-auto">
@@ -122,7 +170,7 @@ function TopBar(props) {
             <NavDropdown title="Layouts" id="navbarScrollingDropdown">
               {layouts}
               <ShowFirstDivider />
-              <NavDropdown.Item onClick={saveCurrentLayout}>
+              <NavDropdown.Item onClick={saveCurrentLayoutNamed}>
                 Save current layout
               </NavDropdown.Item>
               <NavDropdown.Divider />
