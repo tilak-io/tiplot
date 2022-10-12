@@ -76,6 +76,8 @@ def upload_log():
     return {'ok': ok}
 
 
+
+
 @socketio.on('get_entities_props')
 def get_entities():
     global currentTime

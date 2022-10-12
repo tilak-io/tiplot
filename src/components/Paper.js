@@ -38,35 +38,36 @@ function Paper({ socket }) {
     addGraphToLayout("xy");
   };
 
+  const parseLocalStorage = (key) => {
+    var value = localStorage.getItem(key);
+    if (value == "" || value == null) value = [];
+    else value = JSON.parse(value);
+    return value;
+  };
+
   const handleRemove = () => {
     setRows(rows.slice(0, -1));
     setGraphNbr(graphNbr - 1);
-    var layout = localStorage.getItem("layout");
-    layout = JSON.parse(layout);
+    var layout = parseLocalStorage("current_layout");
+    console.log(layout);
     layout.pop();
-    localStorage.setItem("layout", JSON.stringify(layout));
+    localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
   const addGraphToLayout = (type) => {
-    var layout = localStorage.getItem("layout");
-    if (layout == "") layout = [];
-    else layout = JSON.parse(layout);
+    var layout = parseLocalStorage("current_layout");
     layout.push({ type: type, keys: [] });
-    localStorage.setItem("layout", JSON.stringify(layout));
+    localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
   const updateKeys = (index, keys) => {
-    var layout = localStorage.getItem("layout");
-    layout = JSON.parse(layout);
-    console.log(layout[index]);
+    var layout = parseLocalStorage("current_layout");
     layout[index]["keys"] = keys;
-    localStorage.setItem("layout", JSON.stringify(layout));
+    localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
   const initializeLayout = () => {
-    var layout = localStorage.getItem("layout");
-    if (layout == "") layout = [];
-    else layout = JSON.parse(layout);
+    var layout = parseLocalStorage("current_layout");
     var graphs = [];
     layout.forEach((plot, index) => {
       if (plot.type == "yt")

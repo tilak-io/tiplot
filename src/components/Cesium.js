@@ -12,8 +12,8 @@ function Cesium({ socket }) {
     socket.emit("get_entities_props");
 
     // draw the entities
-    socket.on("entities_props", (entities) => {
-      entities.forEach((entity) => drawEntity(entity));
+    socket.on("entities_props", async (entities) => {
+      await entities.forEach((entity) => drawEntity(entity));
       setLoading(false);
       socket.emit("entities_recieved");
     });

@@ -148,7 +148,6 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
   const plotInitialData = () => {
     if (initialKeys === undefined) return; // return if we have no initial keys
     if (initialKeys === []) return; // return if we have no initial keys
-    console.log(initialKeys);
     setSelected_X(initialKeys[0]);
     setSelected_Y(initialKeys[1]);
     addData(initialKeys[0].key, initialKeys[0].nested, initialKeys[1].nested);
