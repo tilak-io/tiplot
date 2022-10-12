@@ -4,6 +4,12 @@ import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 
 const defaultLayout = {
+  showlegend: true,
+  legend: {
+    x: 1,
+    xanchor: "right",
+    y: 1,
+  },
   margin: {
     t: 0,
   },
