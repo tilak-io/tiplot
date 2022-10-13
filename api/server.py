@@ -36,13 +36,13 @@ def choose_parser(file, logs_dir):
             ok = True
             break
         except:
-            print("wrong format")
+            print("~> wrong format")
             ok = False
     return ok
 
 @socketio.on("connect")
 def connected():
-    print("client has connected " + request.sid)
+    print("-> client has connected " + request.sid)
     global thread
     if not thread.is_alive():
         print("-> Starting Communications Thread...")
@@ -84,12 +84,6 @@ def get_entities():
     currentTime = datetime.now()
     props = store.Store.get().getEntitiesProps()
     emit('entities_props', props)
-    print('time to emit: {}'.format(datetime.now() - currentTime))
-
-@socketio.on('entities_recieved')
-def entities_recieved():
-    print('time to recieve data: {}'.format(datetime.now() - currentTime))
-
 
 @socketio.on('get_table_keys')
 def get_table_keys(index):
@@ -133,7 +127,27 @@ def get_takeoff_position():
 
 @socketio.on("disconnect")
 def disconnected():
-    print("client has disconnected " + request.sid)
+    print("-> client has disconnected " + request.sid)
+
+def print_tiplot():
+    print('''
+ _____ _ ____  _       _
+|_   _(_)  _ \| | ___ | |_
+  | | | | |_) | |/ _ \| __|
+  | | | |  __/| | (_) | |_
+  |_| |_|_|   |_|\___/ \__|
+          ''')
+    print('-> Starting TiPlot...')
+
+def run_server():
+    try:
+        socketio.run(app, host='127.0.0.1', port=5000)
+    except:
+        print('~> ')
+    finally:
+        print('-> Stopping TiPlot...')
+        print('-> See you soon.')
 
 if __name__ == '__main__':
-    socketio.run(app, host='127.0.0.1', port=5000)
+    print_tiplot()
+    run_server()
