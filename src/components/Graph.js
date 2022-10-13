@@ -267,14 +267,16 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
       />
       <Plot
         className="plot-yt"
-        style={{ width: "100%" }}
         divId={`plot-${graphIndex}`}
         data={data}
         layout={defaultLayout}
         onRelayout={relayoutHandler}
         onHover={handleHover}
+        useResizeHandler
+        style={{ width: "100%", height: "100%" }}
         config={{
           displayModeBar: false,
+          // responsive: true,
         }}
       />
     </div>
