@@ -1,6 +1,8 @@
 html,
 body {
   /* overflow-y: hidden; */
+  width: 100%;
+  height: 100%;
 }
 
 .Pane1 {
@@ -29,4 +31,8 @@ body {
   -moz-background-clip: padding;
   -webkit-background-clip: padding;
   background-clip: padding-box;
+}
+
+.break {
+  height: 54px;
 }

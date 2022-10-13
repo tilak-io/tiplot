@@ -54,6 +54,7 @@ function Loader({ socket }) {
     <>
       <TopBar page="loader" />
       <br />
+      <div className="break"></div>
       <center>
         <label
           htmlFor="fileUpload"

@@ -7,12 +7,14 @@ const defaultLayout = {
   margin: {
     t: 0,
   },
-  //hovermode: "x unified",
+  hoverdistance: -1,
   xaxis: {
     spikemode: "across",
+    spikesnap: "closest",
   },
   yaxis: {
     spikemode: "across",
+    spikesnap: "closest",
   },
 };
 function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
@@ -121,6 +123,7 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
+    const x = event.points[0].x;
 
     if (window.time_array !== undefined) {
       const start = window.time_array[0];
@@ -134,14 +137,26 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
     while (document.getElementById(`plot-${i}`)) {
       var plot = document.getElementById(`plot-${i}`);
       i++;
+      if (graphIndex == i - 1) continue;
       if (plot.data.length === 0) continue;
-      //Plotly.Fx.hover(plot, { xval: x });
-      const factor = plot.data[0].x.length / nbrPoints;
-      const mapped_index = parseInt(factor * index);
-      Plotly.Fx.hover(plot, {
-        xval: plot.data[0].x[mapped_index],
-        yval: plot.data[0].y[mapped_index],
-      });
+      // mimic hover for x/y graphs
+      if (plot.classList.contains("plot-xy")) {
+        const factor = plot.data[0].x.length / nbrPoints;
+        const mapped_index = parseInt(factor * index);
+
+        Plotly.Fx.hover(plot, {
+          xval: plot.data[0].x[mapped_index],
+          yval: plot.data[0].y[mapped_index],
+        });
+      }
+
+      // mimic hover for t/y graphs
+      if (plot.classList.contains("plot-yt")) {
+        // hide the spike
+        Plotly.Fx.hover(plot, {
+          xpx: -100,
+        });
+      }
     }
   };
 

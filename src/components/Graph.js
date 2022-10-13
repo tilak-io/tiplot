@@ -4,8 +4,17 @@ import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 
 const defaultLayout = {
+  legend: {
+    x: 1,
+    xanchor: "right",
+    y: 1,
+  },
   margin: {
     t: 0,
+  },
+  xaxis: {
+    showspikes: true,
+    spikesnap: "cursor",
   },
   hovermode: "x unified",
 };
@@ -142,6 +151,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
           },
           xaxis: {
             range: event_xrange,
+            spikesnap: "cursor",
+            showspikes: true,
           },
         };
 
@@ -170,7 +181,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
-    //const x = event.points[0].x;
+    const x = event.points[0].x;
 
     if (window.time_array !== undefined) {
       const start = window.time_array[0];
@@ -184,15 +195,24 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
 
     while (document.getElementById(`plot-${i}`)) {
       var plot = document.getElementById(`plot-${i}`);
-      //Plotly.Fx.hover(plot, { xval: x });
       i++;
-      if (plot.data.length === 0) continue;
-      const factor = plot.data[0].x.length / nbrPoints;
-      const mapped_index = parseInt(factor * index);
-      Plotly.Fx.hover(plot, {
-        xval: plot.data[0].x[mapped_index],
-        yval: plot.data[0].y[mapped_index],
-      });
+      if (graphIndex == i - 1) continue; // dont mimic hover on the same graph we're hovering over
+      if (plot.data.length === 0) continue; // dont mimic hover on a graph that has no data
+      // mimic hover for t/y graphs
+      if (plot.classList.contains("plot-yt")) {
+        Plotly.Fx.hover(plot, event.event);
+      }
+
+      // mimic hover for x/y graphs
+      if (plot.classList.contains("plot-xy")) {
+        const factor = plot.data[0].x.length / nbrPoints;
+        const mapped_index = parseInt(factor * index);
+
+        Plotly.Fx.hover(plot, {
+          xval: plot.data[0].x[mapped_index],
+          yval: plot.data[0].y[mapped_index],
+        });
+      }
     }
   };
 
@@ -227,6 +247,9 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
       var line = {
         x: x,
         y: y,
+        // mode: "markers",
+        // type: "scatter",
+        // marker: { size: 5 },
         name: `${table}/${key}`,
       };
       initialData.push(line);
@@ -244,14 +267,16 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
       />
       <Plot
         className="plot-yt"
-        style={{ width: "100%" }}
         divId={`plot-${graphIndex}`}
         data={data}
         layout={defaultLayout}
         onRelayout={relayoutHandler}
         onHover={handleHover}
+        useResizeHandler
+        style={{ width: "100%", height: "100%" }}
         config={{
           displayModeBar: false,
+          // responsive: true,
         }}
       />
     </div>

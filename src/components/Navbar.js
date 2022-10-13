@@ -159,7 +159,7 @@ function TopBar(props) {
       </Modal>
 
       {/* Actual Navbar */}
-      <Navbar bg="dark" variant="dark" sticky="bottom">
+      <Navbar bg="dark" variant="dark" fixed="top">
         <a id="export-layout" style={{ display: "none" }}></a>
         <input id="import-layout" type="file" style={{ display: "none" }} />
         <Container>
@@ -188,12 +188,6 @@ function TopBar(props) {
               <NavDropdown.Item onClick={clearLayouts}>
                 Clear layouts
               </NavDropdown.Item>
-            </NavDropdown>
-            <NavDropdown title="Options" id="navbarScrollingDropdown">
-              <NavDropdown.Item href="#">do something</NavDropdown.Item>
-              <NavDropdown.Item href="#">do something else</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#">Refresh</NavDropdown.Item>
             </NavDropdown>
             <Nav.Link onClick={() => toggle(!isPlaying)}>
               <TogglePlay />
