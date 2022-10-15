@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
 import TopBar from "./Navbar";
 import "../css/loader.css";
+import "../css/overlay.css";
 
 function Loader({ socket }) {
   const [files, setFiles] = useState([]);
   const [logsDir, setLogsDir] = useState("..");
+  const [connected, setConnected] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +30,10 @@ function Loader({ socket }) {
     // when recieving entities from jupyter notebook
     socket.on("entities_loaded", () => {
       navigate("/home");
+    });
+
+    socket.on("connect", () => {
+      setConnected(true);
     });
   }, []);
 
@@ -50,9 +56,15 @@ function Loader({ socket }) {
       });
   };
 
+  const show = connected ? "hide" : "show";
   return (
     <>
       <TopBar page="loader" />
+      <div className={`overlay ${show}`}></div>
+      <div className={`spanner ${show}`}>
+        <div className="loader"></div>
+        <p>Starting Tiplot Server...</p>
+      </div>
       <br />
       <div className="break"></div>
       <center>
