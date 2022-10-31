@@ -216,9 +216,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     }
   };
 
-  const plotInitialData = () => {
+  const plotInitialData = async () => {
     if (initialKeys == undefined) return; // return if we have no initial keys
-
     setSelected(initialKeys);
     var initialData = [];
     initialKeys.forEach((option, index) => {
@@ -230,6 +229,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     });
 
     socket.on("table_values", (response) => {
+      console.log(initialData);
       const index = response["index"];
       const table = response["table"];
       const key = response["y"];
@@ -253,8 +253,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
         name: `${table}/${key}`,
       };
       initialData.push(line);
+      setData(initialData);
     });
-    setData(initialData);
   };
 
   return (
