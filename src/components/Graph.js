@@ -12,11 +12,24 @@ const defaultLayout = {
   margin: {
     t: 0,
   },
+  yaxis: {
+    // linecolor: "white",
+    // gridcolor: "#ddd",
+    // color: "#fff"
+  },
   xaxis: {
     showspikes: true,
     spikesnap: "cursor",
+    // linecolor: "white",
+    // gridcolor: "#eee",
+    // color: "#fff"
   },
   hovermode: "x unified",
+  // plot_bgcolor: "#121212",
+  // paper_bgcolor: "#121212",
+
+  // colorway:["#ea5545", "#f46a9b", "#ef9b20", "#edbf33", "#ede15b", "#bdcf32", "#87bc45", "#27aeef", "#b33dc6"]
+  // colorway: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
 };
 
 function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
