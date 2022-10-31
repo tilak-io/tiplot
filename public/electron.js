@@ -5,12 +5,10 @@ const { app, BrowserWindow } = require("electron");
 const api = path.join(process.resourcesPath, "api/server");
 
 // just for debugging
-//const api = "/home/hamza/projects/tiplot/backend/server";
+// const api = "/home/hamza/projects/tiplot/backend/server";
 
 var spawn = require("child_process").spawn;
 var start = spawn(api, {shell: process.env.ComSpec, stdio: 'inherit'});
-
-//console.log(path.resolve(__dirname));
 
 function createWindow() {
   // Create the browser window.
@@ -36,14 +34,22 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+
+  // Ctrl + C console
+  process.on('SIGINT', e => {
+    start.kill();
+    app.quit();
+  });
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
-    start.kill("SIGINT");
+    start.kill();
     app.quit();
   }
 });
