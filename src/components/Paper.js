@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Graph from "./Graph";
 import GraphXY from "./GraphXY";
 
@@ -41,7 +41,7 @@ function Paper({ socket }) {
   const parseLocalStorage = (key) => {
     try {
       var value = localStorage.getItem(key);
-      if (value == "" || value == null) value = [];
+      if (value === "" || value === null) value = [];
       else value = JSON.parse(value);
     } catch {
       alert("Please import a valid json file");
@@ -76,8 +76,9 @@ function Paper({ socket }) {
     var layout = parseLocalStorage("current_layout");
     var graphs = [];
     layout.forEach((plot, index) => {
-      if (plot.type == "yt")
-        var graph = (
+      var graph;
+      if (plot.type === "yt")
+         graph = (
           <Graph
             key={index}
             graphIndex={index}
@@ -86,8 +87,8 @@ function Paper({ socket }) {
             initialKeys={plot.keys}
           />
         );
-      if (plot.type == "xy")
-        var graph = (
+      if (plot.type === "xy")
+         graph = (
           <GraphXY
             key={index}
             graphIndex={index}

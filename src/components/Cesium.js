@@ -191,7 +191,10 @@ function Cesium({ socket }) {
     viewer.clock.multiplier = 1;
     viewer.clock.shouldAnimate = false;
     // 1340371
-    const airplaneUri = await Cesium.IonResource.fromAssetId(1301486);
+    // const airplaneUri = await Cesium.IonResource.fromAssetId(1357317);
+    // 1384788
+    //const airplaneUri = await Cesium.IonResource.fromAssetId(1301486);
+    const airplaneUri = await Cesium.IonResource.fromAssetId(1384788);
     const airplaneEntity = viewer.entities.add({
       availability: new Cesium.TimeIntervalCollection([
         new Cesium.TimeInterval({ start: startTime, stop: stopTime }),

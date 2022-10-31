@@ -17,9 +17,9 @@ class Comm(Thread):
         self.io = io
         try:
             self.socket.bind("tcp://*:%s" % port)
-            print('-> binded')
+            print('-> binded on %s' % (self.socket.LAST_ENDPOINT).decode('utf-8'))
         except:
-            print('-> addr in use')
+            print('~> addr in use')
 
 
     def send_zipped_pickle(self, obj, flags=0, protocol=-1):

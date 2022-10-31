@@ -1,7 +1,12 @@
-/* html, */
-/* body { */
-/*   overflow-y: auto; */
-/* } */
+html,
+body {
+  /* background-image: url('../img/logoPilou.svg'); */
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  
+}
 
 .clickable {
   cursor: pointer;

@@ -4,6 +4,7 @@ import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 
 const defaultLayout = {
+  showlegend:true,
   legend: {
     x: 1,
     xanchor: "right",
@@ -12,11 +13,24 @@ const defaultLayout = {
   margin: {
     t: 0,
   },
+  yaxis: {
+    // linecolor: "white",
+    // gridcolor: "#ddd",
+    // color: "#fff"
+  },
   xaxis: {
     showspikes: true,
     spikesnap: "cursor",
+    // linecolor: "white",
+    // gridcolor: "#eee",
+    // color: "#fff"
   },
   hovermode: "x unified",
+  // plot_bgcolor: "#121212",
+  // paper_bgcolor: "#121212",
+
+  // colorway:["#ea5545", "#f46a9b", "#ef9b20", "#edbf33", "#ede15b", "#bdcf32", "#87bc45", "#27aeef", "#b33dc6"]
+  // colorway: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
 };
 
 function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
@@ -181,7 +195,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
-    const x = event.points[0].x;
+    // const x = event.points[0].x;
 
     if (window.time_array !== undefined) {
       const start = window.time_array[0];
@@ -196,7 +210,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     while (document.getElementById(`plot-${i}`)) {
       var plot = document.getElementById(`plot-${i}`);
       i++;
-      if (graphIndex == i - 1) continue; // dont mimic hover on the same graph we're hovering over
+      if (graphIndex === i - 1) continue; // dont mimic hover on the same graph we're hovering over
       if (plot.data.length === 0) continue; // dont mimic hover on a graph that has no data
       // mimic hover for t/y graphs
       if (plot.classList.contains("plot-yt")) {
@@ -216,8 +230,25 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     }
   };
 
-  const plotInitialData = async () => {
-    if (initialKeys == undefined) return; // return if we have no initial keys
+  const handleClick = (event) => {
+    let i = 0;
+    const index = event.points[0].pointIndex;
+    const nbrPoints = event.points[0].data.x.length;
+    // const x = event.points[0].x;
+    if (window.time_array !== undefined) {
+      const start = window.time_array[0];
+      const stop = window.time_array[window.time_array.length - 1];
+      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
+      if (event.event.ctrlKey)
+        window.viewer.clock.currentTime.secondsOfDay =
+          window.viewer.clock.startTime.secondsOfDay +
+          (index / nbrPoints) * totalSecs;
+    }
+  };
+
+  const plotInitialData = () => {
+    if (initialKeys === undefined) return; // return if we have no initial keys
+
     setSelected(initialKeys);
     var initialData = [];
     initialKeys.forEach((option, index) => {
@@ -272,6 +303,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
         layout={defaultLayout}
         onRelayout={relayoutHandler}
         onHover={handleHover}
+        onClick={handleClick}
         useResizeHandler
         style={{ width: "100%", height: "100%" }}
         config={{
