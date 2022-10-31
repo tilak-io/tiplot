@@ -5,6 +5,7 @@
   "homepage": "./",
   "proxy": "http://localhost:5000",
   "author": "Hamza <hamza@tilak.io> tilak.io",
+  "description": "A tool to analyse drone flights",
   "main": "public/electron.js",
   "build": {
     "appId": "io.tilak.tiplot",
@@ -16,7 +17,11 @@
           "**/*"
         ]
       }
-    ]
+    ],
+    "linux": {
+      "icon": "src/img/logo.png",
+      "category": "Utility"
+    }
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",

@@ -24,6 +24,7 @@ function Loader({ socket }) {
     });
 
     socket.on("log_selected", (ok) => {
+      setLoading(false);
       if (ok) navigate("/home");
       else alert("unsupported format");
     });
@@ -39,6 +40,7 @@ function Loader({ socket }) {
   }, []);
 
   const parse = (file) => {
+    setLoading(true);
     socket.emit("select_log_file", file);
   };
 
@@ -72,7 +74,7 @@ function Loader({ socket }) {
       <div className={`overlay ${showLoading}`}></div>
       <div className={`spanner ${showLoading}`}>
         <div className="loader"></div>
-        <p>Uploading file, please wait...</p>
+        <p>Loading file, please wait...</p>
       </div>
       <br />
       <div className="break"></div>
