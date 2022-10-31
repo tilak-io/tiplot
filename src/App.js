@@ -34,7 +34,7 @@ function App() {
 
   // return <Test />;
 
-  if (socketInstance == "") return <div>Loading</div>;
+  if (socketInstance === "") return <div>Loading</div>;
   else
     return (
       <>

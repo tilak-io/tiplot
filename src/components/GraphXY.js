@@ -123,7 +123,7 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
-    const x = event.points[0].x;
+    // const x = event.points[0].x;
 
     if (window.time_array !== undefined) {
       const start = window.time_array[0];
@@ -137,7 +137,7 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
     while (document.getElementById(`plot-${i}`)) {
       var plot = document.getElementById(`plot-${i}`);
       i++;
-      if (graphIndex == i - 1) continue;
+      if (graphIndex === i - 1) continue;
       if (plot.data.length === 0) continue;
       // mimic hover for x/y graphs
       if (plot.classList.contains("plot-xy")) {

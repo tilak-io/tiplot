@@ -31,19 +31,19 @@ function TopBar(props) {
 
   const parseLocalStorage = (key) => {
     var value = localStorage.getItem(key);
-    if (value == "" || value == null)
+    if (value === "" || value === null)
       value = {}; // {} instead of [] so we can use associative arrays
     else value = JSON.parse(value);
     return value;
   };
 
-  const saveCurrentLayout = () => {
-    var savedLayouts = parseLocalStorage("saved_layouts");
-    var currentLayout = parseLocalStorage("current_layout");
-    savedLayouts.push(currentLayout);
-    localStorage.setItem("saved_layouts", JSON.stringify(savedLayouts));
-    mapLayouts();
-  };
+  // const saveCurrentLayout = () => {
+  //   var savedLayouts = parseLocalStorage("saved_layouts");
+  //   var currentLayout = parseLocalStorage("current_layout");
+  //   savedLayouts.push(currentLayout);
+  //   localStorage.setItem("saved_layouts", JSON.stringify(savedLayouts));
+  //   mapLayouts();
+  // };
 
   const onSave = () => {
     var name = document.getElementById("layout-name").value;
@@ -174,10 +174,10 @@ function TopBar(props) {
             />TiPlot
           </Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="#/home" className={page == "home" ? "active" : ""}>
+            <Nav.Link href="#/home" className={page === "home" ? "active" : ""}>
               Home
             </Nav.Link>
-            <Nav.Link href="#/" className={page == "loader" ? "active" : ""}>
+            <Nav.Link href="#/" className={page === "loader" ? "active" : ""}>
               Loader
             </Nav.Link>
             <NavDropdown title="Layouts" id="navbarScrollingDropdown">

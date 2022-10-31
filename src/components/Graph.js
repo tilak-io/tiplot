@@ -181,7 +181,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
-    const x = event.points[0].x;
+    // const x = event.points[0].x;
 
     if (window.time_array !== undefined) {
       const start = window.time_array[0];
@@ -196,7 +196,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     while (document.getElementById(`plot-${i}`)) {
       var plot = document.getElementById(`plot-${i}`);
       i++;
-      if (graphIndex == i - 1) continue; // dont mimic hover on the same graph we're hovering over
+      if (graphIndex === i - 1) continue; // dont mimic hover on the same graph we're hovering over
       if (plot.data.length === 0) continue; // dont mimic hover on a graph that has no data
       // mimic hover for t/y graphs
       if (plot.classList.contains("plot-yt")) {
@@ -217,7 +217,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
   };
 
   const plotInitialData = () => {
-    if (initialKeys == undefined) return; // return if we have no initial keys
+    if (initialKeys === undefined) return; // return if we have no initial keys
 
     setSelected(initialKeys);
     var initialData = [];
