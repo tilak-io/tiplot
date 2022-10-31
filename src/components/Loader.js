@@ -10,6 +10,7 @@ function Loader({ socket }) {
   const [files, setFiles] = useState([]);
   const [logsDir, setLogsDir] = useState("..");
   const [connected, setConnected] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,6 +43,7 @@ function Loader({ socket }) {
   };
 
   const handleChange = (event) => {
+    setLoading(true);
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append("log", file, file.name);
@@ -51,12 +53,14 @@ function Loader({ socket }) {
     })
       .then((res) => res.json())
       .then((res) => {
+        setLoading(false);
         if (res.ok) navigate("/home");
         else alert("unsupported format");
       });
   };
 
   const show = connected ? "hide" : "show";
+  const showLoading = loading ? "show" : "hide";
   return (
     <>
       <TopBar page="loader" />
@@ -64,6 +68,11 @@ function Loader({ socket }) {
       <div className={`spanner ${show}`}>
         <div className="loader"></div>
         <p>Starting Tiplot Server...</p>
+      </div>
+      <div className={`overlay ${showLoading}`}></div>
+      <div className={`spanner ${showLoading}`}>
+        <div className="loader"></div>
+        <p>Uploading file, please wait...</p>
       </div>
       <br />
       <div className="break"></div>
