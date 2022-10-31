@@ -4,18 +4,11 @@ const { app, BrowserWindow } = require("electron");
 
 const api = path.join(process.resourcesPath, "api/server");
 
-var execfile = require("child_process").execFile;
-var start = execfile(api, { windowsHide: true }, (err, stdout, stderr) => {
-  if (err) {
-    console.log(err);
-  }
-  if (stdout) {
-    console.log(stdout);
-  }
-  if (stderr) {
-    console.log(stderr);
-  }
-});
+// just for debugging
+//const api = "/home/hamza/projects/tiplot/backend/server";
+
+var spawn = require("child_process").spawn;
+var start = spawn(api, {shell: process.env.ComSpec, stdio: 'inherit'});
 
 //console.log(path.resolve(__dirname));
 
@@ -24,17 +17,20 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    // autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
     },
   });
 
+  win.setMenu(null);
+
   // and load the index.html of the app.
   // win.loadFile("index.html");
   win.loadURL(`file://${path.join(__dirname, "../build/index.html")}`);
-  //  win.loadURL(`http://localhost:3000`);
+  // win.loadURL(`http://localhost:3000`);
   // Open the DevTools.
-  //  win.webContents.openDevTools({ mode: "detach" });
+  // win.webContents.openDevTools({ mode: "detach" });
 }
 
 // This method will be called when Electron has finished

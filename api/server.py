@@ -143,9 +143,8 @@ def run_server():
     try:
         socketio.run(app, host='127.0.0.1', port=5000)
     except:
-        print('~> ')
+        print('~> Server already running.')
     finally:
-        print('-> Stopping TiPlot...')
         print('-> See you soon.')
 
 if __name__ == '__main__':

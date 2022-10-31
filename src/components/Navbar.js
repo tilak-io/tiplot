@@ -8,6 +8,7 @@ import {
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { FaPlay, FaPause } from "react-icons/fa";
+import logo from "../img/logo.png";
 
 function TopBar(props) {
   const [isPlaying, setPlaying] = useState(false);
@@ -159,11 +160,19 @@ function TopBar(props) {
       </Modal>
 
       {/* Actual Navbar */}
-      <Navbar bg="dark" variant="dark" fixed="top">
+      <Navbar variant="dark" fixed="top" className="nav-color">
         <a id="export-layout" style={{ display: "none" }}></a>
         <input id="import-layout" type="file" style={{ display: "none" }} />
         <Container>
-          <Navbar.Brand>TiPlot</Navbar.Brand>
+          <Navbar.Brand href="https://tilak.io">
+            <img
+              src={logo}
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+              alt="TiPlot"
+            />TiPlot
+          </Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link href="#/home" className={page == "home" ? "active" : ""}>
               Home
