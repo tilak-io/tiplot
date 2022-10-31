@@ -160,6 +160,22 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
     }
   };
 
+  const handleClick = (event) => {
+    let i = 0;
+    const index = event.points[0].pointIndex;
+    const nbrPoints = event.points[0].data.x.length;
+    // const x = event.points[0].x;
+    if (window.time_array !== undefined) {
+      const start = window.time_array[0];
+      const stop = window.time_array[window.time_array.length - 1];
+      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
+      if (event.event.ctrlKey)
+        window.viewer.clock.currentTime.secondsOfDay =
+          window.viewer.clock.startTime.secondsOfDay +
+          (index / nbrPoints) * totalSecs;
+    }
+  };
+
   const plotInitialData = () => {
     if (initialKeys === undefined) return; // return if we have no initial keys
     if (initialKeys === []) return; // return if we have no initial keys
@@ -178,6 +194,7 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
         divId={`plot-${graphIndex}`}
         data={data}
         onHover={handleHover}
+        onClick={handleClick}
         layout={defaultLayout}
         config={{
           displayModeBar: false,

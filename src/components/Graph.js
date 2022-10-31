@@ -4,6 +4,7 @@ import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 
 const defaultLayout = {
+  showlegend:true,
   legend: {
     x: 1,
     xanchor: "right",
@@ -229,6 +230,22 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     }
   };
 
+  const handleClick = (event) => {
+    let i = 0;
+    const index = event.points[0].pointIndex;
+    const nbrPoints = event.points[0].data.x.length;
+    // const x = event.points[0].x;
+    if (window.time_array !== undefined) {
+      const start = window.time_array[0];
+      const stop = window.time_array[window.time_array.length - 1];
+      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
+      if (event.event.ctrlKey)
+        window.viewer.clock.currentTime.secondsOfDay =
+          window.viewer.clock.startTime.secondsOfDay +
+          (index / nbrPoints) * totalSecs;
+    }
+  };
+
   const plotInitialData = () => {
     if (initialKeys === undefined) return; // return if we have no initial keys
 
@@ -285,6 +302,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
         layout={defaultLayout}
         onRelayout={relayoutHandler}
         onHover={handleHover}
+        onClick={handleClick}
         useResizeHandler
         style={{ width: "100%", height: "100%" }}
         config={{
