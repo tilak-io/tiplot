@@ -260,6 +260,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     });
 
     socket.on("table_values", (response) => {
+      console.log(initialData);
       const index = response["index"];
       const table = response["table"];
       const key = response["y"];
