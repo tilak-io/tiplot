@@ -253,8 +253,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
         name: `${table}/${key}`,
       };
       initialData.push(line);
+      setData(initialData);
     });
-    setData(initialData);
   };
 
   return (
