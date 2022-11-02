@@ -190,10 +190,6 @@ function Cesium({ socket }) {
     viewer.timeline.zoomTo(startTime, stopTime);
     viewer.clock.multiplier = 1;
     viewer.clock.shouldAnimate = false;
-    // 1340371
-    // const airplaneUri = await Cesium.IonResource.fromAssetId(1357317);
-    // 1384788
-    //const airplaneUri = await Cesium.IonResource.fromAssetId(1301486);
     const airplaneUri = await Cesium.IonResource.fromAssetId(1384788);
     const airplaneEntity = viewer.entities.add({
       availability: new Cesium.TimeIntervalCollection([
@@ -209,8 +205,8 @@ function Cesium({ socket }) {
         resolution: 1,
         material: new Cesium.PolylineGlowMaterialProperty({
           glowPower: 0.2,
-          //color: Cesium.Color.fromRandom(),
-          color: Cesium.Color.RED,
+          color: Cesium.Color.fromRandom(),
+          //color: Cesium.Color.RED,
         }),
         width: 10,
       },
