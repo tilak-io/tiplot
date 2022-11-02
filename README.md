@@ -1,6 +1,22 @@
+
+![https://tilak.io/](docs/tilak.svg)
+
+# About Tilak.io
+
+We are an engineering services company that focus on drone technologies. 
+We decided to opensource TiPlot, our log visualising tool, so the world can benefit from a nice and easy way to display logs from **PX4**, **CSV**, or even from your **Python** code or your **Jupyter Notebook**.
+
+# Feature Request
+
+Please reach out to us via our website [Tilak.io](https://tilak.io/), we are happy to help !
+
 # About the project
 
-TiPlot is a visualising tool to better help you analyse your drone flights.
+TiPlot is a cool and simple visualising tool to analyse your drone flights. 
+With this tool you can: 
+- upload a ulg file, a csv or send a datadict via a socket (see snippets below)
+- display the trajectory in 3d
+- browse over all the fields and plot whatever you want. 
 
 # Installation
 
@@ -202,5 +218,3 @@ In addition, you can save and name multiple layouts and load them whenever you w
 You can also import/export the layout in a `json` format.
 
 ![Entities](docs/layouts.gif)
-
-![Entities](docs/tilak.svg)
