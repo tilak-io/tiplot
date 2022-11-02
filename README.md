@@ -189,5 +189,18 @@ Having multiple entities should help you analyse and spot the differences betwee
 ```python
 send_zipped_pickle(socket, [datadict, [desired_behaviour, actual_behaviour]])
 ```
-
 ![Entities](docs/entities.gif)
+
+## Layouts
+
+A layout is the collection of table/column keys used in the plot.
+
+The *current* layout is always saved, and is the default layout that will be loaded once you re-open the app.
+
+In addition, you can save and name multiple layouts and load them whenever you want.
+
+You can also import/export the layout in a `json` format.
+
+![Entities](docs/layouts.gif)
+
+![Entities](docs/tilak.svg)
