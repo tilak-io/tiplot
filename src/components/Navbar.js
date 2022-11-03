@@ -164,7 +164,7 @@ function TopBar(props) {
         <a id="export-layout" style={{ display: "none" }}></a>
         <input id="import-layout" type="file" style={{ display: "none" }} />
         <Container>
-          <Navbar.Brand href="https://tilak.io">
+          <Navbar.Brand target="_blank" href="https://tilak.io">
             <img
               src={logo}
               width="30"

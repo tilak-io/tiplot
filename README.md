@@ -43,6 +43,7 @@ Install the dependencies:
 
 ```
 yarn install
+pip3 install -r api/requirement.txt
 ```
 
 Then you can run:
@@ -65,9 +66,7 @@ Then you can run:
 
 TiPlot currently provides a parser for **ULG** logs (PX4 logs) and a default parser for **CSV** files. So you can directly import/upload your log file via the loader page once your app is running. (logs will automatically upload/copy files to `~/Documents/tiplot/logs`)
 
-![Entities](docs/demo_ulg.gif)
-
-![Entities](docs/demo_csv.gif)
+![Entities](docs/demo.gif)
 
 You can also create your own **parser** and send the parsed data via a websocket on port `5555`.
 
