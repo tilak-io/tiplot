@@ -2,10 +2,10 @@ const path = require("path");
 const fs = require("fs");
 const { app, BrowserWindow } = require("electron");
 
-//const api = path.join(process.resourcesPath, "api/server");
+const api = path.join(process.resourcesPath, "api/server");
 
 // just for debugging
-const api = "/home/hamza/projects/github/tiplot/backend/server";
+// const api = "/home/hamza/projects/github/tiplot/backend/server";
 
 var spawn = require("child_process").spawn;
 var start = spawn(api, {shell: process.env.ComSpec, stdio: 'inherit'});

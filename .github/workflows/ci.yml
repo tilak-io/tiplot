@@ -1,0 +1,34 @@
+name: Building AppImage
+run-name: ${{ github.actor }} is buildling TiPlot's AppImage 🚀
+on: 
+  push:
+    branches:
+      - main
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+      - run: tree
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+        with:
+          requirement_files: api/requirements.txt
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+        # the package installation will only be executed when the
+        # requirements-files have changed.
+      - run: pip install -r api/requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+      - name: install node dependecies
+        run: yarn install
+      - name: build backend 
+        run: yarn build:api
+      - name: build desktop app
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          CI: false
+        run: yarn build:electron
