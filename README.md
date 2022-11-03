@@ -43,6 +43,7 @@ Install the dependencies:
 
 ```
 yarn install
+pip3 install -r api/requirement.txt
 ```
 
 Then you can run:
