@@ -1,7 +1,7 @@
 {
   "name": "tiplot",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "homepage": "./",
   "proxy": "http://localhost:5000",
   "author": "Hamza <hamza@tilak.io> tilak.io",
