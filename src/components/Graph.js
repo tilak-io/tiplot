@@ -4,7 +4,7 @@ import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 
 const defaultLayout = {
-  showlegend:true,
+  showlegend: true,
   legend: {
     x: 1,
     xanchor: "right",
@@ -295,6 +295,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
         isMulti
         onChange={handleChange}
         value={selectedValue}
+        closeMenuOnSelect={false}
       />
       <Plot
         className="plot-yt"
