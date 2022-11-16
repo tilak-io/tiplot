@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Container,
   Nav,
@@ -6,11 +7,11 @@ import {
   Modal,
   Button,
 } from "react-bootstrap";
-import { useState, useEffect } from "react";
-import { FaPlay, FaPause } from "react-icons/fa";
+import { FaPlay, FaPause, FaToggleOn, FaToggleOff } from "react-icons/fa";
+
 import logo from "../img/logo.png";
 
-function TopBar(props) {
+function TopBar({ page, toggle3dView, showView }) {
   const [isPlaying, setPlaying] = useState(false);
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
@@ -133,7 +134,21 @@ function TopBar(props) {
       );
   }
 
-  const page = props.page;
+  function ViewButton() {
+    if (showView)
+      return (
+        <span>
+          <FaToggleOn style={{ color: "#00ffff" }} />
+        </span>
+      );
+    else
+      return (
+        <span>
+          <FaToggleOff style={{ color: "#DDDDDD" }} />
+        </span>
+      );
+  }
+
   return (
     <>
       {/* Pop up for setting layout name */}
@@ -171,7 +186,8 @@ function TopBar(props) {
               height="30"
               className="d-inline-block align-top"
               alt="TiPlot"
-            />TiPlot
+            />
+            TiPlot
           </Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link href="#/home" className={page === "home" ? "active" : ""}>
@@ -200,6 +216,9 @@ function TopBar(props) {
             </NavDropdown>
             <Nav.Link onClick={() => toggle(!isPlaying)}>
               <TogglePlay />
+            </Nav.Link>
+            <Nav.Link onClick={toggle3dView}>
+              <ViewButton />
             </Nav.Link>
           </Nav>
         </Container>
