@@ -29,6 +29,7 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
     const currentHeight = plots[0].clientHeight;
     var update = {
       height: currentHeight + value,
+      "yaxis.autorange": true,
     };
     for (let i = 0; i < plots.length; i++) {
       Plotly.relayout(plots[i], update);

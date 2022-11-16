@@ -97,6 +97,12 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
         name: `${table}/${key}`,
       };
       setData([...data, line]);
+
+      // autoscale after adding new data
+      var update = {
+        "yaxis.autorange": true,
+      };
+      Plotly.relayout(`plot-${graphIndex}`, update);
     });
   };
 
