@@ -2,6 +2,7 @@ import Select from "react-select";
 import Plot from "react-plotly.js";
 import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
+import GraphOptions from "./GraphOptions";
 
 const defaultLayout = {
   showlegend: true,
@@ -294,21 +295,23 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
         value={selectedValue}
         closeMenuOnSelect={false}
       />
-      <Plot
-        className="plot-yt"
-        divId={`plot-${graphIndex}`}
-        data={data}
-        layout={defaultLayout}
-        onRelayout={relayoutHandler}
-        onHover={handleHover}
-        onClick={handleClick}
-        useResizeHandler
-        style={{ width: "100%", height: "100%" }}
-        config={{
-          displayModeBar: false,
-          // responsive: true,
-        }}
-      />
+      <div className="d-flex">
+        <Plot
+          className="plot-yt"
+          divId={`plot-${graphIndex}`}
+          data={data}
+          layout={defaultLayout}
+          onRelayout={relayoutHandler}
+          onHover={handleHover}
+          onClick={handleClick}
+          useResizeHandler
+          config={{
+            displayModeBar: false,
+            // responsive: true,
+          }}
+        />
+        <GraphOptions plotId={`plot-${graphIndex}`} />
+      </div>
     </div>
   );
 }

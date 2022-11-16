@@ -15,9 +15,10 @@ function Layout({ socket }) {
   const [showView, setShowView] = useState(true);
 
   const relayout = () => {
-    var update = { autoresize: true };
     let plots = document.getElementsByClassName("js-plotly-plot");
+    window.Plotly = Plotly; // to debug debug
     for (let i = 0; i < plots.length; i++) {
+      var update = { autoresize: true, width: plots[i].clientWidth };
       Plotly.relayout(plots[i], update);
     }
   };
