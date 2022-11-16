@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { MdLegendToggle, MdZoomOutMap } from "react-icons/md";
-import {
-  AiOutlineZoomIn,
-  AiOutlineZoomOut,
-  AiOutlineUnorderedList,
-} from "react-icons/ai";
-import { IoMdRemoveCircle } from "react-icons/io";
 import { RiDeleteBack2Fill } from "react-icons/ri";
 import { BsArrowBarDown, BsArrowBarUp } from "react-icons/bs";
+import { HiOutlineTicket } from "react-icons/hi";
+import { CiCircleRemove } from "react-icons/ci";
 import Plotly from "plotly.js/dist/plotly";
 
 function GraphOptions({ plotId, graphIndex, removeGraph }) {
@@ -27,6 +23,7 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
   const changeHeight = (value) => {
     const plots = document.getElementsByClassName("js-plotly-plot");
     const currentHeight = plots[0].clientHeight;
+    if (currentHeight + value < 150) return;
     var update = {
       height: currentHeight + value,
       "yaxis.autorange": true,
@@ -68,9 +65,9 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
 
       <span
         onClick={toggleLegend}
-        style={{ color: showLegend ? "grey" : "blue" }}
+        style={{ color: showLegend ? "grey" : "black" }}
       >
-        <MdLegendToggle style={{ width: "100%" }} />
+        <HiOutlineTicket style={{ width: "100%" }} />
       </span>
 
       <span onClick={autoscale}>
