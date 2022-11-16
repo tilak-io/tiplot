@@ -22,7 +22,7 @@ With this tool you can:
 
 ## AppImage
 
-Download the latest AppImage available in the [releases page]().
+Download the latest AppImage available in the [releases page](https://github.com/tilak-io/tiplot/releases).
 
 ```bash
 cd ~/Downloads

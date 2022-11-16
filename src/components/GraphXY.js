@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import Select from "react-select";
 import Plot from "react-plotly.js";
 import Plotly from "plotly.js/dist/plotly";
-import { useState, useEffect } from "react";
+import GraphOptions from "./GraphOptions";
 
 const defaultLayout = {
   margin: {
@@ -17,7 +18,7 @@ const defaultLayout = {
     spikesnap: "closest",
   },
 };
-function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
+function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
   const [xs, setXs] = useState([]);
   const [ys, setYs] = useState([]);
   const [data, setData] = useState([]);
@@ -178,7 +179,7 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
 
   const plotInitialData = () => {
     if (initialKeys === undefined) return; // return if we have no initial keys
-    if (initialKeys === []) return; // return if we have no initial keys
+    if (initialKeys.length === 0) return; // return if we have no initial keys
     setSelected_X(initialKeys[0]);
     setSelected_Y(initialKeys[1]);
     addData(initialKeys[0].key, initialKeys[0].nested, initialKeys[1].nested);
@@ -188,18 +189,24 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys }) {
     <div>
       <Select options={xs} onChange={handleChangeX} value={selected_x} />
       <Select options={ys} onChange={handleChangeY} value={selected_y} />
-      <Plot
-        className="plot-xy"
-        style={{ width: "100%" }}
-        divId={`plot-${graphIndex}`}
-        data={data}
-        onHover={handleHover}
-        onClick={handleClick}
-        layout={defaultLayout}
-        config={{
-          displayModeBar: false,
-        }}
-      />
+      <div className="d-flex">
+        <Plot
+          className="plot-xy"
+          divId={`plot-${graphIndex}`}
+          data={data}
+          onHover={handleHover}
+          onClick={handleClick}
+          layout={defaultLayout}
+          config={{
+            displayModeBar: false,
+          }}
+        />
+        <GraphOptions
+          plotId={`plot-${graphIndex}`}
+          graphIndex={graphIndex}
+          removeGraph={removeGraph}
+        />
+      </div>
     </div>
   );
 }

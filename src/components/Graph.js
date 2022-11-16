@@ -2,9 +2,10 @@ import Select from "react-select";
 import Plot from "react-plotly.js";
 import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
+import GraphOptions from "./GraphOptions";
 
 const defaultLayout = {
-  showlegend:true,
+  showlegend: true,
   legend: {
     x: 1,
     xanchor: "right",
@@ -33,7 +34,7 @@ const defaultLayout = {
   // colorway: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
 };
 
-function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
+function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
   const [keys, setKeys] = useState([]);
   const [data, setData] = useState([]);
   const [selectedValue, setSelected] = useState();
@@ -96,6 +97,12 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
         name: `${table}/${key}`,
       };
       setData([...data, line]);
+
+      // autoscale after adding new data
+      var update = {
+        "yaxis.autorange": true,
+      };
+      Plotly.relayout(`plot-${graphIndex}`, update);
     });
   };
 
@@ -135,10 +142,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
   const relayoutHandler = (event) => {
     var event_xrange = [event["xaxis.range[0]"], event["xaxis.range[1]"]];
     // adjust range when zooming on xaxis only
-    if (
-      event["xaxis.range[0]"] !== undefined &&
-      event["yaxis.range[0]"] === undefined
-    ) {
+    if (event["xaxis.range[0]"] !== undefined) {
       let i = 0;
       while (document.getElementById(`plot-${i}`)) {
         var plot = document.getElementById(`plot-${i}`);
@@ -260,7 +264,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
     });
 
     socket.on("table_values", (response) => {
-      console.log(initialData);
+      // console.log(initialData);
       const index = response["index"];
       const table = response["table"];
       const key = response["y"];
@@ -291,26 +295,34 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
   return (
     <div>
       <Select
+        id={`select-${graphIndex}`}
         options={keys}
         isMulti
         onChange={handleChange}
         value={selectedValue}
+        closeMenuOnSelect={false}
       />
-      <Plot
-        className="plot-yt"
-        divId={`plot-${graphIndex}`}
-        data={data}
-        layout={defaultLayout}
-        onRelayout={relayoutHandler}
-        onHover={handleHover}
-        onClick={handleClick}
-        useResizeHandler
-        style={{ width: "100%", height: "100%" }}
-        config={{
-          displayModeBar: false,
-          // responsive: true,
-        }}
-      />
+      <div className="d-flex">
+        <Plot
+          className="plot-yt"
+          divId={`plot-${graphIndex}`}
+          data={data}
+          layout={defaultLayout}
+          onRelayout={relayoutHandler}
+          onHover={handleHover}
+          onClick={handleClick}
+          useResizeHandler
+          config={{
+            displayModeBar: false,
+            // responsive: true,
+          }}
+        />
+        <GraphOptions
+          plotId={`plot-${graphIndex}`}
+          graphIndex={graphIndex}
+          removeGraph={removeGraph}
+        />
+      </div>
     </div>
   );
 }

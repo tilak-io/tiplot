@@ -41,3 +41,13 @@ body {
 .nav-color {
   background-color: #14182d;
 }
+
+.plot-options {
+  background-color: #fff;
+  width: 40px;
+}
+.plot-yt,
+.plot-xy {
+  width: calc(100% - 30px);
+  height: 100%;
+}
