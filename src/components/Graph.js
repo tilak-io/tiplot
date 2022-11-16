@@ -135,10 +135,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
   const relayoutHandler = (event) => {
     var event_xrange = [event["xaxis.range[0]"], event["xaxis.range[1]"]];
     // adjust range when zooming on xaxis only
-    if (
-      event["xaxis.range[0]"] !== undefined &&
-      event["yaxis.range[0]"] === undefined
-    ) {
+    if (event["xaxis.range[0]"] !== undefined) {
       let i = 0;
       while (document.getElementById(`plot-${i}`)) {
         var plot = document.getElementById(`plot-${i}`);
