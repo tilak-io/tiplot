@@ -46,7 +46,8 @@ body {
   background-color: #fff;
   width: 40px;
 }
-.plot-yt {
+.plot-yt,
+.plot-xy {
   width: calc(100% - 30px);
   height: 100%;
 }

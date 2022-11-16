@@ -8,7 +8,7 @@ function Paper({ socket }) {
 
   useEffect(() => {
     initializeLayout();
-  }, []);
+  }, [graphNbr]);
 
   const addXT = (index) => {
     var graph = (
@@ -17,6 +17,7 @@ function Paper({ socket }) {
         graphIndex={index}
         socket={socket}
         updateKeys={updateKeys}
+        removeGraph={removeGraph}
       />
     );
     setRows([...rows, graph]);
@@ -31,6 +32,7 @@ function Paper({ socket }) {
         graphIndex={index}
         socket={socket}
         updateKeys={updateKeys}
+        removeGraph={removeGraph}
       />
     );
     setRows([...rows, graph]);
@@ -78,29 +80,39 @@ function Paper({ socket }) {
     layout.forEach((plot, index) => {
       var graph;
       if (plot.type === "yt")
-         graph = (
+        graph = (
           <Graph
             key={index}
             graphIndex={index}
             socket={socket}
             updateKeys={updateKeys}
             initialKeys={plot.keys}
+            removeGraph={removeGraph}
           />
         );
       if (plot.type === "xy")
-         graph = (
+        graph = (
           <GraphXY
             key={index}
             graphIndex={index}
             socket={socket}
             initialKeys={plot.keys}
             updateKeys={updateKeys}
+            removeGraph={removeGraph}
           />
         );
       graphs.push(graph);
     });
     setRows(graphs);
     setGraphNbr(layout.length);
+  };
+
+  const removeGraph = (index) => {
+    var layout = parseLocalStorage("current_layout");
+    layout.splice(index, 1);
+    localStorage.setItem("current_layout", JSON.stringify(layout));
+    setRows([]); // force clear
+    setGraphNbr(graphNbr - 1); // this will trigger initializeLayout()
   };
 
   return (

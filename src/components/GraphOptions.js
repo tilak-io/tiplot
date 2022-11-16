@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { MdLegendToggle, MdZoomOutMap } from "react-icons/md";
-import { AiOutlineZoomIn, AiOutlineZoomOut } from "react-icons/ai";
+import {
+  AiOutlineZoomIn,
+  AiOutlineZoomOut,
+  AiOutlineUnorderedList,
+} from "react-icons/ai";
 import { IoMdRemoveCircle } from "react-icons/io";
+import { RiDeleteBack2Fill } from "react-icons/ri";
 import { BsArrowBarDown, BsArrowBarUp } from "react-icons/bs";
 import Plotly from "plotly.js/dist/plotly";
 
-function GraphOptions({ plotId }) {
+function GraphOptions({ plotId, graphIndex, removeGraph }) {
   const [showLegend, setShowLegend] = useState(false);
+  const [showSelect, setShowSelect] = useState(false);
 
   const toggleLegend = () => {
     setShowLegend(!showLegend);
@@ -19,19 +25,46 @@ function GraphOptions({ plotId }) {
   };
 
   const changeHeight = (value) => {
-    let plots = document.getElementsByClassName("js-plotly-plot");
+    const plots = document.getElementsByClassName("js-plotly-plot");
     const currentHeight = plots[0].clientHeight;
     var update = {
       height: currentHeight + value,
     };
-
     for (let i = 0; i < plots.length; i++) {
       Plotly.relayout(plots[i], update);
     }
   };
 
+  const toggleSelect = () => {
+    setShowSelect(!showSelect);
+    const select = document.getElementById(`select-${graphIndex}`);
+    if (showSelect) select.style.display = "block";
+    else select.style.display = "none";
+  };
+
+  const autoscale = () => {
+    const update = {
+      "xaxis.autorange": true,
+      "yaxis.autorange": true,
+    };
+    const plot = document.getElementById(plotId);
+    Plotly.relayout(plot, update);
+  };
+
   return (
     <div className="plot-options">
+      <span onClick={() => removeGraph(graphIndex)}>
+        <RiDeleteBack2Fill style={{ width: "100%", color: "red" }} />
+      </span>
+
+      <span onClick={() => changeHeight(-20)}>
+        <BsArrowBarUp style={{ width: "100%" }} />
+      </span>
+
+      <span onClick={() => changeHeight(20)}>
+        <BsArrowBarDown style={{ width: "100%" }} />
+      </span>
+
       <span
         onClick={toggleLegend}
         style={{ color: showLegend ? "grey" : "blue" }}
@@ -39,16 +72,8 @@ function GraphOptions({ plotId }) {
         <MdLegendToggle style={{ width: "100%" }} />
       </span>
 
-      <span onClick={() => changeHeight(20)}>
-        <BsArrowBarDown style={{ width: "100%" }} />
-      </span>
-
-      <span onClick={() => changeHeight(-20)}>
-        <BsArrowBarUp style={{ width: "100%" }} />
-      </span>
-
-      <span>
-        <IoMdRemoveCircle style={{ width: "100%", color: "red" }} />
+      <span onClick={autoscale}>
+        <MdZoomOutMap style={{ width: "100%" }} />
       </span>
     </div>
   );

@@ -34,7 +34,7 @@ const defaultLayout = {
   // colorway: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
 };
 
-function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
+function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
   const [keys, setKeys] = useState([]);
   const [data, setData] = useState([]);
   const [selectedValue, setSelected] = useState();
@@ -289,6 +289,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
   return (
     <div>
       <Select
+        id={`select-${graphIndex}`}
         options={keys}
         isMulti
         onChange={handleChange}
@@ -310,7 +311,11 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys }) {
             // responsive: true,
           }}
         />
-        <GraphOptions plotId={`plot-${graphIndex}`} />
+        <GraphOptions
+          plotId={`plot-${graphIndex}`}
+          graphIndex={graphIndex}
+          removeGraph={removeGraph}
+        />
       </div>
     </div>
   );
