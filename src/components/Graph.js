@@ -12,7 +12,10 @@ const defaultLayout = {
     y: 1,
   },
   margin: {
-    t: 0,
+    t: 10,
+    b: 25,
+    l: 25,
+    r: 25,
   },
   yaxis: {
     // linecolor: "white",

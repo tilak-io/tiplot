@@ -18,7 +18,11 @@ function Layout({ socket }) {
     let plots = document.getElementsByClassName("js-plotly-plot");
     window.Plotly = Plotly; // to debug debug
     for (let i = 0; i < plots.length; i++) {
-      var update = { autoresize: true, width: plots[i].clientWidth };
+      var update = {
+        autoresize: true,
+        width: plots[i].clientWidth,
+        "yaxis.autorange": true,
+      };
       Plotly.relayout(plots[i], update);
     }
   };
