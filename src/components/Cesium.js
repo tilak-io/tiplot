@@ -49,7 +49,7 @@ function Cesium({ socket }) {
     //      Cesium.createOsmBuildings()
     //    );
     return () => {
-      window.location.reload();
+      // window.location.reload();
     };
   }, []);
 
