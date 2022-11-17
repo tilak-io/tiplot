@@ -4,26 +4,6 @@ import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 import GraphOptions from "./GraphOptions";
 
-const defaultLayout = {
-  showlegend: true,
-  legend: {
-    x: 1,
-    xanchor: "right",
-    y: 1,
-  },
-  margin: {
-    t: 10,
-    b: 25,
-    l: 25,
-    r: 25,
-  },
-  xaxis: {
-    showspikes: true,
-    spikesnap: "cursor",
-  },
-  hovermode: "x unified",
-};
-
 function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
   const [keys, setKeys] = useState([]);
   const [data, setData] = useState([]);
@@ -355,6 +335,26 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     }
   };
 
+  const defaultLayout = {
+    showlegend: true,
+    legend: {
+      x: 1,
+      xanchor: "right",
+      y: 1,
+    },
+    margin: {
+      t: 10,
+      b: 25,
+      l: 25,
+      r: 25,
+    },
+    xaxis: {
+      showspikes: true,
+      spikesnap: "cursor",
+    },
+    hovermode: "x unified",
+  };
+
   return (
     <div>
       <Select
@@ -370,7 +370,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
           className="plot-yt"
           divId={`plot-${graphIndex}`}
           data={data}
-          // {/* layout={defaultLayout} */}
+          layout={defaultLayout}
           onRelayout={relayoutHandler}
           onHover={handleHover}
           onClick={handleClick}
