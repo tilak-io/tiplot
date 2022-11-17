@@ -217,27 +217,39 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       }
     }
 
-    while (document.getElementById(`plot-${i}`)) {
-      var plot = document.getElementById(`plot-${i}`);
-      i++;
-      if (graphIndex === i - 1) continue; // dont mimic hover on the same graph we're hovering over
-      if (plot.data.length === 0) continue; // dont mimic hover on a graph that has no data
-      // mimic hover for t/y graphs
-      if (plot.classList.contains("plot-yt")) {
-        Plotly.Fx.hover(plot, event.event);
-      }
+    // TODO: FIX
 
-      // mimic hover for x/y graphs
-      if (plot.classList.contains("plot-xy")) {
-        const factor = plot.data[0].x.length / nbrPoints;
-        const mapped_index = parseInt(factor * index);
+    // const plots = document.getElementsByClassName("plot-yt");
+    // for (let i = 0; i < plots.length; i++) {
+    //   if (plots[i].id == graphIndex) continue;
+    //   if (plots[i].data.length == 0) continue;
+    //   console.log(plots[i].id);
+    //   Plotly.Fx.hover(plots[i], event.event);
+    // }
 
-        Plotly.Fx.hover(plot, {
-          xval: plot.data[0].x[mapped_index],
-          yval: plot.data[0].y[mapped_index],
-        });
-      }
-    }
+    // TODO: REMOVE
+
+    // while (document.getElementById(`plot-${i}`)) {
+    //   var plot = document.getElementById(`plot-${i}`);
+    //   i++;
+    //   if (graphIndex === i - 1) continue; // dont mimic hover on the same graph we're hovering over
+    //   if (plot.data.length === 0) continue; // dont mimic hover on a graph that has no data
+    //   // mimic hover for t/y graphs
+    //   if (plot.classList.contains("plot-yt")) {
+    //     Plotly.Fx.hover(plot, event.event);
+    //   }
+
+    //   // mimic hover for x/y graphs
+    //   if (plot.classList.contains("plot-xy")) {
+    //     const factor = plot.data[0].x.length / nbrPoints;
+    //     const mapped_index = parseInt(factor * index);
+
+    //     Plotly.Fx.hover(plot, {
+    //       xval: plot.data[0].x[mapped_index],
+    //       yval: plot.data[0].y[mapped_index],
+    //     });
+    //   }
+    // }
   };
 
   const handleClick = (event) => {
