@@ -184,6 +184,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       }
     }
 
+    // TODO: use relayout instead of update
     // resetting all layouts when double tap
     if (
       event["xaxis.autorange"] !== undefined &&
@@ -202,16 +203,18 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
-    // const x = event.points[0].x;
+    const x = event.points[0].x;
 
     if (window.time_array !== undefined) {
       const start = window.time_array[0];
       const stop = window.time_array[window.time_array.length - 1];
       const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
-      if (event.event.altKey)
+      if (event.event.altKey) {
         window.viewer.clock.currentTime.secondsOfDay =
           window.viewer.clock.startTime.secondsOfDay +
           (index / nbrPoints) * totalSecs;
+        updateTimelineIndicator(x);
+      }
     }
 
     while (document.getElementById(`plot-${i}`)) {
@@ -241,15 +244,17 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
-    // const x = event.points[0].x;
+    const x = event.points[0].x;
     if (window.time_array !== undefined) {
       const start = window.time_array[0];
       const stop = window.time_array[window.time_array.length - 1];
       const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
-      if (event.event.ctrlKey)
+      if (event.event.ctrlKey) {
         window.viewer.clock.currentTime.secondsOfDay =
           window.viewer.clock.startTime.secondsOfDay +
           (index / nbrPoints) * totalSecs;
+        updateTimelineIndicator(x);
+      }
     }
   };
 
@@ -293,6 +298,30 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       initialData.push(line);
       setData(initialData);
     });
+  };
+
+  const updateTimelineIndicator = (timestamp) => {
+    const update = {
+      shapes: [
+        {
+          type: "line",
+          x0: timestamp,
+          y0: 0,
+          x1: timestamp,
+          yref: "paper",
+          y1: 1,
+          line: {
+            color: "red",
+            width: 1.5,
+            // dash: "dot",
+          },
+        },
+      ],
+    };
+    const plots = document.getElementsByClassName("plot-yt");
+    for (let i = 0; i < plots.length; i++) {
+      Plotly.relayout(plots[i].id, update);
+    }
   };
 
   return (
