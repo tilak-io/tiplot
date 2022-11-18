@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Plotly from "plotly.js/dist/plotly";
 import "../css/cesium.css";
 
 function Cesium({ socket }) {
@@ -43,6 +44,7 @@ function Cesium({ socket }) {
     viewer.bottomContainer.style.visibility = "hidden";
     viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //Loop at the end
     viewer.forceResize();
+    addTickListener();
     window.viewer = viewer;
 
     //    const osmBuildings = viewer.scene.primitives.add(
@@ -52,6 +54,48 @@ function Cesium({ socket }) {
       window.location.reload();
     };
   }, []);
+
+  const addTickListener = () => {
+    viewer.useDefaultRenderLoop = false;
+
+    function renderLoop() {
+      updateTimelineIndicator();
+      viewer.resize();
+      viewer.render();
+      requestAnimationFrame(renderLoop);
+    }
+
+    requestAnimationFrame(renderLoop);
+  };
+
+  const updateTimelineIndicator = () => {
+    if (viewer.clock.shouldAnimate) {
+      const startSecond = viewer.clock.startTime.secondsOfDay;
+      const currentSecond = viewer.clock.currentTime.secondsOfDay - startSecond;
+
+      const update = {
+        shapes: [
+          {
+            type: "line",
+            x0: currentSecond,
+            y0: 0,
+            x1: currentSecond,
+            yref: "paper",
+            y1: 1,
+            line: {
+              color: "red",
+              width: 1.5,
+              // dash: "dot",
+            },
+          },
+        ],
+      };
+      const plots = document.getElementsByClassName("plot-yt");
+      for (let i = 0; i < plots.length; i++) {
+        Plotly.relayout(plots[i], update);
+      }
+    }
+  };
 
   const calculateTimeArray = (entity) => {
     var time_array = [];
