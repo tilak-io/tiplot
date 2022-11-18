@@ -49,7 +49,7 @@ function Cesium({ socket }) {
     //      Cesium.createOsmBuildings()
     //    );
     return () => {
-      // window.location.reload();
+      window.location.reload();
     };
   }, []);
 
@@ -61,7 +61,7 @@ function Cesium({ socket }) {
       const time = Cesium.JulianDate.addSeconds(
         startTime,
         // timeStepInSeconds * i,
-        (entity_data[i].timestamp - entity_data[0].timestamp) / 1e6,
+        (entity_data[i].timestamp - entity_data[0].timestamp) / 1e7,
         new Cesium.JulianDate()
       );
       time_array.push(time);
