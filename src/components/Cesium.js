@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Plotly from "plotly.js/dist/plotly";
 import "../css/cesium.css";
 
 function Cesium({ socket }) {
@@ -6,6 +7,7 @@ function Cesium({ socket }) {
   var Cesium = window.Cesium;
   var viewer = window.viewer;
   const [isLoading, setLoading] = useState(true);
+  var t0 = 0;
 
   useEffect(() => {
     // requesting the entities position and orientation
@@ -43,6 +45,7 @@ function Cesium({ socket }) {
     viewer.bottomContainer.style.visibility = "hidden";
     viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //Loop at the end
     viewer.forceResize();
+    addTickListener();
     window.viewer = viewer;
 
     //    const osmBuildings = viewer.scene.primitives.add(
@@ -53,10 +56,55 @@ function Cesium({ socket }) {
     };
   }, []);
 
+  const addTickListener = () => {
+    viewer.useDefaultRenderLoop = false;
+
+    function renderLoop() {
+      updateTimelineIndicator();
+      viewer.resize();
+      viewer.render();
+      requestAnimationFrame(renderLoop);
+    }
+
+    requestAnimationFrame(renderLoop);
+  };
+
+  const updateTimelineIndicator = () => {
+    if (viewer.clock.shouldAnimate) {
+      const currentSecond = Cesium.JulianDate.secondsDifference(
+        viewer.clock.currentTime,
+        viewer.clock.startTime
+      );
+
+      const update = {
+        shapes: [
+          {
+            type: "line",
+            x0: currentSecond + t0,
+            y0: 0,
+            x1: currentSecond + t0,
+            yref: "paper",
+            y1: 1,
+            line: {
+              color: "red",
+              width: 1.5,
+              // dash: "dot",
+            },
+          },
+        ],
+      };
+      const plots = document.getElementsByClassName("plot-yt");
+      for (let i = 0; i < plots.length; i++) {
+        Plotly.relayout(plots[i], update);
+      }
+    }
+  };
+
   const calculateTimeArray = (entity) => {
     var time_array = [];
     var entity_data = entity.props;
     const startTime = new Cesium.JulianDate();
+    t0 = entity_data[0].timestamp / 1e6;
     for (let i = 0; i < entity_data.length; i++) {
       const time = Cesium.JulianDate.addSeconds(
         startTime,

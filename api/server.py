@@ -96,7 +96,8 @@ def get_table_values(data):
     index = data['index']
     table = data['table']
     keys = data['keys']
-    keys.append('timestamp')
+    # keys.append('timestamp')
+    keys.append('timestamp_tiplot')
     values = store.Store.get().datadict[table][keys].fillna(
         0).to_dict('records')
     response = {"index": index,"y": keys[0], "x": keys[1],"table": table, "values": values}

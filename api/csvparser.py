@@ -12,13 +12,17 @@ class CSVParser(Parser):
 
     def parse(self,filename):
         csv = pd.read_csv(filename)
-        csv['timestamp'] = pd.to_datetime(csv["timestamp"]).values.astype(np.int64) / 1e4
-        self.datadict = {"data": csv} 
+        time_delta = pd.to_datetime(csv['timestamp'])
+        seconds = time_delta / np.timedelta64(1, 's')
+        micro_seconds = time_delta / np.timedelta64(1, 'us')
+        csv['timestamp'] = micro_seconds
+        csv['timestamp_tiplot'] = seconds
+        self.datadict = {"data": csv}
         return [self.datadict, self.entities]
 
     def initDefaultEntities(self):
         entity = CesiumEntity(
-            name='csv default entity', 
+            name='csv default entity',
             alpha=1,
             useRPY=True,
             position={
