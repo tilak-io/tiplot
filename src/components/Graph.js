@@ -85,6 +85,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
         x: x,
         y: y,
         name: `${table}/${key}`,
+        hovertemplate: `${key}: %{y:.2f}<extra></extra>`,
       };
       setData([...data, line]);
     });
@@ -211,8 +212,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     const plots = document.getElementsByClassName("plot-yt");
 
     for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data == undefined) return;
       if (plots[i].data.length == 0) return;
-
       const x_min = Math.min.apply(Math, plots[i].data[0].x);
       const x_max = Math.max.apply(Math, plots[i].data[0].x);
 
@@ -327,6 +328,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
         x: x,
         y: y,
         name: `${table}/${key}`,
+        hovertemplate: `${key}: %{y:.2f}<extra></extra>`,
       };
       initialData.push(line);
       setData(initialData);
@@ -378,7 +380,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       r: 25,
     },
     hovermode: "x unified",
-    // height: plot.clientHeight,
   };
 
   return (

@@ -8,17 +8,49 @@ import { TbChartDots } from "react-icons/tb";
 import Plotly from "plotly.js/dist/plotly";
 
 function GraphOptions({ plotId, graphIndex, removeGraph }) {
-  const [showLegend, setShowLegend] = useState(false);
-  // const [showSelect, setShowSelect] = useState(false);
+  const [showLegend, setShowLegend] = useState(true);
   const [plotType, setPlotType] = useState(1);
+  const [legendAnchor, setLegendAnchor] = useState(1);
 
   const toggleLegend = () => {
-    setShowLegend(!showLegend);
-    const update = {
-      showlegend: showLegend,
-    };
+    var update;
+
+    switch (legendAnchor) {
+      case 0:
+        update = {
+          showlegend: true,
+          legend: {
+            xanchor: "right",
+            x: 1,
+          },
+        };
+        break;
+      case 1:
+        update = {
+          showlegend: true,
+          legend: {
+            xanchor: "left",
+            x: 0,
+          },
+        };
+        break;
+      case 2:
+        update = {
+          showlegend: false,
+        };
+        break;
+    }
+
     const plot = document.getElementById(plotId);
     Plotly.relayout(plot, update);
+
+    if (legendAnchor >= 2) {
+      setLegendAnchor(0);
+      setShowLegend(false);
+    } else {
+      setLegendAnchor(legendAnchor + 1);
+      setShowLegend(true);
+    }
   };
 
   const changeHeight = (value) => {
@@ -30,13 +62,6 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
     };
     Plotly.relayout(plot, update);
   };
-
-  // const toggleSelect = () => {
-  //   setShowSelect(!showSelect);
-  //   const select = document.getElementById(`select-${graphIndex}`);
-  //   if (showSelect) select.style.display = "block";
-  //   else select.style.display = "none";
-  // };
 
   const autoscale = () => {
     const update = {
@@ -100,7 +125,7 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
 
       <span
         onClick={toggleLegend}
-        style={{ color: showLegend ? "grey" : "black" }}
+        style={{ color: showLegend ? "black" : "grey" }}
       >
         <HiOutlineTicket style={{ width: "100%" }} />
       </span>
