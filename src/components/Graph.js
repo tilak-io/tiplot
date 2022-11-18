@@ -42,6 +42,10 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    autoRange();
+  }, [data]);
+
   const stretchHeight = () => {
     var update = {
       autoresize: true,
@@ -205,12 +209,19 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
 
   const autoRange = () => {
     const plots = document.getElementsByClassName("plot-yt");
-    const update = {
-      custom: true,
-      "xaxis.autorange": true,
-      "yaxis.autorange": true,
-    };
+
     for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data.length == 0) return;
+
+      const x_min = Math.min.apply(Math, plots[i].data[0].x);
+      const x_max = Math.max.apply(Math, plots[i].data[0].x);
+
+      const update = {
+        custom: true,
+        "xaxis.range": [x_min, x_max],
+        "yaxis.autorange": true,
+      };
+
       Plotly.relayout(plots[i], update);
     }
   };
@@ -327,7 +338,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     if (plot.data.length == 0) return;
     const t0 = plot.data[0].x[0];
     const timestamp = t - t0;
-    console.log(t0, t, timestamp);
     window.viewer.clock.currentTime.secondsOfDay =
       window.viewer.clock.startTime.secondsOfDay + timestamp;
     const update = {
