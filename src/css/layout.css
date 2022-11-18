@@ -51,3 +51,9 @@ body {
   width: calc(100% - 30px);
   height: 100%;
 }
+
+.resizable {
+  background-color: #fff;
+  resize: vertical;
+  overflow: auto;
+}

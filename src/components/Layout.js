@@ -14,29 +14,11 @@ function Layout({ socket }) {
   const [size, setSize] = useState(defaultSize);
   const [showView, setShowView] = useState(true);
 
-  const relayout = () => {
-    let plots = document.getElementsByClassName("js-plotly-plot");
-    window.Plotly = Plotly; // to debug debug
-    for (let i = 0; i < plots.length; i++) {
-      var update = {
-        autoresize: true,
-        width: plots[i].clientWidth,
-        "yaxis.autorange": true,
-      };
-      Plotly.relayout(plots[i], update);
-    }
-  };
-
   const toggle3dView = () => {
     setShowView(!showView);
     if (showView) setSize(window.innerWidth);
     else setSize(defaultSize);
   };
-
-  // pane size listener
-  useEffect(() => {
-    relayout();
-  }, [size]);
 
   // window resize listener
   useEffect(() => {

@@ -57,7 +57,6 @@ function Paper({ socket }) {
     setRows(rows.slice(0, -1));
     setGraphNbr(graphNbr - 1);
     var layout = parseLocalStorage("current_layout");
-    console.log(layout);
     layout.pop();
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { MdLegendToggle, MdZoomOutMap } from "react-icons/md";
-import { RiDeleteBack2Fill } from "react-icons/ri";
-import { BsArrowBarDown, BsArrowBarUp } from "react-icons/bs";
+import { BsArrowBarDown, BsArrowBarUp, BsTrash } from "react-icons/bs";
 import { HiOutlineTicket } from "react-icons/hi";
 import { AiOutlineDotChart, AiOutlineLineChart } from "react-icons/ai";
 import { TbChartDots } from "react-icons/tb";
@@ -23,16 +22,13 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
   };
 
   const changeHeight = (value) => {
-    const plots = document.getElementsByClassName("js-plotly-plot");
-    const currentHeight = plots[0].clientHeight;
+    const plot = document.getElementById(plotId);
+    const currentHeight = plot.clientHeight;
     if (currentHeight + value < 150) return;
     var update = {
       height: currentHeight + value,
-      "yaxis.autorange": true,
     };
-    for (let i = 0; i < plots.length; i++) {
-      Plotly.relayout(plots[i], update);
-    }
+    Plotly.relayout(plot, update);
   };
 
   // const toggleSelect = () => {
@@ -99,15 +95,7 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
   return (
     <div className="plot-options">
       <span onClick={() => removeGraph(graphIndex)}>
-        <RiDeleteBack2Fill style={{ width: "100%", color: "red" }} />
-      </span>
-
-      <span onClick={() => changeHeight(-20)}>
-        <BsArrowBarUp style={{ width: "100%" }} />
-      </span>
-
-      <span onClick={() => changeHeight(20)}>
-        <BsArrowBarDown style={{ width: "100%" }} />
+        <BsTrash style={{ width: "100%", color: "red" }} />
       </span>
 
       <span

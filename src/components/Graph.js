@@ -8,6 +8,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
   const [keys, setKeys] = useState([]);
   const [data, setData] = useState([]);
   const [selectedValue, setSelected] = useState();
+  var plot;
 
   useEffect(() => {
     plotInitialData();
@@ -35,8 +36,22 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       });
       setKeys(options);
     });
+    // vertical resize listener
+    plot = document.getElementById(`plot-${graphIndex}`);
+    new ResizeObserver(stretchHeight).observe(plot);
     // eslint-disable-next-line
   }, []);
+
+  const stretchHeight = () => {
+    var update = {
+      autoresize: true,
+      width: plot.clientWidth,
+      height: plot.clientHeight,
+      "yaxis.autorange": true,
+    };
+
+    if (plot.clientHeight != 0) Plotly.relayout(plot, update);
+  };
 
   const addData = async (table, key) => {
     socket.off("table_values");
@@ -124,7 +139,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
         "yaxis.range": yrange,
       };
 
-      Plotly.relayout(`plot-${graphIndex}`, update);
+      Plotly.relayout(plot, update);
     }
 
     // resetting all layouts when double tap
@@ -147,7 +162,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
 
   //  adujst y range on the visible data
   const autoScaleVerticalAxis = (xrange) => {
-    const plot = document.getElementById(`plot-${graphIndex}`);
+    plot = document.getElementById(`plot-${graphIndex}`);
     var max_values = [];
     var min_values = [];
     if (plot.data.length == 0) return;
@@ -182,8 +197,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       "xaxis.range[0]": event["xaxis.range[0]"],
       "xaxis.range[1]": event["xaxis.range[1]"],
     };
-
-    console.log(update);
 
     for (let i = 0; i < plots.length; i++) {
       Plotly.relayout(plots[i], update);
@@ -336,6 +349,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
   };
 
   const defaultLayout = {
+    autoresize: true,
     showlegend: true,
     legend: {
       x: 1,
@@ -349,6 +363,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       r: 25,
     },
     hovermode: "x unified",
+    // height: plot.clientHeight,
   };
 
   return (
@@ -361,7 +376,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
         value={selectedValue}
         closeMenuOnSelect={false}
       />
-      <div className="d-flex">
+      <div className="d-flex resizable">
         <Plot
           className="plot-yt"
           divId={`plot-${graphIndex}`}
@@ -371,12 +386,12 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
           onHover={handleHover}
           onClick={handleClick}
           onRestyle={handleRestyle}
-          useResizeHandler
+          // useResizeHandler
           config={{
             displayModeBar: false,
-            // responsive: true,
           }}
         />
+
         <GraphOptions
           plotId={`plot-${graphIndex}`}
           graphIndex={graphIndex}
