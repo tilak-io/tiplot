@@ -7,6 +7,7 @@ function Cesium({ socket }) {
   var Cesium = window.Cesium;
   var viewer = window.viewer;
   const [isLoading, setLoading] = useState(true);
+  var t0 = 0;
 
   useEffect(() => {
     // requesting the entities position and orientation
@@ -79,9 +80,9 @@ function Cesium({ socket }) {
         shapes: [
           {
             type: "line",
-            x0: currentSecond,
+            x0: currentSecond + t0,
             y0: 0,
-            x1: currentSecond,
+            x1: currentSecond + t0,
             yref: "paper",
             y1: 1,
             line: {
@@ -103,6 +104,7 @@ function Cesium({ socket }) {
     var time_array = [];
     var entity_data = entity.props;
     const startTime = new Cesium.JulianDate();
+    t0 = entity_data[0].timestamp / 1e6;
     for (let i = 0; i < entity_data.length; i++) {
       const time = Cesium.JulianDate.addSeconds(
         startTime,

@@ -18,7 +18,6 @@ class ULGParser(Parser):
             else:
                 name = data.name
             self.datadict[name] = pd.DataFrame(data.data)
-            self.datadict[name]['timestamp'] = (self.datadict[name]['timestamp'] - self.datadict[name]['timestamp'][0])
             self.datadict[name]['timestamp_tiplot'] = self.datadict[name]['timestamp'] / 1e6
         return [self.datadict, self.entities]
 

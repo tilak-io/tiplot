@@ -322,16 +322,21 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     });
   };
 
-  const updateTimelineIndicator = (timestamp) => {
+  const updateTimelineIndicator = (t) => {
+    plot = document.getElementById(`plot-${graphIndex}`);
+    if (plot.data.length == 0) return;
+    const t0 = plot.data[0].x[0];
+    const timestamp = t - t0;
+    console.log(t0, t, timestamp);
     window.viewer.clock.currentTime.secondsOfDay =
       window.viewer.clock.startTime.secondsOfDay + timestamp;
     const update = {
       shapes: [
         {
           type: "line",
-          x0: timestamp,
+          x0: t,
           y0: 0,
-          x1: timestamp,
+          x1: t,
           yref: "paper",
           y1: 1,
           line: {

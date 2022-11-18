@@ -12,8 +12,7 @@ class CSVParser(Parser):
 
     def parse(self,filename):
         csv = pd.read_csv(filename)
-        start_time = pd.to_datetime(csv['timestamp'][0])
-        time_delta = (pd.to_datetime(csv['timestamp']) - start_time)
+        time_delta = pd.to_datetime(csv['timestamp'])
         seconds = time_delta / np.timedelta64(1, 's')
         micro_seconds = time_delta / np.timedelta64(1, 'us')
         csv['timestamp'] = micro_seconds
