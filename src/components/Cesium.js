@@ -70,8 +70,10 @@ function Cesium({ socket }) {
 
   const updateTimelineIndicator = () => {
     if (viewer.clock.shouldAnimate) {
-      const startSecond = viewer.clock.startTime.secondsOfDay;
-      const currentSecond = viewer.clock.currentTime.secondsOfDay - startSecond;
+      const currentSecond = Cesium.JulianDate.secondsDifference(
+        viewer.clock.currentTime,
+        viewer.clock.startTime
+      );
 
       const update = {
         shapes: [
@@ -105,7 +107,7 @@ function Cesium({ socket }) {
       const time = Cesium.JulianDate.addSeconds(
         startTime,
         // timeStepInSeconds * i,
-        (entity_data[i].timestamp - entity_data[0].timestamp) / 1e7,
+        (entity_data[i].timestamp - entity_data[0].timestamp) / 1e6,
         new Cesium.JulianDate()
       );
       time_array.push(time);

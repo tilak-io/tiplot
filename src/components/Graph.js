@@ -183,6 +183,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       "xaxis.range[1]": event["xaxis.range[1]"],
     };
 
+    console.log(update);
+
     for (let i = 0; i < plots.length; i++) {
       Plotly.relayout(plots[i], update);
     }
@@ -213,9 +215,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       const stop = window.time_array[window.time_array.length - 1];
       const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
       if (event.event.altKey) {
-        window.viewer.clock.currentTime.secondsOfDay =
-          window.viewer.clock.startTime.secondsOfDay +
-          (index / nbrPoints) * totalSecs;
         updateTimelineIndicator(x);
       }
     }
@@ -265,9 +264,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       const stop = window.time_array[window.time_array.length - 1];
       const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
       if (event.event.ctrlKey) {
-        window.viewer.clock.currentTime.secondsOfDay =
-          window.viewer.clock.startTime.secondsOfDay +
-          (index / nbrPoints) * totalSecs;
         updateTimelineIndicator(x);
       }
     }
@@ -314,6 +310,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
   };
 
   const updateTimelineIndicator = (timestamp) => {
+    window.viewer.clock.currentTime.secondsOfDay =
+      window.viewer.clock.startTime.secondsOfDay + timestamp;
     const update = {
       shapes: [
         {
@@ -349,10 +347,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       b: 25,
       l: 25,
       r: 25,
-    },
-    xaxis: {
-      showspikes: true,
-      spikesnap: "cursor",
     },
     hovermode: "x unified",
   };
