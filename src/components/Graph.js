@@ -213,18 +213,28 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
   const autoRange = () => {
     const plots = document.getElementsByClassName("plot-yt");
 
+    var max_values = [];
+    var min_values = [];
+
     for (let i = 0; i < plots.length; i++) {
       if (plots[i].data == undefined) return;
       if (plots[i].data.length == 0) return;
       const x_min = Math.min.apply(Math, plots[i].data[0].x);
       const x_max = Math.max.apply(Math, plots[i].data[0].x);
+      min_values.push(x_min);
+      max_values.push(x_max);
+    }
 
-      const update = {
-        custom: true,
-        "xaxis.range": [x_min, x_max],
-        "yaxis.autorange": true,
-      };
+    const all_min = Math.min.apply(Math, min_values);
+    const all_max = Math.max.apply(Math, max_values);
 
+    const update = {
+      custom: true,
+      "xaxis.range": [all_min, all_max],
+      "yaxis.autorange": true,
+    };
+
+    for (let i = 0; i < plots.length; i++) {
       Plotly.relayout(plots[i], update);
     }
   };
