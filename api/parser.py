@@ -1,5 +1,3 @@
-import pandas as pd
-
 class Parser:
     def __init__(self):
         self.name = "Generic Parser"

@@ -4,7 +4,6 @@ pyulog
 zmq
 flask
 flask_cors
-pickle5
 flask_socketio
 python-dotenv
 python-engineio

@@ -1,9 +1,7 @@
-
-from parser import Parser
 import pandas as pd
 import numpy as np
-from datetime import datetime
 from cesium_entity import CesiumEntity
+from parser import Parser
 
 class CSVParser(Parser):
     def __init__(self):
