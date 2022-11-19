@@ -7,7 +7,7 @@ const spawn = require("child_process").spawn,
       "-w",
       "--onefile",
       "--distpath backend",
-      "--add-data api:api",
+      "--add-data api;api",
       "api/server.py",
     ],
     {
