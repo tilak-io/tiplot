@@ -76,13 +76,15 @@ function Cesium({ socket }) {
         viewer.clock.startTime
       );
 
+      window.currentX = currentSecond + t0;
+
       const update = {
         shapes: [
           {
             type: "line",
-            x0: currentSecond + t0,
+            x0: window.currentX,
             y0: 0,
-            x1: currentSecond + t0,
+            x1: window.currentX,
             yref: "paper",
             y1: 1,
             line: {
@@ -104,7 +106,6 @@ function Cesium({ socket }) {
     var time_array = [];
     var entity_data = entity.props;
     const startTime = new Cesium.JulianDate();
-    t0 = entity_data[0].timestamp / 1e6;
     for (let i = 0; i < entity_data.length; i++) {
       const time = Cesium.JulianDate.addSeconds(
         startTime,
@@ -114,6 +115,9 @@ function Cesium({ socket }) {
       );
       time_array.push(time);
     }
+
+    t0 = entity_data[0].timestamp / 1e6;
+    window.t0 = t0;
     return time_array;
   };
 
