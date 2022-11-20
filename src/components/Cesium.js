@@ -110,13 +110,13 @@ function Cesium({ socket }) {
       const time = Cesium.JulianDate.addSeconds(
         startTime,
         // timeStepInSeconds * i,
-        (entity_data[i].timestamp - entity_data[0].timestamp) / 1e6,
+        (entity_data[i].timestamp_tiplot - entity_data[0].timestamp_tiplot),
         new Cesium.JulianDate()
       );
       time_array.push(time);
     }
 
-    t0 = entity_data[0].timestamp / 1e6;
+    t0 = entity_data[0].timestamp_tiplot;
     window.t0 = t0;
     return time_array;
   };
