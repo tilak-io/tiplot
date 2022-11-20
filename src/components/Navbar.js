@@ -219,6 +219,24 @@ function TopBar({ page, toggle3dView, showView }) {
     );
   }
 
+  function Controls() {
+    if (window.viewer)
+    return (<Nav>
+      <Nav.Link onClick={fitGraphsToScreen}>
+        <FaExpand style={{ color: "#0af" }} />
+      </Nav.Link>
+      <Nav.Link onClick={togglePlay}>
+        <PlayButton />
+      </Nav.Link>
+      <Nav.Link onClick={toggleSpeed}>
+        <SpeedButton />
+      </Nav.Link>
+      <Nav.Link onClick={toggle3dView}>
+        <ViewButton />
+      </Nav.Link>
+    </Nav>);
+  }
+
   return (
     <>
       {/* Pop up for setting layout name */}
@@ -285,20 +303,7 @@ function TopBar({ page, toggle3dView, showView }) {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Nav>
-            <Nav.Link onClick={fitGraphsToScreen}>
-              <FaExpand style={{ color: "#0af" }} />
-            </Nav.Link>
-            <Nav.Link onClick={togglePlay}>
-              <PlayButton />
-            </Nav.Link>
-            <Nav.Link onClick={toggleSpeed}>
-              <SpeedButton />
-            </Nav.Link>
-            <Nav.Link onClick={toggle3dView}>
-              <ViewButton />
-            </Nav.Link>
-          </Nav>
+          <Controls />
         </Container>
       </Navbar>
     </>
