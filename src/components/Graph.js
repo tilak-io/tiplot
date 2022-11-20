@@ -239,7 +239,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     }
   };
 
-  const handleRestyle = (event) => {};
+  const handleRestyle = (event) => { };
 
   const handleHover = (event) => {
     let i = 0;
@@ -391,7 +391,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     margin: {
       t: 10,
       b: 25,
-      l: 25,
+      l: 50,
       r: 25,
     },
     hovermode: "x unified",
@@ -401,6 +401,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     <div>
       <Select
         id={`select-${graphIndex}`}
+        className="multiselect"
         options={keys}
         isMulti
         onChange={handleChange}

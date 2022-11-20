@@ -7,8 +7,14 @@ import {
   Modal,
   Button,
 } from "react-bootstrap";
-import { FaPlay, FaPause, FaToggleOn, FaToggleOff, FaForward } from "react-icons/fa";
-
+import {
+  FaPlay,
+  FaPause,
+  FaToggleOn,
+  FaToggleOff,
+  FaForward,
+  FaExpand,
+} from "react-icons/fa";
 import logo from "../img/logo.png";
 
 function TopBar({ page, toggle3dView, showView }) {
@@ -33,7 +39,6 @@ function TopBar({ page, toggle3dView, showView }) {
 
   const toggleSpeed = () => {
     if (window.viewer) {
-
       switch (speed) {
         case 1:
           window.viewer.clock.multiplier = 2;
@@ -53,8 +58,24 @@ function TopBar({ page, toggle3dView, showView }) {
           break;
       }
     }
+  };
 
-  }
+  const fitGraphsToScreen = () => {
+    const containers = document.getElementsByClassName("resizable");
+    const plots = document.getElementsByClassName("plot-yt");
+    const multiselects = document.getElementsByClassName("multiselect");
+    var additionalHeight = 130; // buttons + navbar height
+    for (var i = 0; i < multiselects.length; i++)
+      additionalHeight += multiselects[i].clientHeight;
+    const plotHeight = (window.innerHeight - additionalHeight) / plots.length;
+    var update = {
+      autoresize: true,
+      height: plotHeight,
+    };
+
+    for (var i = 0; i < plots.length; i++)
+      containers[i].style.height = plotHeight + "px";
+  };
 
   const parseLocalStorage = (key) => {
     var value = localStorage.getItem(key);
@@ -191,9 +212,11 @@ function TopBar({ page, toggle3dView, showView }) {
         color = "#b3bdf2";
         break;
     }
-    return <span>
-      <FaForward style={{ color: color }} />
-    </span>;
+    return (
+      <span>
+        <FaForward style={{ color: color }} />
+      </span>
+    );
   }
 
   return (
@@ -263,6 +286,9 @@ function TopBar({ page, toggle3dView, showView }) {
             </NavDropdown>
           </Nav>
           <Nav>
+            <Nav.Link onClick={fitGraphsToScreen}>
+              <FaExpand style={{ color: "#0af" }} />
+            </Nav.Link>
             <Nav.Link onClick={togglePlay}>
               <PlayButton />
             </Nav.Link>
