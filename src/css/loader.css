@@ -7,6 +7,10 @@ body {
   
 }
 
+.loader-page {
+  margin-top: 54px;
+}
+
 .clickable {
   cursor: pointer;
 }

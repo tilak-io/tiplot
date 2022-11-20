@@ -5,12 +5,12 @@ from flask_cors import CORS
 from threading import Thread
 from ulgparser import ULGParser
 from csvparser import CSVParser
-import store
 from time import localtime, strftime
 from os import makedirs, path
 from glob import glob
 from communication import Comm
 from datetime import datetime
+import store
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'

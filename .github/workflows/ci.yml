@@ -1,6 +1,6 @@
-name: Building AppImage
-run-name: ${{ github.actor }} is buildling TiPlot's AppImage 🚀
-on: 
+name: Building Executable
+run-name: ${{ github.actor }} is buildling TiPlot 🚀
+on:
   push:
     branches:
       - main
@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.10' 
+          python-version: "3.10"
       - run: tree
       - uses: syphar/restore-virtualenv@v1
         id: cache-virtualenv
@@ -25,7 +25,26 @@ jobs:
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
       - name: install node dependecies
         run: yarn install
-      - name: build backend 
+      - name: build backend
+        run: yarn build:api
+      - name: build desktop app
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          CI: false
+        run: yarn build:electron
+
+  Build-EXE:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - run: tree
+      - name: install node dependecies
+        run: yarn install
+      - run: pip install -r api/requirements.txt
+      - name: build backend
         run: yarn build:api
       - name: build desktop app
         env:

@@ -7,14 +7,21 @@ import {
   Modal,
   Button,
 } from "react-bootstrap";
-import { FaPlay, FaPause, FaToggleOn, FaToggleOff } from "react-icons/fa";
-
+import {
+  FaPlay,
+  FaPause,
+  FaToggleOn,
+  FaToggleOff,
+  FaForward,
+  FaExpand,
+} from "react-icons/fa";
 import logo from "../img/logo.png";
 
 function TopBar({ page, toggle3dView, showView }) {
   const [isPlaying, setPlaying] = useState(false);
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
+  const [speed, setSpeed] = useState(1);
 
   const handleClose = () => setShowSaveMsg(false);
   const saveCurrentLayoutNamed = () => setShowSaveMsg(true);
@@ -23,11 +30,51 @@ function TopBar({ page, toggle3dView, showView }) {
     mapLayouts();
   }, []);
 
-  const toggle = (value) => {
+  const togglePlay = () => {
     if (window.viewer) {
-      window.viewer.clock.shouldAnimate = value;
-      setPlaying(value);
+      window.viewer.clock.shouldAnimate = !isPlaying;
+      setPlaying(!isPlaying);
     }
+  };
+
+  const toggleSpeed = () => {
+    if (window.viewer) {
+      switch (speed) {
+        case 1:
+          window.viewer.clock.multiplier = 2;
+          setSpeed(2);
+          break;
+        case 2:
+          window.viewer.clock.multiplier = 5;
+          setSpeed(5);
+          break;
+        case 5:
+          window.viewer.clock.multiplier = 10;
+          setSpeed(10);
+          break;
+        default:
+          window.viewer.clock.multiplier = 1;
+          setSpeed(1);
+          break;
+      }
+    }
+  };
+
+  const fitGraphsToScreen = () => {
+    const containers = document.getElementsByClassName("resizable");
+    const plots = document.getElementsByClassName("plot-yt");
+    const multiselects = document.getElementsByClassName("multiselect");
+    var additionalHeight = 130; // buttons + navbar height
+    for (var i = 0; i < multiselects.length; i++)
+      additionalHeight += multiselects[i].clientHeight;
+    const plotHeight = (window.innerHeight - additionalHeight) / plots.length;
+    var update = {
+      autoresize: true,
+      height: plotHeight,
+    };
+
+    for (var i = 0; i < plots.length; i++)
+      containers[i].style.height = plotHeight + "px";
   };
 
   const parseLocalStorage = (key) => {
@@ -119,7 +166,7 @@ function TopBar({ page, toggle3dView, showView }) {
     if (layouts.length > 0) return <NavDropdown.Divider />;
   }
 
-  function TogglePlay() {
+  function PlayButton() {
     if (!isPlaying)
       return (
         <span>
@@ -147,6 +194,29 @@ function TopBar({ page, toggle3dView, showView }) {
           <FaToggleOff style={{ color: "#DDDDDD" }} />
         </span>
       );
+  }
+
+  function SpeedButton() {
+    var color;
+    switch (speed) {
+      case 1:
+        color = "#593f73";
+        break;
+      case 2:
+        color = "#7460bf";
+        break;
+      case 5:
+        color = "#8372f2";
+        break;
+      default:
+        color = "#b3bdf2";
+        break;
+    }
+    return (
+      <span>
+        <FaForward style={{ color: color }} />
+      </span>
+    );
   }
 
   return (
@@ -214,8 +284,16 @@ function TopBar({ page, toggle3dView, showView }) {
                 Clear layouts
               </NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link onClick={() => toggle(!isPlaying)}>
-              <TogglePlay />
+          </Nav>
+          <Nav>
+            <Nav.Link onClick={fitGraphsToScreen}>
+              <FaExpand style={{ color: "#0af" }} />
+            </Nav.Link>
+            <Nav.Link onClick={togglePlay}>
+              <PlayButton />
+            </Nav.Link>
+            <Nav.Link onClick={toggleSpeed}>
+              <SpeedButton />
             </Nav.Link>
             <Nav.Link onClick={toggle3dView}>
               <ViewButton />

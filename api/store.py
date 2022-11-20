@@ -1,5 +1,4 @@
 import pandas as pd
-import logging
 import threading
 
 class Store:
