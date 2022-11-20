@@ -19,6 +19,7 @@ CORS(app,resources={r"/*":{"origins":"*"}})
 socketio = SocketIO(app,cors_allowed_origins="*")
 
 logs_dir = path.expanduser("~/Documents/tiplot/logs/")
+logs_dir = logs_dir.replace("\\", "/")
 if not path.exists(logs_dir):
     makedirs(logs_dir)
 
