@@ -4,8 +4,8 @@
   "private": true,
   "homepage": "./",
   "proxy": "http://localhost:5000",
-  "author": "Hamza <hamza@tilak.io> tilak.io",
-  "description": "A tool to analyse drone flights",
+  "author": "Hamza ZOGHMAR <hamza@tilak.io> tilak.io",
+  "description": "Cool and simple visualising tool to analyse your drone flights",
   "main": "public/electron.js",
   "build": {
     "appId": "io.tilak.tiplot",
@@ -21,6 +21,10 @@
     "linux": {
       "icon": "src/img/logo.png",
       "category": "Utility"
+    },
+    "win": {
+      "_target": "portable",
+      "icon": "src/img/logo.png"
     }
   },
   "dependencies": {
