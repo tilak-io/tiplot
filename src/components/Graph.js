@@ -175,6 +175,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     if (plot.data.length == 0) return;
     for (let j = 0; j < plot.data.length; j++) {
       var e = plot.data[j];
+      if (e.visible == "legendonly") continue;
       var x0 = findClosest(xrange[0], e);
       var x1 = findClosest(xrange[1], e);
       const visible_y_data = e.y.slice(e.x.indexOf(x0), e.x.indexOf(x1));
@@ -189,7 +190,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
           ? Math.min.apply(Math, min_values)
           : 0;
 
-      var margin = (max - min) / 4;
+      var margin = (max - min) / 5;
       margin = margin == 0 ? 0.5 : margin; // set the margin to 1 in case of max == min
       var new_y_range = [min - margin, max + margin];
     }
@@ -238,8 +239,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       Plotly.relayout(plots[i], update);
     }
   };
-
-  const handleRestyle = (event) => { };
 
   const handleHover = (event) => {
     let i = 0;
@@ -417,7 +416,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
           onRelayout={relayoutHandler}
           onHover={handleHover}
           onClick={handleClick}
-          onRestyle={handleRestyle}
           // useResizeHandler
           config={{
             displayModeBar: false,
