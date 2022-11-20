@@ -101,7 +101,7 @@ def get_table_values(data):
     datadict = store.Store.get().datadict
     try:
         values = datadict[table][keys].fillna(0).to_dict('records')
-        print("-> Served x: " + keys[0] + ", y:" + keys[1])
+        print("-> Served x: " + keys[1] + ", y:" + keys[0])
     except:
         values = []
         print("~> Could not find: " + keys[0])
