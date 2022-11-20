@@ -66,64 +66,66 @@ function Loader({ socket }) {
   return (
     <>
       <TopBar page="loader" />
-      <div className={`overlay ${show}`}></div>
-      <div className={`spanner ${show}`}>
-        <div className="loader"></div>
-        <p>Starting Tiplot Server...</p>
-      </div>
-      <div className={`overlay ${showLoading}`}></div>
-      <div className={`spanner ${showLoading}`}>
-        <div className="loader"></div>
-        <p>Loading file, please wait...</p>
-      </div>
-      <br />
-      <div className="break"></div>
-      <center>
-        <label
-          htmlFor="fileUpload"
-          className="file-upload btn btn-warning btn-lg rounded-pill shadow"
-        >
-          <i className="fa fa-upload mr-2"></i>Browse for file
-          <input id="fileUpload" type="file" onChange={handleChange} />
-        </label>
-      </center>
-      <br />
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-sm-12 my-auto">
-            <Table striped bordered hover>
-              <tbody>
-                <tr>
-                  <th className="align-middle">
-                    <FcOpenedFolder />
-                  </th>
-                  <th className="align-middle">{logsDir}</th>
-                  <th className="align-middle">Size</th>
-                  <th className="align-middle">Modified</th>
-                </tr>
-                {files.map((file, i) => {
-                  return (
-                    <tr
-                      key={i}
-                      className="clickable"
-                      onClick={() => parse(file)}
-                    >
-                      <td className="icon-row">
-                        <FcFile />
-                      </td>
-                      <td>{file[0]}</td>
-                      <td>
-                        {/* TODO: a cleaner way to convert */}
-                        {file[1] < 1048576
-                          ? (file[1] / 1024).toFixed(2) + " KB"
-                          : (file[1] / 1048576).toFixed(2) + " MB"}
-                      </td>
-                      <td>{file[2]}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+      <div className="loader-page">
+        <div className={`overlay ${show}`}></div>
+        <div className={`spanner ${show}`}>
+          <div className="loader"></div>
+          <p>Starting Tiplot Server...</p>
+        </div>
+        <div className={`overlay ${showLoading}`}></div>
+        <div className={`spanner ${showLoading}`}>
+          <div className="loader"></div>
+          <p>Loading file, please wait...</p>
+        </div>
+        <br />
+        <div className="break"></div>
+        <center>
+          <label
+            htmlFor="fileUpload"
+            className="file-upload btn btn-warning btn-lg rounded-pill shadow"
+          >
+            <i className="fa fa-upload mr-2"></i>Browse for file
+            <input id="fileUpload" type="file" onChange={handleChange} />
+          </label>
+        </center>
+        <br />
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-sm-12 my-auto">
+              <Table striped bordered hover>
+                <tbody>
+                  <tr>
+                    <th className="align-middle">
+                      <FcOpenedFolder />
+                    </th>
+                    <th className="align-middle">{logsDir}</th>
+                    <th className="align-middle">Size</th>
+                    <th className="align-middle">Modified</th>
+                  </tr>
+                  {files.map((file, i) => {
+                    return (
+                      <tr
+                        key={i}
+                        className="clickable"
+                        onClick={() => parse(file)}
+                      >
+                        <td className="icon-row">
+                          <FcFile />
+                        </td>
+                        <td>{file[0]}</td>
+                        <td>
+                          {/* TODO: a cleaner way to convert */}
+                          {file[1] < 1048576
+                            ? (file[1] / 1024).toFixed(2) + " KB"
+                            : (file[1] / 1048576).toFixed(2) + " MB"}
+                        </td>
+                        <td>{file[2]}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </div>
           </div>
         </div>
       </div>
