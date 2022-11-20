@@ -98,8 +98,13 @@ def get_table_values(data):
     keys = data['keys']
     # keys.append('timestamp')
     keys.append('timestamp_tiplot')
-    values = store.Store.get().datadict[table][keys].fillna(
-        0).to_dict('records')
+    datadict = store.Store.get().datadict
+    try:
+        values = datadict[table][keys].fillna(0).to_dict('records')
+        print("-> Served x: " + keys[0] + ", y:" + keys[1])
+    except:
+        values = []
+        print("~> Could not find: " + keys[0])
     response = {"index": index,"y": keys[0], "x": keys[1],"table": table, "values": values}
     emit('table_values', response)
 
