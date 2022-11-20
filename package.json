@@ -23,7 +23,6 @@
       "category": "Utility"
     },
     "win": {
-      "_target": "portable",
       "icon": "src/img/logo.png"
     }
   },
