@@ -248,12 +248,12 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       }
     }
 
-    const plots = document.getElementsByClassName("plot-yt");
-    for (let i = 0; i < plots.length; i++) {
-      if (plots[i].id == graphIndex) continue;
-      if (plots[i].data.length == 0) continue;
-      Plotly.Fx.hover(plots[i], event.event);
-    }
+    // const plots = document.getElementsByClassName("plot-yt");
+    // for (let i = 0; i < plots.length; i++) {
+    //   if (plots[i].id == graphIndex) continue;
+    //   if (plots[i].data.length == 0) continue;
+    //   Plotly.Fx.hover(plots[i], event.event);
+    // }
 
     // FIXME: mimic hover for xy
 
