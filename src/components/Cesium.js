@@ -70,36 +70,36 @@ function Cesium({ socket }) {
   };
 
   const updateTimelineIndicator = () => {
-    if (viewer.clock.shouldAnimate) {
-      const currentSecond = Cesium.JulianDate.secondsDifference(
-        viewer.clock.currentTime,
-        viewer.clock.startTime
-      );
+    // if (viewer.clock.shouldAnimate) {
+    const currentSecond = Cesium.JulianDate.secondsDifference(
+      viewer.clock.currentTime,
+      viewer.clock.startTime
+    );
 
-      window.currentX = currentSecond + t0;
+    window.currentX = currentSecond + t0;
 
-      const update = {
-        shapes: [
-          {
-            type: "line",
-            x0: window.currentX,
-            y0: 0,
-            x1: window.currentX,
-            yref: "paper",
-            y1: 1,
-            line: {
-              color: "red",
-              width: 1.5,
-              // dash: "dot",
-            },
+    const update = {
+      shapes: [
+        {
+          type: "line",
+          x0: window.currentX,
+          y0: 0,
+          x1: window.currentX,
+          yref: "paper",
+          y1: 1,
+          line: {
+            color: "red",
+            width: 1.5,
+            // dash: "dot",
           },
-        ],
-      };
-      const plots = document.getElementsByClassName("plot-yt");
-      for (let i = 0; i < plots.length; i++) {
-        Plotly.relayout(plots[i], update);
-      }
+        },
+      ],
+    };
+    const plots = document.getElementsByClassName("plot-yt");
+    for (let i = 0; i < plots.length; i++) {
+      Plotly.relayout(plots[i], update);
     }
+    // }
   };
 
   const calculateTimeArray = (entity) => {
@@ -110,13 +110,13 @@ function Cesium({ socket }) {
       const time = Cesium.JulianDate.addSeconds(
         startTime,
         // timeStepInSeconds * i,
-        (entity_data[i].timestamp - entity_data[0].timestamp) / 1e6,
+        (entity_data[i].timestamp_tiplot - entity_data[0].timestamp_tiplot),
         new Cesium.JulianDate()
       );
       time_array.push(time);
     }
 
-    t0 = entity_data[0].timestamp / 1e6;
+    t0 = entity_data[0].timestamp_tiplot;
     window.t0 = t0;
     return time_array;
   };

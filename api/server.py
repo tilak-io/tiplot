@@ -19,6 +19,7 @@ CORS(app,resources={r"/*":{"origins":"*"}})
 socketio = SocketIO(app,cors_allowed_origins="*")
 
 logs_dir = path.expanduser("~/Documents/tiplot/logs/")
+logs_dir = logs_dir.replace("\\", "/")
 if not path.exists(logs_dir):
     makedirs(logs_dir)
 
@@ -98,8 +99,13 @@ def get_table_values(data):
     keys = data['keys']
     # keys.append('timestamp')
     keys.append('timestamp_tiplot')
-    values = store.Store.get().datadict[table][keys].fillna(
-        0).to_dict('records')
+    datadict = store.Store.get().datadict
+    try:
+        values = datadict[table][keys].fillna(0).to_dict('records')
+        print("-> Served x: " + keys[1] + ", y:" + keys[0])
+    except:
+        values = []
+        print("~> Could not find: " + keys[0])
     response = {"index": index,"y": keys[0], "x": keys[1],"table": table, "values": values}
     emit('table_values', response)
 

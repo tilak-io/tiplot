@@ -22,10 +22,10 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       // return if its not the components that made the request
       if (index !== graphIndex) return;
       var options = [];
-      keys.forEach((value, index) => {
+      keys.forEach((value) => {
         var key = Object.keys(value)[0];
         var nested_keys = Object.values(value)[0];
-        nested_keys.forEach((nested, idx) => {
+        nested_keys.forEach((nested) => {
           options.push({
             label: `${key}/${nested}`,
             value: `${key}/${nested}`,
@@ -241,41 +241,23 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
   };
 
   const handleHover = (event) => {
-    let i = 0;
-    const index = event.points[0].pointIndex;
-    const nbrPoints = event.points[0].data.x.length;
     const x = event.points[0].x;
-
     if (window.time_array !== undefined) {
-      const start = window.time_array[0];
-      const stop = window.time_array[window.time_array.length - 1];
-      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
       if (event.event.altKey) {
         updateTimelineIndicator(x);
       }
     }
 
-    // TODO: FIX
-
     // const plots = document.getElementsByClassName("plot-yt");
     // for (let i = 0; i < plots.length; i++) {
     //   if (plots[i].id == graphIndex) continue;
     //   if (plots[i].data.length == 0) continue;
-    //   console.log(plots[i].id);
     //   Plotly.Fx.hover(plots[i], event.event);
     // }
 
-    // TODO: REMOVE
+    // FIXME: mimic hover for xy
 
     // while (document.getElementById(`plot-${i}`)) {
-    //   var plot = document.getElementById(`plot-${i}`);
-    //   i++;
-    //   if (graphIndex === i - 1) continue; // dont mimic hover on the same graph we're hovering over
-    //   if (plot.data.length === 0) continue; // dont mimic hover on a graph that has no data
-    //   // mimic hover for t/y graphs
-    //   if (plot.classList.contains("plot-yt")) {
-    //     Plotly.Fx.hover(plot, event.event);
-    //   }
 
     //   // mimic hover for x/y graphs
     //   if (plot.classList.contains("plot-xy")) {
@@ -291,14 +273,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
   };
 
   const handleClick = (event) => {
-    let i = 0;
-    const index = event.points[0].pointIndex;
-    const nbrPoints = event.points[0].data.x.length;
     const x = event.points[0].x;
     if (window.time_array !== undefined) {
-      const start = window.time_array[0];
-      const stop = window.time_array[window.time_array.length - 1];
-      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
       if (event.event.ctrlKey) {
         updateTimelineIndicator(x);
       }
@@ -310,7 +286,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
 
     setSelected(initialKeys);
     var initialData = [];
-    initialKeys.forEach((option, index) => {
+    initialKeys.forEach((option) => {
       socket.emit("get_table_values", {
         index: graphIndex,
         table: option.key,
@@ -352,7 +328,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     const timestamp = t - window.t0;
     window.viewer.clock.currentTime.secondsOfDay =
       window.viewer.clock.startTime.secondsOfDay + timestamp;
-    drawTimelineIndicator(window.currentX);
+    // drawTimelineIndicator(window.currentX);
   };
 
   const drawTimelineIndicator = (x) => {

@@ -169,13 +169,13 @@ function TopBar({ page, toggle3dView, showView }) {
   function PlayButton() {
     if (!isPlaying)
       return (
-        <span>
+        <span title="Play">
           <FaPlay style={{ color: "#00ff4f" }} />
         </span>
       );
     else
       return (
-        <span>
+        <span title="Pause">
           <FaPause style={{ color: "#ffff00" }} />
         </span>
       );
@@ -184,13 +184,13 @@ function TopBar({ page, toggle3dView, showView }) {
   function ViewButton() {
     if (showView)
       return (
-        <span>
+        <span title="Show 3d View">
           <FaToggleOn style={{ color: "#00ffff" }} />
         </span>
       );
     else
       return (
-        <span>
+        <span title="Hide 3d View">
           <FaToggleOff style={{ color: "#DDDDDD" }} />
         </span>
       );
@@ -217,6 +217,24 @@ function TopBar({ page, toggle3dView, showView }) {
         <FaForward style={{ color: color }} />
       </span>
     );
+  }
+
+  function Controls() {
+    if (window.viewer)
+      return (<Nav>
+        <Nav.Link onClick={fitGraphsToScreen}>
+          <FaExpand style={{ color: "#0af" }} title="Fit graphs to screen" />
+        </Nav.Link>
+        <Nav.Link onClick={togglePlay}>
+          <PlayButton />
+        </Nav.Link>
+        <Nav.Link onClick={toggleSpeed}>
+          <SpeedButton />
+        </Nav.Link>
+        <Nav.Link onClick={toggle3dView}>
+          <ViewButton />
+        </Nav.Link>
+      </Nav>);
   }
 
   return (
@@ -285,20 +303,7 @@ function TopBar({ page, toggle3dView, showView }) {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Nav>
-            <Nav.Link onClick={fitGraphsToScreen}>
-              <FaExpand style={{ color: "#0af" }} />
-            </Nav.Link>
-            <Nav.Link onClick={togglePlay}>
-              <PlayButton />
-            </Nav.Link>
-            <Nav.Link onClick={toggleSpeed}>
-              <SpeedButton />
-            </Nav.Link>
-            <Nav.Link onClick={toggle3dView}>
-              <ViewButton />
-            </Nav.Link>
-          </Nav>
+          <Controls />
         </Container>
       </Navbar>
     </>
