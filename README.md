@@ -14,9 +14,9 @@ Please reach out to us via our website [Tilak.io](https://tilak.io/), we are hap
 
 TiPlot is a cool and simple visualising tool to analyse your drone flights. 
 With this tool you can: 
-- upload a ulg file, a csv or send a datadict via a socket (see snippets below)
-- display the trajectory in 3d
-- browse over all the fields and plot whatever you want. 
+- Upload a ulg file, a csv or send a datadict via a socket (see snippets below)
+- Display the trajectory in 3d
+- Browse over all the fields and plot whatever you want. 
 
 # Installation
 
@@ -43,7 +43,7 @@ Install the dependencies:
 
 ```
 yarn install
-pip3 install -r api/requirement.txt
+pip3 install -r api/requirements.txt
 ```
 
 Then you can run:
@@ -73,7 +73,7 @@ You can also create your own **parser** and send the parsed data via a websocket
 ```python
 import zmq
 import zlib
-import pickle5 as pickle
+import pickle
 import pyulog
 import pandas as pd
 
@@ -100,6 +100,7 @@ def parse_ulg(filename):
         else:
             name = data.name
         datadict[name] = pd.DataFrame(data.data)
+        datadict[name]['timestamp_tiplot'] = datadict[name]['timestamp'] / 1e6 # Timestamp in seconds
     return datadict
 ```
 
@@ -107,12 +108,13 @@ def parse_ulg(filename):
 ```python
 def parse_csv(filename):
     csv = pd.read_csv(filename)
-    csv['timestamp'] = pd.to_datetime(csv["timestamp"]).values.astype(np.int64) / 1e4
+    csv['timestamp'] = pd.to_datetime(csv["timestamp"]).values.astype(np.int64) / 1e3
+    csv['timestamp_tiplot'] = csv['timestamp'] / 1e6 # Timestamp in seconds
     datadict = {"data": csv} 
     return datadict
 ```
 
-Note that the `timestamp` columns needs to be converted to `microseconds`.
+Note that the you need to add new column called `timestamp_tiplot` which contains the timestamp converted to `seconds`.
 
 Once you defined your parser, you can use the `send_zipped_pickle` function to send your parsed data to TiPlot.
 
