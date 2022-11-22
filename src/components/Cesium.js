@@ -40,9 +40,7 @@ function Cesium({ socket }) {
 
     // cleaning up the interface
     viewer.animation.container.style.visibility = "hidden";
-    viewer.baseLayerPicker.container.style.visibility = "hidden";
     viewer.timeline.container.style.visibility = "hidden";
-    viewer.bottomContainer.style.visibility = "hidden";
     viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //Loop at the end
     viewer.forceResize();
     addTickListener();
