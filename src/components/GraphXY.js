@@ -24,6 +24,7 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
   const [data, setData] = useState([]);
   const [selected_x, setSelected_X] = useState();
   const [selected_y, setSelected_Y] = useState();
+  var plot;
 
   useEffect(() => {
     plotInitialData();
@@ -38,10 +39,10 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
       // return if its not the components that made the request
       if (index !== graphIndex) return;
       var options = [];
-      keys.forEach((value, index) => {
+      keys.forEach((value) => {
         var key = Object.keys(value)[0];
         var nested_keys = Object.values(value)[0];
-        nested_keys.forEach((nested, idx) => {
+        nested_keys.forEach((nested) => {
           options.push({
             label: `${key}/${nested}`,
             value: `${key}/${nested}`,
@@ -51,8 +52,21 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
         });
       });
       setXs(options);
+
+      plot = document.getElementById(`plot-${graphIndex}`);
+      new ResizeObserver(stretchHeight).observe(plot);
     });
 
+    const stretchHeight = () => {
+      var update = {
+        autoresize: true,
+        width: plot.clientWidth,
+        height: plot.clientHeight,
+        "yaxis.autorange": true,
+      };
+
+      if (plot.clientHeight != 0) Plotly.relayout(plot, update);
+    };
     // set the Y array
     socket.on("table_columns", (response) => {
       const index = response["index"];
@@ -162,7 +176,6 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
   };
 
   const handleClick = (event) => {
-    let i = 0;
     const index = event.points[0].pointIndex;
     const nbrPoints = event.points[0].data.x.length;
     // const x = event.points[0].x;
@@ -187,9 +200,9 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
 
   return (
     <div>
-      <Select options={xs} onChange={handleChangeX} value={selected_x} />
-      <Select options={ys} onChange={handleChangeY} value={selected_y} />
-      <div className="d-flex">
+      <Select className="multiselect" options={xs} onChange={handleChangeX} value={selected_x} />
+      <Select className="multiselect" options={ys} onChange={handleChangeY} value={selected_y} />
+      <div className="d-flex resizable">
         <Plot
           className="plot-xy"
           divId={`plot-${graphIndex}`}

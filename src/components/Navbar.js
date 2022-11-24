@@ -22,11 +22,13 @@ function TopBar({ page, toggle3dView, showView }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
   const [speed, setSpeed] = useState(1);
+  const [isFit, setFit] = useState(true);
 
   const handleClose = () => setShowSaveMsg(false);
   const saveCurrentLayoutNamed = () => setShowSaveMsg(true);
 
   useEffect(() => {
+    window.fitGraphsToScreen = true;
     mapLayouts();
   }, []);
 
@@ -60,20 +62,21 @@ function TopBar({ page, toggle3dView, showView }) {
     }
   };
 
+  const toggleFit = () => {
+    setFit(!isFit);
+    window.fitGraphsToScreen = !isFit;
+    fitGraphsToScreen();
+  };
+
   const fitGraphsToScreen = () => {
+    const defaultHeight = 450;
     const containers = document.getElementsByClassName("resizable");
-    const plots = document.getElementsByClassName("plot-yt");
     const multiselects = document.getElementsByClassName("multiselect");
     var additionalHeight = 130; // buttons + navbar height
     for (var i = 0; i < multiselects.length; i++)
       additionalHeight += multiselects[i].clientHeight;
-    const plotHeight = (window.innerHeight - additionalHeight) / plots.length;
-    var update = {
-      autoresize: true,
-      height: plotHeight,
-    };
-
-    for (var i = 0; i < plots.length; i++)
+    const plotHeight = window.fitGraphsToScreen ? (window.innerHeight - additionalHeight) / containers.length : defaultHeight;
+    for (var i = 0; i < containers.length; i++)
       containers[i].style.height = plotHeight + "px";
   };
 
@@ -85,13 +88,6 @@ function TopBar({ page, toggle3dView, showView }) {
     return value;
   };
 
-  // const saveCurrentLayout = () => {
-  //   var savedLayouts = parseLocalStorage("saved_layouts");
-  //   var currentLayout = parseLocalStorage("current_layout");
-  //   savedLayouts.push(currentLayout);
-  //   localStorage.setItem("saved_layouts", JSON.stringify(savedLayouts));
-  //   mapLayouts();
-  // };
 
   const onSave = () => {
     var name = document.getElementById("layout-name").value;
@@ -219,11 +215,18 @@ function TopBar({ page, toggle3dView, showView }) {
     );
   }
 
+  function FitButton() {
+    if (isFit)
+      return <FaExpand style={{ color: "#0af" }} title="Fit graphs to screen" />;
+    else
+      return <FaExpand style={{ color: "#888" }} title="Fit graphs to screen" />;
+  }
+
   function Controls() {
     if (window.viewer)
       return (<Nav>
-        <Nav.Link onClick={fitGraphsToScreen}>
-          <FaExpand style={{ color: "#0af" }} title="Fit graphs to screen" />
+        <Nav.Link onClick={toggleFit}>
+          <FitButton />
         </Nav.Link>
         <Nav.Link onClick={togglePlay}>
           <PlayButton />
