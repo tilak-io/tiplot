@@ -237,7 +237,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
 
     for (let i = 0; i < plots.length; i++) {
       if (plots[i].data == undefined) continue;
-      if (plots[i].data.length == 0) continue;
       Plotly.relayout(plots[i], update);
     }
   };
