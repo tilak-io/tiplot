@@ -218,8 +218,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     var min_values = [];
 
     for (let i = 0; i < plots.length; i++) {
-      if (plots[i].data == undefined) return;
-      if (plots[i].data.length == 0) return;
+      if (plots[i].data == undefined) continue;
+      if (plots[i].data.length == 0) continue;
       const x_min = Math.min.apply(Math, plots[i].data[0].x);
       const x_max = Math.max.apply(Math, plots[i].data[0].x);
       min_values.push(x_min);
@@ -236,6 +236,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     };
 
     for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data == undefined) continue;
       Plotly.relayout(plots[i], update);
     }
   };
