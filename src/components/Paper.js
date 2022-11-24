@@ -5,9 +5,11 @@ import GraphXY from "./GraphXY";
 function Paper({ socket }) {
   const [graphNbr, setGraphNbr] = useState(0);
   const [rows, setRows] = useState([]);
+  const [currentId, setId] = useState(0);
 
   useEffect(() => {
     initializeLayout();
+    fitGraphsToScreen();
   }, [graphNbr]);
 
   const addXT = (index) => {
@@ -22,7 +24,8 @@ function Paper({ socket }) {
     );
     setRows([...rows, graph]);
     setGraphNbr(graphNbr + 1);
-    addGraphToLayout("yt");
+    setId(currentId + 1);
+    addGraphToLayout("yt", index);
   };
 
   const addXY = (index) => {
@@ -37,7 +40,8 @@ function Paper({ socket }) {
     );
     setRows([...rows, graph]);
     setGraphNbr(graphNbr + 1);
-    addGraphToLayout("xy");
+    setId(currentId + 1);
+    addGraphToLayout("xy", index);
   };
 
   const parseLocalStorage = (key) => {
@@ -61,28 +65,29 @@ function Paper({ socket }) {
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
-  const addGraphToLayout = (type) => {
+  const addGraphToLayout = (type, id) => {
     var layout = parseLocalStorage("current_layout");
-    layout.push({ type: type, keys: [] });
+    layout.push({ id: id, type: type, keys: [] });
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
-  const updateKeys = (index, keys) => {
+  const updateKeys = (id, keys) => {
     var layout = parseLocalStorage("current_layout");
-    layout[index]["keys"] = keys;
+    layout.forEach(plot => { if (plot["id"] === id) plot["keys"] = keys });
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
   const initializeLayout = () => {
     var layout = parseLocalStorage("current_layout");
     var graphs = [];
-    layout.forEach((plot, index) => {
+    var lastPlot;
+    layout.forEach((plot) => {
       var graph;
       if (plot.type === "yt")
         graph = (
           <Graph
-            key={index}
-            graphIndex={index}
+            key={plot.id}
+            graphIndex={plot.id}
             socket={socket}
             updateKeys={updateKeys}
             initialKeys={plot.keys}
@@ -92,8 +97,8 @@ function Paper({ socket }) {
       if (plot.type === "xy")
         graph = (
           <GraphXY
-            key={index}
-            graphIndex={index}
+            key={plot.id}
+            graphIndex={plot.id}
             socket={socket}
             initialKeys={plot.keys}
             updateKeys={updateKeys}
@@ -101,17 +106,31 @@ function Paper({ socket }) {
           />
         );
       graphs.push(graph);
+      lastPlot = plot;
     });
     setRows(graphs);
     setGraphNbr(layout.length);
+    if (lastPlot !== undefined)
+      setId(lastPlot.id + 1);
   };
 
   const removeGraph = (index) => {
     var layout = parseLocalStorage("current_layout");
-    layout.splice(index, 1);
-    localStorage.setItem("current_layout", JSON.stringify(layout));
-    setRows([]); // force clear
-    setGraphNbr(graphNbr - 1); // this will trigger initializeLayout()
+    const filtered_layout = layout.filter(graph => graph.id != index);
+    localStorage.setItem("current_layout", JSON.stringify(filtered_layout));
+    initializeLayout();
+  };
+
+  const fitGraphsToScreen = () => {
+    if (!window.fitGraphsToScreen) return;
+    const containers = document.getElementsByClassName("resizable");
+    const multiselects = document.getElementsByClassName("multiselect");
+    var additionalHeight = 130; // buttons + navbar height
+    for (var i = 0; i < multiselects.length; i++)
+      additionalHeight += multiselects[i].clientHeight;
+    const plotHeight = (window.innerHeight - additionalHeight) / containers.length;
+    for (var i = 0; i < containers.length; i++)
+      containers[i].style.height = plotHeight + "px";
   };
 
   return (
@@ -123,21 +142,21 @@ function Paper({ socket }) {
         <div className="container">
           <button
             className="btn btn-primary btn"
-            onClick={() => addXT(graphNbr)}
+            onClick={() => addXT(currentId)}
           >
             + XT
           </button>
           &nbsp;
           <button
             className="btn btn-secondary btn"
-            onClick={() => addXY(graphNbr)}
+            onClick={() => addXY(currentId)}
           >
             + XY
           </button>
           &nbsp;
           <button
             className="btn btn-danger btn"
-            onClick={graphNbr === 0 ? null : handleRemove}
+            onClick={rows.length === 0 ? null : handleRemove}
           >
             - Remove
           </button>

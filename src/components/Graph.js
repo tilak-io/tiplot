@@ -241,6 +241,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     }
   };
 
+
+
   const handleHover = (event) => {
     const x = event.points[0].x;
     if (window.time_array !== undefined) {

@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Button } from "react-bootstrap";
-import { MdLegendToggle, MdZoomOutMap } from "react-icons/md";
-import { BsArrowBarDown, BsArrowBarUp, BsTrash } from "react-icons/bs";
+import { MdZoomOutMap } from "react-icons/md";
+import { BsTrash } from "react-icons/bs";
 import { HiOutlineTicket } from "react-icons/hi";
 import { AiOutlineDotChart, AiOutlineLineChart } from "react-icons/ai";
 import { TbChartDots } from "react-icons/tb";
@@ -51,16 +50,6 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
       setLegendAnchor(legendAnchor + 1);
       setShowLegend(true);
     }
-  };
-
-  const changeHeight = (value) => {
-    const plot = document.getElementById(plotId);
-    const currentHeight = plot.clientHeight;
-    if (currentHeight + value < 150) return;
-    var update = {
-      height: currentHeight + value,
-    };
-    Plotly.relayout(plot, update);
   };
 
   const autoscale = () => {
