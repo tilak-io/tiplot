@@ -73,7 +73,9 @@ function Paper({ socket }) {
 
   const updateKeys = (id, keys) => {
     var layout = parseLocalStorage("current_layout");
-    layout.forEach(plot => { if (plot["id"] === id) plot["keys"] = keys });
+    layout.forEach((plot) => {
+      if (plot["id"] === id) plot["keys"] = keys;
+    });
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
@@ -110,13 +112,12 @@ function Paper({ socket }) {
     });
     setRows(graphs);
     setGraphNbr(layout.length);
-    if (lastPlot !== undefined)
-      setId(lastPlot.id + 1);
+    if (lastPlot !== undefined) setId(lastPlot.id + 1);
   };
 
   const removeGraph = (index) => {
     var layout = parseLocalStorage("current_layout");
-    const filtered_layout = layout.filter(graph => graph.id != index);
+    const filtered_layout = layout.filter((graph) => graph.id != index);
     localStorage.setItem("current_layout", JSON.stringify(filtered_layout));
     initializeLayout();
   };
@@ -128,7 +129,8 @@ function Paper({ socket }) {
     var additionalHeight = 130; // buttons + navbar height
     for (var i = 0; i < multiselects.length; i++)
       additionalHeight += multiselects[i].clientHeight;
-    const plotHeight = (window.innerHeight - additionalHeight) / containers.length;
+    const plotHeight =
+      (window.innerHeight - additionalHeight) / containers.length;
     for (var i = 0; i < containers.length; i++)
       containers[i].style.height = plotHeight + "px";
   };

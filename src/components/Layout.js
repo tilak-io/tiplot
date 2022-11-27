@@ -1,6 +1,5 @@
 import "../css/layout.css";
 import { useState, useEffect } from "react";
-import Plotly from "plotly.js/dist/plotly";
 import Paper from "./Paper";
 import Cesium from "./Cesium";
 import TopBar from "./Navbar";

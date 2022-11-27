@@ -75,7 +75,9 @@ function TopBar({ page, toggle3dView, showView }) {
     var additionalHeight = 130; // buttons + navbar height
     for (var i = 0; i < multiselects.length; i++)
       additionalHeight += multiselects[i].clientHeight;
-    const plotHeight = window.fitGraphsToScreen ? (window.innerHeight - additionalHeight) / containers.length : defaultHeight;
+    const plotHeight = window.fitGraphsToScreen
+      ? (window.innerHeight - additionalHeight) / containers.length
+      : defaultHeight;
     for (var i = 0; i < containers.length; i++)
       containers[i].style.height = plotHeight + "px";
   };
@@ -87,7 +89,6 @@ function TopBar({ page, toggle3dView, showView }) {
     else value = JSON.parse(value);
     return value;
   };
-
 
   const onSave = () => {
     var name = document.getElementById("layout-name").value;
@@ -217,27 +218,33 @@ function TopBar({ page, toggle3dView, showView }) {
 
   function FitButton() {
     if (isFit)
-      return <FaExpand style={{ color: "#0af" }} title="Fit graphs to screen" />;
+      return (
+        <FaExpand style={{ color: "#0af" }} title="Fit graphs to screen" />
+      );
     else
-      return <FaExpand style={{ color: "#888" }} title="Fit graphs to screen" />;
+      return (
+        <FaExpand style={{ color: "#888" }} title="Fit graphs to screen" />
+      );
   }
 
   function Controls() {
     if (window.viewer)
-      return (<Nav>
-        <Nav.Link onClick={toggleFit}>
-          <FitButton />
-        </Nav.Link>
-        <Nav.Link onClick={togglePlay}>
-          <PlayButton />
-        </Nav.Link>
-        <Nav.Link onClick={toggleSpeed}>
-          <SpeedButton />
-        </Nav.Link>
-        <Nav.Link onClick={toggle3dView}>
-          <ViewButton />
-        </Nav.Link>
-      </Nav>);
+      return (
+        <Nav>
+          <Nav.Link onClick={toggleFit}>
+            <FitButton />
+          </Nav.Link>
+          <Nav.Link onClick={togglePlay}>
+            <PlayButton />
+          </Nav.Link>
+          <Nav.Link onClick={toggleSpeed}>
+            <SpeedButton />
+          </Nav.Link>
+          <Nav.Link onClick={toggle3dView}>
+            <ViewButton />
+          </Nav.Link>
+        </Nav>
+      );
   }
 
   return (
