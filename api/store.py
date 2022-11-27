@@ -37,6 +37,7 @@ class Store:
         keys = list(self.datadict.keys())
         return keys
 
+    # TODO: Do not merge a table with itself
     def getEntitiesProps(self):
         data = []
         for e in self.entities:
@@ -63,7 +64,6 @@ class Store:
         return nested
 
     def getNestedKeys(self):
-        keys = list(self.datadict.keys())
         nested = []
         for key in self.datadict.keys():
             k = list(self.datadict[key].keys())

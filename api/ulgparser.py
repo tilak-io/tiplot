@@ -6,8 +6,9 @@ from parser import Parser
 class ULGParser(Parser):
     def __init__(self):
         super().__init__()
-        self.name = "ULG Parser"
+        self.name = "ulg_parser"
         self.ulg = None
+        self.initEntities()
 
     def parse(self,filename):
         self.ulg = pyulog.ULog(filename)
@@ -21,7 +22,7 @@ class ULGParser(Parser):
             self.datadict[name]['timestamp_tiplot'] = self.datadict[name]['timestamp'] / 1e6
         return [self.datadict, self.entities]
 
-    def initDefaultEntities(self):
+    def setDefaultEntities(self):
         entity = CesiumEntity(name='ulg default entity',
                               position={
                                   'table':'vehicle_global_position',

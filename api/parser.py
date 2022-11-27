@@ -1,10 +1,14 @@
+from cesium_entity import CesiumEntity
+from os import path
+import json
+
 class Parser:
     def __init__(self):
-        self.name = "Generic Parser"
+        self.name = "generic_parser"
         self.entities = []
         self.datadict = {}
         self.layout = None
-        self.initDefaultEntities()
+
 
     def parse(self,filename):
         print("Parsing file")
@@ -15,5 +19,22 @@ class Parser:
     def setLayout(self, layout):
         self.layout = layout
 
-    def initDefaultEntities(self):
+    def setDefaultEntities(self):
         pass
+
+    def initEntities(self):
+        config_folder = path.expanduser("~/Documents/tiplot/config/")
+        config_file = config_folder + self.name + ".json"
+        if (path.exists(config_file)):
+            print("+ " + self.name + " config found")
+            print("+ " + config_file)
+            file = open(config_file)
+            entities = json.load(file)
+            for entity in entities:
+                mapped_entity = CesiumEntity.fromJson(entity)
+                self.addEntity(mapped_entity)
+        else:
+            print("- " + self.name + " config not found")
+            print("- " + config_file)
+            print("- Using default config for: " + self.name)
+            self.setDefaultEntities()
