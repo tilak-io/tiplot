@@ -24,6 +24,8 @@ class Parser:
 
     def initEntities(self):
         config_folder = path.expanduser("~/Documents/tiplot/config/")
+        if not path.exists(config_folder):
+            makedirs(config_folder)
         config_file = config_folder + self.name + ".json"
         if (path.exists(config_file)):
             print("+ " + self.name + " config found")
