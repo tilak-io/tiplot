@@ -30,6 +30,8 @@ function TopBar({ page, toggle3dView, showView }) {
   useEffect(() => {
     window.fitGraphsToScreen = true;
     mapLayouts();
+
+    // eslint-disable-next-line
   }, []);
 
   const togglePlay = () => {
@@ -78,8 +80,8 @@ function TopBar({ page, toggle3dView, showView }) {
     const plotHeight = window.fitGraphsToScreen
       ? (window.innerHeight - additionalHeight) / containers.length
       : defaultHeight;
-    for (var i = 0; i < containers.length; i++)
-      containers[i].style.height = plotHeight + "px";
+    for (var j = 0; j < containers.length; j++)
+      containers[j].style.height = plotHeight + "px";
   };
 
   const parseLocalStorage = (key) => {
@@ -274,7 +276,9 @@ function TopBar({ page, toggle3dView, showView }) {
 
       {/* Actual Navbar */}
       <Navbar variant="dark" fixed="top" className="nav-color">
-        <a id="export-layout" style={{ display: "none" }}></a>
+        <a id="export-layout" style={{ display: "none" }} href="#export-layout">
+          export layout
+        </a>
         <input id="import-layout" type="file" style={{ display: "none" }} />
         <Container>
           <Navbar.Brand target="_blank" href="https://tilak.io">

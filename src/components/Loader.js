@@ -37,6 +37,8 @@ function Loader({ socket }) {
     socket.on("connect", () => {
       setConnected(true);
     });
+
+    // eslint-disable-next-line
   }, []);
 
   const parse = (file) => {
