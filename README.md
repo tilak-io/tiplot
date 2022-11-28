@@ -68,6 +68,10 @@ TiPlot currently provides a parser for **ULG** logs (PX4 logs) and a default par
 
 ![Entities](docs/demo.gif)
 
+If you want to draw custom entites, you can use the default config templates found in the `templates` folder.
+Copy the config template into `~/Documents/tiplot`.
+The parser config is a json list ([see examples](#example-of-the-default-ulg-entity))
+
 You can also create your own **parser** and send the parsed data via a websocket on port `5555`.
 
 ```python
@@ -188,15 +192,15 @@ entity_csv_default = {
     'useRPY': True,
     'position':{
       'table': 'data',
-      'longitude': 'lon_x',
-      'lattitude': 'lat_x',
-      'altitude': 'altitude_x'
+      'longitude': 'lon',
+      'lattitude': 'lat',
+      'altitude': 'altitude'
   },
     'attitude':{
       'table': 'data',
-      'roll': 'roll_x',
-      'pitch': 'pitch_x',
-      'yaw': 'yaw_x',
+      'roll': 'roll',
+      'pitch': 'pitch',
+      'yaw': 'yaw',
   }
 }
 
@@ -206,7 +210,9 @@ Having multiple entities should help you analyse and spot the differences betwee
 ```python
 send_zipped_pickle(socket, [datadict, [desired_behaviour, actual_behaviour]])
 ```
+
 ![Entities](docs/entities.gif)
+
 
 ## Layouts
 
