@@ -27,14 +27,14 @@ class CSVParser(Parser):
             useRPY=True,
             position={
                 'table':'data',
-                'longitude':'lon_x',
-                'lattitude':'lat_x',
-                'altitude':'altitude_x',
+                'longitude':'lon',
+                'lattitude':'lat',
+                'altitude':'altitude',
             },
             attitude={
                 'table':'data',
-                'roll':'roll_x',
-                'pitch':'pitch_x',
-                'yaw':'yaw_x',
+                'roll':'roll',
+                'pitch':'pitch',
+                'yaw':'yaw',
             })
         self.addEntity(entity) 
