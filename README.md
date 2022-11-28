@@ -66,7 +66,7 @@ Then you can run:
 
 TiPlot currently provides a parser for **ULG** logs (PX4 logs) and a default parser for **CSV** files. So you can directly import/upload your log file via the loader page once your app is running. (logs will automatically upload/copy files to `~/Documents/tiplot/logs`)
 
-![Entities](docs/demo.gif)
+![Entities](docs/demo_ulg.gif)
 
 If you want to draw custom entites, you can use the default config templates found in the `templates` folder.
 Copy the config template into `~/Documents/tiplot`.
@@ -211,7 +211,7 @@ Having multiple entities should help you analyse and spot the differences betwee
 send_zipped_pickle(socket, [datadict, [desired_behaviour, actual_behaviour]])
 ```
 
-![Entities](docs/entities.gif)
+<!-- ![Entities](docs/entities.gif) -->
 
 
 ## Layouts
@@ -224,4 +224,4 @@ In addition, you can save and name multiple layouts and load them whenever you w
 
 You can also import/export the layout in a `json` format.
 
-![Entities](docs/layouts.gif)
+<!-- ![Entities](docs/layouts.gif) -->
