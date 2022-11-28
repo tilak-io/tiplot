@@ -25,11 +25,9 @@ if not path.exists(logs_dir):
 
 thread = Thread()
 
-
-
 def choose_parser(file, logs_dir):
-    full_path = logs_dir + file
     parsers = [ULGParser(), CSVParser()]
+    full_path = logs_dir + file
     for p in parsers:
         try:
             [datadict, entities] = p.parse(full_path)

@@ -200,8 +200,18 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
 
   return (
     <div>
-      <Select className="multiselect" options={xs} onChange={handleChangeX} value={selected_x} />
-      <Select className="multiselect" options={ys} onChange={handleChangeY} value={selected_y} />
+      <Select
+        className="multiselect"
+        options={xs}
+        onChange={handleChangeX}
+        value={selected_x}
+      />
+      <Select
+        className="multiselect"
+        options={ys}
+        onChange={handleChangeY}
+        value={selected_y}
+      />
       <div className="d-flex resizable">
         <Plot
           className="plot-xy"

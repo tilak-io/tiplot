@@ -108,7 +108,7 @@ function Cesium({ socket }) {
       const time = Cesium.JulianDate.addSeconds(
         startTime,
         // timeStepInSeconds * i,
-        (entity_data[i].timestamp_tiplot - entity_data[0].timestamp_tiplot),
+        entity_data[i].timestamp_tiplot - entity_data[0].timestamp_tiplot,
         new Cesium.JulianDate()
       );
       time_array.push(time);

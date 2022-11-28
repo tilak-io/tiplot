@@ -6,7 +6,8 @@ from parser import Parser
 class CSVParser(Parser):
     def __init__(self):
         super().__init__()
-        self.name = "CSV Parser"
+        self.name = "csv_parser"
+        self.initEntities()
 
     def parse(self,filename):
         csv = pd.read_csv(filename)
@@ -19,21 +20,21 @@ class CSVParser(Parser):
         self.datadict = {"data": csv} 
         return [self.datadict, self.entities]
 
-    def initDefaultEntities(self):
+    def setDefaultEntities(self):
         entity = CesiumEntity(
             name='csv default entity',
             alpha=1,
             useRPY=True,
             position={
                 'table':'data',
-                'longitude':'lon_x',
-                'lattitude':'lat_x',
-                'altitude':'altitude_x',
+                'longitude':'lon',
+                'lattitude':'lat',
+                'altitude':'altitude',
             },
             attitude={
                 'table':'data',
-                'roll':'roll_x',
-                'pitch':'pitch_x',
-                'yaw':'yaw_x',
+                'roll':'roll',
+                'pitch':'pitch',
+                'yaw':'yaw',
             })
         self.addEntity(entity) 

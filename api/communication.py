@@ -1,6 +1,5 @@
 import zmq, zlib, time, pickle, store
 from cesium_entity import CesiumEntity
-from ulgparser import ULGParser
 from threading import Thread
 
 class Comm(Thread):
@@ -37,7 +36,6 @@ class Comm(Thread):
 
 
     def listen_for_data(self):
-        parser = ULGParser()
         while True:
             try:
                 [datadict, json_entities] = self.recv_zipped_pickle(zmq.NOBLOCK)
