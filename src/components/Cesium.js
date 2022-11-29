@@ -43,29 +43,18 @@ function Cesium({ socket }) {
     viewer.timeline.container.style.visibility = "hidden";
     viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //Loop at the end
     viewer.forceResize();
-    addTickListener();
+
+    // update the Timeline indicator on each frame
+    viewer.scene.preRender.addEventListener(function () {
+      updateTimelineIndicator();
+    });
+
     window.viewer = viewer;
 
-    //    const osmBuildings = viewer.scene.primitives.add(
-    //      Cesium.createOsmBuildings()
-    //    );
     return () => {
       window.location.reload();
     };
   }, []);
-
-  const addTickListener = () => {
-    viewer.useDefaultRenderLoop = false;
-
-    function renderLoop() {
-      updateTimelineIndicator();
-      viewer.resize();
-      viewer.render();
-      requestAnimationFrame(renderLoop);
-    }
-
-    requestAnimationFrame(renderLoop);
-  };
 
   const updateTimelineIndicator = () => {
     // if (viewer.clock.shouldAnimate) {
