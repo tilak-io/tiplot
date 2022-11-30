@@ -37,15 +37,17 @@ function Cesium({ socket }) {
     };
   });
 
-  var cube, positions, amount;
-  var pos = [],
+  var cube;
+
+  var positions = [],
+    quaternions = [],
     currentPos = 24000;
 
   const drawPath = (entity) => {
     // const amount = entity.props.length;
-    const points = [];
-    amount = entity.props.length;
-    positions = new Float32Array(amount * 3);
+    console.log(entity);
+    const amount = entity.props.length;
+    const points = new Float32Array(amount * 3);
     const sizes = new Float32Array(amount);
     const vertex = new THREE.Vector3();
 
@@ -53,14 +55,24 @@ function Cesium({ socket }) {
       vertex.x = entity.props[i].longitude;
       vertex.y = -entity.props[i].altitude;
       vertex.z = entity.props[i].lattitude;
-      points.push(vertex.x, vertex.y, vertex.z);
-      pos.push(new THREE.Vector3(vertex.x, vertex.y, vertex.z));
-      vertex.toArray(positions, i * 3);
+
+      positions.push(new THREE.Vector3(vertex.x, vertex.y, vertex.z));
+      vertex.toArray(points, i * 3);
+
+      quaternions.push(
+        new THREE.Quaternion(
+          entity.props[i].q1,
+          -entity.props[i].q3,
+          entity.props[i].q2,
+          entity.props[i].q0
+        )
+      );
       sizes[i] = 10;
     }
+    console.log(quaternions);
 
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("position", new THREE.BufferAttribute(points, 3));
 
     var material = new THREE.MeshBasicMaterial({
       color: 0x00ff00,
@@ -73,7 +85,7 @@ function Cesium({ socket }) {
     // window.positions = positions;
     camera.position.z = 5;
     cube = new THREE.Mesh(
-      new THREE.BoxBufferGeometry(0.5, 0.1, 1),
+      new THREE.BoxGeometry(1, 0.1, 0.3),
       new THREE.MeshNormalMaterial()
     );
     scene.add(cube);
@@ -87,14 +99,15 @@ function Cesium({ socket }) {
 
   const animation = () => {
     if (!cube) return;
-    // if (currentPos >= amount) currentPos = 24000;
+    if (currentPos >= 38000) currentPos = 24000;
 
     let t = clock.getElapsedTime() * 0.1;
     stalker.subVectors(camera.position, cube.position);
 
-    cube.position.x = pos[currentPos].x;
-    cube.position.y = pos[currentPos].y;
-    cube.position.z = pos[currentPos].z;
+    cube.position.x = positions[currentPos].x;
+    cube.position.y = positions[currentPos].y;
+    cube.position.z = positions[currentPos].z;
+    cube.setRotationFromQuaternion(quaternions[currentPos]);
 
     currentPos++;
     orbit.object.position.copy(cube.position).add(stalker);
