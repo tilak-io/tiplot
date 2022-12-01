@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import "../css/cesium.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 function Cesium({ socket }) {
   const mount = useRef(0);
@@ -37,7 +38,7 @@ function Cesium({ socket }) {
     };
   });
 
-  var cube;
+  var drone;
 
   var positions = [],
     quaternions = [],
@@ -45,12 +46,10 @@ function Cesium({ socket }) {
 
   const drawPath = (entity) => {
     // const amount = entity.props.length;
-    console.log(entity);
     const amount = entity.props.length;
     const points = new Float32Array(amount * 3);
     const sizes = new Float32Array(amount);
     const vertex = new THREE.Vector3();
-
     for (let i = 0; i < amount; i++) {
       vertex.x = entity.props[i].longitude;
       vertex.y = -entity.props[i].altitude;
@@ -69,8 +68,6 @@ function Cesium({ socket }) {
       );
       sizes[i] = 10;
     }
-    console.log(quaternions);
-
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(points, 3));
 
@@ -84,34 +81,35 @@ function Cesium({ socket }) {
 
     // window.positions = positions;
     camera.position.z = 5;
-    cube = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 0.1, 0.3),
+    drone = new THREE.Mesh(
+      new THREE.ConeGeometry(0.3, 1, 17),
       new THREE.MeshNormalMaterial()
     );
-    scene.add(cube);
+    scene.add(drone);
   };
 
-  var grid = new THREE.GridHelper(100, 100);
-  scene.add(grid);
+  var gridx = new THREE.GridHelper(100, 100);
+  scene.add(gridx);
 
   var stalker = new THREE.Vector3();
   var clock = new THREE.Clock();
 
   const animation = () => {
-    if (!cube) return;
-    if (currentPos >= 38000) currentPos = 24000;
+    if (!drone) return;
+    if (currentPos >= 34395) currentPos = 24000;
 
     let t = clock.getElapsedTime() * 0.1;
-    stalker.subVectors(camera.position, cube.position);
+    stalker.subVectors(camera.position, drone.position);
 
-    cube.position.x = positions[currentPos].x;
-    cube.position.y = positions[currentPos].y;
-    cube.position.z = positions[currentPos].z;
-    cube.setRotationFromQuaternion(quaternions[currentPos]);
+    drone.position.x = positions[currentPos].x;
+    drone.position.y = positions[currentPos].y;
+    drone.position.z = positions[currentPos].z;
+    drone.setRotationFromQuaternion(quaternions[currentPos]);
+    drone.rotation.z -= Math.PI / 2;
 
     currentPos++;
-    orbit.object.position.copy(cube.position).add(stalker);
-    orbit.target.copy(cube.position);
+    orbit.object.position.copy(drone.position).add(stalker);
+    orbit.target.copy(drone.position);
     orbit.update();
 
     renderer.render(scene, camera);
