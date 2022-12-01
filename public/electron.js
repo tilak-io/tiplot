@@ -8,7 +8,11 @@ const api = path.join(process.resourcesPath, "api/server");
 // const api = "/home/hamza/projects/github/tiplot/backend/server";
 
 var spawn = require("child_process").spawn;
-var start = spawn(api, { windowsHide: true, shell: process.env.ComSpec, stdio: 'inherit' });
+var start = spawn(api, {
+  windowsHide: true,
+  shell: process.env.ComSpec,
+  stdio: "inherit",
+});
 
 function createWindow() {
   // Create the browser window.
@@ -38,7 +42,7 @@ app.whenReady().then(() => {
   createWindow();
 
   // Ctrl + C console
-  process.on('SIGINT', e => {
+  process.on("SIGINT", (e) => {
     start.kill();
     app.quit();
   });

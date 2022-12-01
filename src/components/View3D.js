@@ -3,8 +3,6 @@ import "../css/cesium.css";
 import Entity from "../models/Entity.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { render } from "@testing-library/react";
 
 function View3D({ socket }) {
   const mount = useRef(0);
@@ -12,11 +10,26 @@ function View3D({ socket }) {
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
   camera.position.set(5, 5, 5);
+  // camera.rotation.x = Math.PI / 2;
+  camera.rotateX(Math.PI / 2);
 
   const orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enableDamping = true;
   const stalker = new THREE.Vector3();
   const entities = [];
+
+  // Scene setup
+  var gridx = new THREE.GridHelper(100, 100);
+  scene.add(gridx);
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+  scene.add(ambientLight);
+
+  scene.add(new THREE.AxesHelper(5));
+
+  const dirLight = new THREE.DirectionalLight(0xefefff, 1.5);
+  dirLight.position.set(10, 10, 10);
+  scene.add(dirLight);
 
   useEffect(() => {
     // Getting the entities
@@ -38,21 +51,19 @@ function View3D({ socket }) {
 
   const initEntity = (e, index) => {
     entities.push(new Entity(e));
-    scene.add(entities[index].getPath());
-    scene.add(entities[index].getMesh());
+    entities[index].loadPath(scene);
+    entities[index].loadObj(scene);
   };
 
   const updateEntities = () => {
     const target = entities[0];
+    if (!target.mesh) return;
     stalker.subVectors(camera.position, target.mesh.position);
     entities.forEach((e) => e.update());
     orbit.object.position.copy(target.mesh.position).add(stalker);
     orbit.target.copy(target.mesh.position);
     orbit.update();
   };
-
-  var gridx = new THREE.GridHelper(100, 100);
-  scene.add(gridx);
 
   const animation = () => {
     if (entities.length === 0) return;

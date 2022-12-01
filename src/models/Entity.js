@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
 export default class Entity {
   startIndex = 24000;
   positions = [];
@@ -6,12 +8,9 @@ export default class Entity {
   timestamp = [];
   currentIndex = this.startIndex;
   isMoving = true;
-  mesh = new THREE.Mesh(
-    new THREE.ConeGeometry(0.3, 1, 17),
-    new THREE.MeshNormalMaterial()
-  );
   pathPoints = null;
   path = new THREE.Line();
+  mesh = null;
 
   constructor(e) {
     const size = e.props.length;
@@ -22,6 +21,33 @@ export default class Entity {
       this.addPositionPoint(e.props[i]);
       this.addQuaternion(e.props[i]);
     }
+  }
+
+  loadObj(scene) {
+    const instance = this;
+    const loader = new GLTFLoader();
+    loader.load(
+      "http://localhost:5000/model",
+      function (gltf) {
+        console.log("loaded drone");
+        instance.mesh = gltf.scene;
+        scene.add(gltf.scene);
+      },
+      undefined,
+      function (error) {
+        console.log(error);
+        console.log("failed to load drone, setting up default cone");
+        const width = 0.5; // ui: width
+        const height = 0.3; // ui: height
+        const depth = 2; // ui: depth
+        const geometry = new THREE.BoxGeometry(width, height, depth);
+        instance.mesh = new THREE.Mesh(
+          geometry,
+          new THREE.MeshNormalMaterial()
+        );
+        scene.add(instance.mesh);
+      }
+    );
   }
 
   addPositionPoint(props) {
@@ -57,7 +83,7 @@ export default class Entity {
     point.toArray(this.pathPoints, i * 3);
   }
 
-  getPath() {
+  loadPath(scene) {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       "position",
@@ -68,19 +94,17 @@ export default class Entity {
     });
 
     const line = new THREE.Line(geometry, material);
-    return line;
-  }
-
-  getMesh() {
-    return this.mesh;
+    scene.add(line);
   }
 
   update() {
     if (this.positions.length === 0) return;
+    if (!this.mesh) return;
     if (!window.currentX) {
       this.currentIndex = 0;
     } else {
       this.currentIndex = this.timestamp.indexOf(window.currentX);
+
       // TODO: handle situations where x is not fout in timestamp
     }
 
@@ -89,8 +113,9 @@ export default class Entity {
     this.mesh.position.y = this.positions[this.currentIndex].y;
     this.mesh.position.z = this.positions[this.currentIndex].z;
 
-    this.mesh.setRotationFromQuaternion(this.quaternions[this.currentIndex]);
-    this.mesh.rotation.z -= Math.PI / 2;
+    // this.mesh.setRotationFromQuaternion(this.quaternions[this.currentIndex]);
+    // this.mesh.rotation.y += Math.PI;
+    // this.mesh.rotation.y += Math.PI / 2;
 
     if (this.isMoving) {
       this.currentIndex++;

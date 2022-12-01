@@ -1,12 +1,12 @@
 from engineio.async_drivers import gevent
-from flask import Flask, request
+from flask import Flask, request, send_file
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from threading import Thread
 from ulgparser import ULGParser
 from csvparser import CSVParser
 from time import localtime, strftime
-from os import makedirs, path
+from os import makedirs, path, getcwd
 from glob import glob
 from communication import Comm
 from datetime import datetime
@@ -74,6 +74,12 @@ def upload_log():
 
     return {'ok': ok}
 
+
+@app.route('/model')
+def model_3d():
+    model = getcwd() + "/../src/obj/drone.glb"
+
+    return send_file(model)
 
 
 
