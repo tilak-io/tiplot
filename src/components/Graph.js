@@ -243,10 +243,9 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
 
   const handleHover = (event) => {
     const x = event.points[0].x;
-    if (window.time_array !== undefined) {
-      if (event.event.altKey) {
-        updateTimelineIndicator(x);
-      }
+    const idx = event.points[0].pointIndex;
+    if (event.event.altKey) {
+      updateTimelineIndicator(x, idx);
     }
 
     // const plots = document.getElementsByClassName("plot-yt");
@@ -323,17 +322,18 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     });
   };
 
-  const updateTimelineIndicator = (t) => {
+  const updateTimelineIndicator = (t, index) => {
     window.currentX = t;
-    plot = document.getElementById(`plot-${graphIndex}`);
-    const timestamp = t - window.t0;
-    window.viewer.clock.currentTime.secondsOfDay =
-      window.viewer.clock.startTime.secondsOfDay + timestamp;
-    // drawTimelineIndicator(window.currentX);
+    window.idx = index;
+    // const timestamp = t - window.t0;
+    // window.viewer.clock.currentTime.secondsOfDay =
+    //   window.viewer.clock.startTime.secondsOfDay + timestamp;
+    drawTimelineIndicator(window.currentX);
   };
 
   const drawTimelineIndicator = (x) => {
     const plots = document.getElementsByClassName("plot-yt");
+
     const update = {
       shapes: [
         {
@@ -351,6 +351,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
         },
       ],
     };
+
     for (let i = 0; i < plots.length; i++) {
       Plotly.relayout(plots[i], update);
     }
