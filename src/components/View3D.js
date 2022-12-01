@@ -4,6 +4,7 @@ import Entity from "../models/Entity.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { render } from "@testing-library/react";
 
 function View3D({ socket }) {
   const mount = useRef(0);
@@ -29,6 +30,7 @@ function View3D({ socket }) {
       mount.current.appendChild(renderer.domElement);
     }
     renderer.setAnimationLoop(animation);
+
     return () => {
       window.location.reload();
     };
@@ -58,10 +60,33 @@ function View3D({ socket }) {
   const animation = () => {
     if (entities.length === 0) return;
     updateEntities();
+
+    resizeCanvasToDisplaySize();
     renderer.render(scene, camera);
   };
+  var w = 0;
 
-  return <div ref={mount} />;
+  const resizeCanvasToDisplaySize = () => {
+    const view = document.getElementById("view-3d");
+    const canvas = renderer.domElement;
+
+    const width = view.clientWidth;
+    const height = view.clientHeight;
+
+    if (canvas.width !== width || canvas.height !== height) {
+      renderer.setSize(width, height, false);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+  };
+
+  return (
+    <div id="view-3d">
+      <div ref={mount} />
+    </div>
+  );
 }
 
 export default View3D;

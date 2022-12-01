@@ -12,11 +12,11 @@ function Layout({ socket }) {
   const [size, setSize] = useState(defaultSize);
   const [showView, setShowView] = useState(true);
 
-  // const toggle3dView = () => {
-  //   setShowView(!showView);
-  //   if (showView) setSize(window.innerWidth);
-  //   else setSize(defaultSize);
-  // };
+  const toggle3dView = () => {
+    //   setShowView(!showView);
+    //   if (showView) setSize(window.innerWidth);
+    //   else setSize(defaultSize);
+  };
 
   // window resize listener
   useEffect(() => {
@@ -30,13 +30,14 @@ function Layout({ socket }) {
     // };
   });
 
+  // <SplitPane split="vertical" size={size} onDragFinished={setSize}>
   return (
     <>
-      {/* <TopBar page="home" toggle3dView={toggle3dView} showView={showView} /> */}
-      {/* <SplitPane split="vertical" size={size} onDragFinished={setSize}> */}
-      {/*   <Paper socket={socket} /> */}
-      <View3D socket={socket} />
-      {/* </SplitPane> */}
+      <TopBar page="home" toggle3dView={toggle3dView} showView={showView} />
+      <SplitPane split="vertical" minSize="60%">
+        <Paper socket={socket} />
+        <View3D socket={socket} />
+      </SplitPane>
     </>
   );
 }
