@@ -11,7 +11,7 @@ function View3D({ socket }) {
   var renderer = new THREE.WebGLRenderer();
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
-  camera.position.set(0, 0, 1);
+  camera.position.set(5, 5, 5);
 
   const orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enableDamping = true;
@@ -21,8 +21,8 @@ function View3D({ socket }) {
   useEffect(() => {
     // Getting the entities
     socket.emit("get_entities_props");
-    socket.on("entities_props", (entities) => {
-      entities.forEach(initEntity);
+    socket.on("entities_props", (raw_entities) => {
+      raw_entities.forEach(initEntity);
     });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -44,11 +44,8 @@ function View3D({ socket }) {
 
   const updateEntities = () => {
     const target = entities[0];
-
     stalker.subVectors(camera.position, target.mesh.position);
-    entities.forEach((e) => {
-      e.update();
-    });
+    entities.forEach((e) => e.update());
     orbit.object.position.copy(target.mesh.position).add(stalker);
     orbit.target.copy(target.mesh.position);
     orbit.update();
@@ -60,11 +57,9 @@ function View3D({ socket }) {
   const animation = () => {
     if (entities.length === 0) return;
     updateEntities();
-
     resizeCanvasToDisplaySize();
     renderer.render(scene, camera);
   };
-  var w = 0;
 
   const resizeCanvasToDisplaySize = () => {
     const view = document.getElementById("view-3d");

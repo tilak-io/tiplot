@@ -3,8 +3,9 @@ export default class Entity {
   startIndex = 24000;
   positions = [];
   quaternions = [];
+  timestamp = [];
   currentIndex = this.startIndex;
-  isMoving = false;
+  isMoving = true;
   mesh = new THREE.Mesh(
     new THREE.ConeGeometry(0.3, 1, 17),
     new THREE.MeshNormalMaterial()
@@ -16,6 +17,7 @@ export default class Entity {
     const size = e.props.length;
     // using a single loop to do all the mapping
     for (let i = 0; i < size; i++) {
+      this.timestamp.push(e.props[i].timestamp_tiplot);
       this.addPointToPath(e.props[i], i, size);
       this.addPositionPoint(e.props[i]);
       this.addQuaternion(e.props[i]);
@@ -75,6 +77,14 @@ export default class Entity {
 
   update() {
     if (this.positions.length === 0) return;
+    if (!window.currentX) {
+      this.currentIndex = 0;
+    } else {
+      this.currentIndex = this.timestamp.indexOf(window.currentX);
+      // TODO: handle situations where x is not fout in timestamp
+    }
+
+    // this.currentIndex = window.currentIndex ?? 0;
     this.mesh.position.x = this.positions[this.currentIndex].x;
     this.mesh.position.y = this.positions[this.currentIndex].y;
     this.mesh.position.z = this.positions[this.currentIndex].z;

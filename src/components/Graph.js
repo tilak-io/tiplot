@@ -324,7 +324,6 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
 
   const updateTimelineIndicator = (t, index) => {
     window.currentX = t;
-    window.idx = index;
     // const timestamp = t - window.t0;
     // window.viewer.clock.currentTime.secondsOfDay =
     //   window.viewer.clock.startTime.secondsOfDay + timestamp;
