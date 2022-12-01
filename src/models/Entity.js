@@ -4,7 +4,7 @@ export default class Entity {
   positions = [];
   quaternions = [];
   currentIndex = this.startIndex;
-  isMoving = true;
+  isMoving = false;
   mesh = new THREE.Mesh(
     new THREE.ConeGeometry(0.3, 1, 17),
     new THREE.MeshNormalMaterial()
@@ -12,7 +12,15 @@ export default class Entity {
   pathPoints = null;
   path = new THREE.Line();
 
-  constructor() {}
+  constructor(e) {
+    const size = e.props.length;
+    // using a single loop to do all the mapping
+    for (let i = 0; i < size; i++) {
+      this.addPointToPath(e.props[i], i, size);
+      this.addPositionPoint(e.props[i]);
+      this.addQuaternion(e.props[i]);
+    }
+  }
 
   addPositionPoint(props) {
     this.positions.push(
@@ -37,7 +45,7 @@ export default class Entity {
 
   addPointToPath(props, i, length) {
     if (this.pathPoints === null)
-      this.pathPoints = new Float32Array(length * 3); // assuming the we already initialized the `positions` array
+      this.pathPoints = new Float32Array(length * 3);
 
     const point = new THREE.Vector3(
       props.longitude, // x = x1
@@ -59,6 +67,10 @@ export default class Entity {
 
     const line = new THREE.Line(geometry, material);
     return line;
+  }
+
+  getMesh() {
+    return this.mesh;
   }
 
   update() {

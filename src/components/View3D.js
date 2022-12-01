@@ -10,18 +10,18 @@ function View3D({ socket }) {
   var renderer = new THREE.WebGLRenderer();
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
-  camera.position.set(0, 5, 8);
+  camera.position.set(0, 0, 1);
 
   const orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enableDamping = true;
-  var stalker = new THREE.Vector3();
-  const entity = new Entity();
+  const stalker = new THREE.Vector3();
+  const entities = [];
 
   useEffect(() => {
     // Getting the entities
     socket.emit("get_entities_props");
     socket.on("entities_props", (entities) => {
-      entities.forEach(drawPath);
+      entities.forEach(initEntity);
     });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -29,32 +29,35 @@ function View3D({ socket }) {
       mount.current.appendChild(renderer.domElement);
     }
     renderer.setAnimationLoop(animation);
-    scene.add(entity.mesh);
     return () => {
       window.location.reload();
     };
   }, []);
 
-  const drawPath = (e) => {
-    const size = e.props.length;
-    for (let i = 0; i < size; i++) {
-      entity.addPointToPath(e.props[i], i, size);
-      entity.addPositionPoint(e.props[i]);
-      entity.addQuaternion(e.props[i]);
-    }
-    var path = entity.getPath();
-    scene.add(path);
+  const initEntity = (e, index) => {
+    entities.push(new Entity(e));
+    scene.add(entities[index].getPath());
+    scene.add(entities[index].getMesh());
+  };
+
+  const updateEntities = () => {
+    const target = entities[0];
+
+    stalker.subVectors(camera.position, target.mesh.position);
+    entities.forEach((e) => {
+      e.update();
+    });
+    orbit.object.position.copy(target.mesh.position).add(stalker);
+    orbit.target.copy(target.mesh.position);
+    orbit.update();
   };
 
   var gridx = new THREE.GridHelper(100, 100);
   scene.add(gridx);
 
   const animation = () => {
-    stalker.subVectors(camera.position, entity.mesh.position);
-    entity.update();
-    orbit.object.position.copy(entity.mesh.position).add(stalker);
-    orbit.target.copy(entity.mesh.position);
-    orbit.update();
+    if (entities.length === 0) return;
+    updateEntities();
     renderer.render(scene, camera);
   };
 
