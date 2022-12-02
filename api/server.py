@@ -77,7 +77,7 @@ def upload_log():
 
 @app.route('/model')
 def model_3d():
-    model = getcwd() + "/../src/obj/drone.glb"
+    model = getcwd() + "/../src/obj/root.gltf"
 
     return send_file(model)
 

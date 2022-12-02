@@ -14,6 +14,7 @@ export default class Entity {
 
   constructor(e) {
     const size = e.props.length;
+    console.log(e);
     // using a single loop to do all the mapping
     for (let i = 0; i < size; i++) {
       this.timestamp.push(e.props[i].timestamp_tiplot);
@@ -29,22 +30,23 @@ export default class Entity {
     loader.load(
       "http://localhost:5000/model",
       function (gltf) {
-        console.log("loaded drone");
+        // console.log("Entity Loaded");
         instance.mesh = gltf.scene;
+        // instance.mesh.add(new THREE.AxesHelper(5));
         scene.add(gltf.scene);
+        instance.mesh.children[0].material.color = new THREE.Color("blue");
+        window.mesh = instance.mesh.children[0];
       },
       undefined,
       function (error) {
         console.log(error);
-        console.log("failed to load drone, setting up default cone");
-        const width = 0.5; // ui: width
-        const height = 0.3; // ui: height
-        const depth = 2; // ui: depth
-        const geometry = new THREE.BoxGeometry(width, height, depth);
+        console.log("failed to load drone, setting up default cube");
+        const geometry = new THREE.BoxGeometry(2, 0.5, 0.3);
         instance.mesh = new THREE.Mesh(
           geometry,
           new THREE.MeshNormalMaterial()
         );
+        // instance.mesh.add(new THREE.AxesHelper(5));
         scene.add(instance.mesh);
       }
     );
@@ -52,22 +54,13 @@ export default class Entity {
 
   addPositionPoint(props) {
     this.positions.push(
-      new THREE.Vector3(
-        props.longitude, // x = x1
-        -props.altitude, // y = -z1
-        props.lattitude // z = y
-      )
+      new THREE.Vector3(props.longitude, props.lattitude, props.altitude)
     );
   }
 
   addQuaternion(props) {
     this.quaternions.push(
-      new THREE.Quaternion(
-        props.q1, // qx = qx
-        -props.q3, // qy = -qz
-        props.q2, // qz = qy
-        props.q0 // qw = qw
-      )
+      new THREE.Quaternion(props.q1, props.q2, props.q3, props.q0)
     );
   }
 
@@ -76,9 +69,9 @@ export default class Entity {
       this.pathPoints = new Float32Array(length * 3);
 
     const point = new THREE.Vector3(
-      props.longitude, // x = x1
-      -props.altitude, // y = -z1
-      props.lattitude // z = y1
+      props.longitude,
+      props.lattitude,
+      props.altitude
     );
     point.toArray(this.pathPoints, i * 3);
   }
@@ -89,8 +82,12 @@ export default class Entity {
       "position",
       new THREE.BufferAttribute(this.pathPoints, 3)
     );
-    var material = new THREE.MeshBasicMaterial({
+
+    var material = new THREE.LineBasicMaterial({
       color: 0x00ff00,
+      opacity: 0.6,
+      // transparent: true,
+      linewidth: 3,
     });
 
     const line = new THREE.Line(geometry, material);
@@ -100,11 +97,12 @@ export default class Entity {
   update() {
     if (this.positions.length === 0) return;
     if (!this.mesh) return;
+
     if (!window.currentX) {
       this.currentIndex = 0;
     } else {
-      this.currentIndex = this.timestamp.indexOf(window.currentX);
-
+      const x = findInTimeArray(window.currentX, this.timestamp);
+      this.currentIndex = this.timestamp.indexOf(x);
       // TODO: handle situations where x is not fout in timestamp
     }
 
@@ -113,14 +111,19 @@ export default class Entity {
     this.mesh.position.y = this.positions[this.currentIndex].y;
     this.mesh.position.z = this.positions[this.currentIndex].z;
 
-    // this.mesh.setRotationFromQuaternion(this.quaternions[this.currentIndex]);
-    // this.mesh.rotation.y += Math.PI;
-    // this.mesh.rotation.y += Math.PI / 2;
+    this.mesh.setRotationFromQuaternion(this.quaternions[this.currentIndex]);
 
     if (this.isMoving) {
+      this.currentIndex++;
       this.currentIndex++;
       if (this.currentIndex >= this.positions.length)
         this.currentIndex = this.startIndex;
     }
   }
 }
+
+const findInTimeArray = (x, array) => {
+  return array.reduce((a, b) => {
+    return Math.abs(b - x) < Math.abs(a - x) ? b : a;
+  });
+};
