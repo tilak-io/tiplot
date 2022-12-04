@@ -4,6 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 export default class Entity {
   startIndex = 24000;
   positions = [];
+  rotations = [];
   quaternions = [];
   timestamp = [];
   currentIndex = this.startIndex;
@@ -15,25 +16,21 @@ export default class Entity {
   constructor(e) {
     const size = e.props.length;
     this.useXYZ = e.useXYZ;
+    this.useRPY = e.useRPY;
     this.setReference(e);
     // using a single loop to do all the mapping
     for (let i = 0; i < size; i++) {
       this.timestamp.push(e.props[i].timestamp_tiplot);
+      // position
       if (e.useXYZ) this.addPointToPath(e.props[i], i, size);
       else this.addCoordinatesToPath(e.props[i], i, size);
-
-      this.addQuaternion(e.props[i]);
+      // rotation
+      if (e.useRPY) this.addEuler(e.props[i]);
+      else this.addQuaternion(e.props[i]);
     }
   }
 
-  ///////////////////// Entity Attitude
-  addQuaternion(props) {
-    this.quaternions.push(
-      new THREE.Quaternion(props.q1, props.q2, props.q3, props.q0)
-    );
-  }
-
-  // Using Longitude/Lattitude/Altitude
+  // Entity position
   //
   addCoordinatesToPath(props, i, length) {
     if (this.pathPoints === null)
@@ -77,9 +74,22 @@ export default class Entity {
     );
   }
 
+  ///////////////////// Entity Attitude
+  addQuaternion(props) {
+    this.quaternions.push(
+      new THREE.Quaternion(props.q1, props.q2, props.q3, props.q0)
+    );
+  }
+
+  addEuler(props) {
+    this.rotations.push(
+      new THREE.Euler(props.roll, props.pitch, props.yaw, "XYZ")
+    );
+  }
+
   //////////////////// Drawing the entity's path
   //
-  loadPath(scene) {
+  loadPath(scene, idx) {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       "position",
@@ -87,7 +97,8 @@ export default class Entity {
     );
 
     var material = new THREE.LineBasicMaterial({
-      color: this.useXYZ ? 0x00ff00ff : 0xffff00,
+      // color: this.useXYZ ? 0x00ff00ff : 0xffff00,
+      color: colors[idx % colors.length],
     });
 
     const line = new THREE.Line(geometry, material);
@@ -154,12 +165,14 @@ export default class Entity {
       this.currentIndex = this.timestamp.indexOf(x);
     }
 
-    // this.currentIndex = window.currentIndex ?? 0;
     this.mesh.position.x = this.positions[this.currentIndex].x;
     this.mesh.position.y = this.positions[this.currentIndex].y;
     this.mesh.position.z = this.positions[this.currentIndex].z;
 
-    this.mesh.setRotationFromQuaternion(this.quaternions[this.currentIndex]);
+    if (this.useRPY)
+      this.mesh.setRotationFromEuler(this.rotations[this.currentIndex]);
+    else
+      this.mesh.setRotationFromQuaternion(this.quaternions[this.currentIndex]);
 
     if (this.isMoving) {
       this.currentIndex++;
@@ -170,16 +183,17 @@ export default class Entity {
   }
 }
 
-// Extra Math
+// Extra
 //
+const CONSTANTS_RADIUS_OF_EARTH = 6371000; // radius of the earth
+const k = 0.677; // PX4 constant
+const colors = ["yellow", "purple", "orange", "blue", "green", "red"]; // color array for the entity paths
+
 const findInTimeArray = (x, array) => {
   return array.reduce((a, b) => {
     return Math.abs(b - x) < Math.abs(a - x) ? b : a;
   });
 };
-
-const CONSTANTS_RADIUS_OF_EARTH = 6371000;
-const k = 0.677; // PX4 constant
 
 const getXY = (lon, lat) => {
   // const ref_lat = (8.545607418125618 * 180) / Math.PI;

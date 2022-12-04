@@ -54,8 +54,8 @@ function View3D({ socket }) {
 
   const initEntity = (e, index) => {
     entities.push(new Entity(e));
-    entities[index].loadPath(scene);
-    entities[index].loadObj(scene);
+    entities[index].loadPath(scene, index);
+    entities[index].loadObj(scene, index);
   };
 
   const updateEntities = () => {
