@@ -25,6 +25,7 @@ class CSVParser(Parser):
             name='csv default entity',
             alpha=1,
             useRPY=True,
+            useXYZ=False,
             position={
                 'table':'data',
                 'longitude':'lon',

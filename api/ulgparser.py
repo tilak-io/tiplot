@@ -24,11 +24,13 @@ class ULGParser(Parser):
 
     def setDefaultEntities(self):
         entity = CesiumEntity(name='ulg default entity',
+                              useRPY=False,
+                              useXYZ=True,
                               position={
-                                  'table':'vehicle_global_position',
-                                  'longitude':'lon',
-                                  'lattitude':'lat',
-                                  'altitude':'alt',
+                                  'table':'vehicle_local_position',
+                                  'x':'x',
+                                  'y':'y',
+                                  'z':'z',
                               },
                               attitude={
                                   'table':'vehicle_attitude',
