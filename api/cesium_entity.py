@@ -6,6 +6,7 @@ class CesiumEntity:
                  attitude,
                  alpha=1,
                  useRPY=False,
+                 useXYZ=True,
                  viewModel=None):
 
         self.name = name
@@ -13,6 +14,7 @@ class CesiumEntity:
         self.attitude = attitude
         self.alpha = alpha
         self.useRPY = useRPY
+        self.useXYZ = useXYZ
         #self.takeoffKey = takeoff_key
         self.viewModel = viewModel
         self.id = CesiumEntity.next_id
@@ -34,6 +36,11 @@ class CesiumEntity:
         else:
             useRPY = False
 
+        if "useXYZ" in json:
+            useXYZ = json['useXYZ']
+        else:
+            useXYZ = True
+
         if "viewModel" in json:
             viewModel = json['viewModel']
         else:
@@ -45,5 +52,6 @@ class CesiumEntity:
                    attitude=attitude,
                    alpha=alpha,
                    useRPY=useRPY,
+                   useXYZ=useXYZ,
                    viewModel=viewModel)
 

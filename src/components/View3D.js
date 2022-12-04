@@ -9,10 +9,10 @@ function View3D({ socket }) {
   var renderer = new THREE.WebGLRenderer();
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
-  // camera.position.set(0, 200, 0);
   camera.up.set(0, 0, -1);
+  camera.position.set(-20, 0, 0);
 
-  camera.position.set(-5, 5, 2);
+  // camera.position.set(-5, 5, 2);
 
   const orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enableDamping = true;
@@ -20,11 +20,13 @@ function View3D({ socket }) {
   const entities = [];
 
   // Scene setup
-  // var gridx = new THREE.GridHelper(100, 100);
-  // scene.add(gridx);
+  var gridx = new THREE.GridHelper(1000, 100);
+  gridx.rotation.x = Math.PI / 2;
+  scene.add(gridx);
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
   scene.add(ambientLight);
+  scene.add(new THREE.AxesHelper(5));
 
   // scene.add(new THREE.AxesHelper(5));
 

@@ -13,29 +13,92 @@ export default class Entity {
   mesh = null;
 
   constructor(e) {
-    const size = e.props.length;
     console.log(e);
+    const size = e.props.length;
+    this.useXYZ = e.useXYZ;
+    this.setReference(e.props[0]);
     // using a single loop to do all the mapping
     for (let i = 0; i < size; i++) {
       this.timestamp.push(e.props[i].timestamp_tiplot);
-      this.addPointToPath(e.props[i], i, size);
-      this.addPositionPoint(e.props[i]);
+      if (e.useXYZ) {
+        this.addPointToPath(e.props[i], i, size);
+      } else {
+        this.addCoordinatesToPath(e.props[i], i, size);
+      }
       this.addQuaternion(e.props[i]);
     }
   }
 
+  ///////////////////// Entity Attitude
+  addQuaternion(props) {
+    this.quaternions.push(
+      new THREE.Quaternion(props.q1, props.q2, props.q3, props.q0)
+    );
+  }
+
+  // Using Longitude/Lattitude/Altitude
+  //
+  addCoordinatesToPath(props, i, length) {
+    if (this.pathPoints === null)
+      this.pathPoints = new Float32Array(length * 3);
+
+    // Entity path
+    const [x, y] = getXY(props.longitude, props.lattitude);
+    const z = -props.altitude;
+
+    const point = new THREE.Vector3(
+      x - this.ref_x,
+      y - this.ref_y,
+      z - this.ref_z
+    );
+    point.toArray(this.pathPoints, i * 3);
+
+    // Entity position
+    this.positions.push(
+      new THREE.Vector3(x - this.ref_x, y - this.ref_y, z - this.ref_z)
+    );
+  }
+
+  addPointToPath(props, i, length) {
+    if (this.pathPoints === null)
+      this.pathPoints = new Float32Array(length * 3);
+
+    // Entity path
+    const point = new THREE.Vector3(props.x, props.y, props.z);
+    point.toArray(this.pathPoints, i * 3);
+
+    // Entity position
+    this.positions.push(new THREE.Vector3(props.x, props.y, props.z));
+  }
+
+  //////////////////// Drawing the entity's path
+  //
+  loadPath(scene) {
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(this.pathPoints, 3)
+    );
+
+    var material = new THREE.LineBasicMaterial({
+      color: this.useXYZ ? 0x00ff00ff : 0xffff00,
+    });
+
+    const line = new THREE.Line(geometry, material);
+    scene.add(line);
+  }
+
+  //////////////////// Drawing the 3d obj
+  //
   loadObj(scene) {
     const instance = this;
     const loader = new GLTFLoader();
     loader.load(
       "http://localhost:5000/model",
       function (gltf) {
-        // console.log("Entity Loaded");
         instance.mesh = gltf.scene;
-        // instance.mesh.add(new THREE.AxesHelper(5));
         scene.add(gltf.scene);
         instance.mesh.children[0].material.color = new THREE.Color("blue");
-        window.mesh = instance.mesh.children[0];
       },
       undefined,
       function (error) {
@@ -46,56 +109,29 @@ export default class Entity {
           geometry,
           new THREE.MeshNormalMaterial()
         );
-        // instance.mesh.add(new THREE.AxesHelper(5));
         scene.add(instance.mesh);
       }
     );
   }
 
-  addPositionPoint(props) {
-    this.positions.push(
-      new THREE.Vector3(props.longitude, props.lattitude, props.altitude)
-    );
+  ////////////////////  Reference
+  // Setting the first point as a reference
+  //
+
+  setReference(props) {
+    const [x, y] = getXY(props.longitude, props.lattitude);
+    const z = -props.altitude;
+    this.ref_x = x;
+    this.ref_y = y;
+    this.ref_z = z;
   }
 
-  addQuaternion(props) {
-    this.quaternions.push(
-      new THREE.Quaternion(props.q1, props.q2, props.q3, props.q0)
-    );
-  }
-
-  addPointToPath(props, i, length) {
-    if (this.pathPoints === null)
-      this.pathPoints = new Float32Array(length * 3);
-
-    const point = new THREE.Vector3(
-      props.longitude,
-      props.lattitude,
-      props.altitude
-    );
-    point.toArray(this.pathPoints, i * 3);
-  }
-
-  loadPath(scene) {
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(this.pathPoints, 3)
-    );
-
-    var material = new THREE.LineBasicMaterial({
-      color: 0x00ff00,
-      opacity: 0.6,
-      // transparent: true,
-      linewidth: 3,
-    });
-
-    const line = new THREE.Line(geometry, material);
-    scene.add(line);
-  }
-
+  //////////////////// Updating the position/attitude
+  // This function will be called every frame
+  //
   update() {
     if (this.positions.length === 0) return;
+
     if (!this.mesh) return;
 
     if (!window.currentX) {
@@ -103,7 +139,6 @@ export default class Entity {
     } else {
       const x = findInTimeArray(window.currentX, this.timestamp);
       this.currentIndex = this.timestamp.indexOf(x);
-      // TODO: handle situations where x is not fout in timestamp
     }
 
     // this.currentIndex = window.currentIndex ?? 0;
@@ -122,8 +157,36 @@ export default class Entity {
   }
 }
 
+// Extra Math
+//
 const findInTimeArray = (x, array) => {
   return array.reduce((a, b) => {
     return Math.abs(b - x) < Math.abs(a - x) ? b : a;
   });
+};
+
+const CONSTANTS_RADIUS_OF_EARTH = 6371000;
+const k = 0.677; // PX4 constant
+
+const getXY = (lon, lat) => {
+  // const ref_lat = (8.545607418125618 * 180) / Math.PI;
+  // const ref_lon = (47.39775079229968 * 180) / Math.PI;
+  // const ref_cos_lat = Math.cos(ref_lat);
+  // const ref_sin_lat = Math.sin(ref_lat);
+  // const lat_rad = (lat * 180) / Math.PI;
+  // const lon_rad = (lon * 180) / Math.PI;
+
+  // const sin_lat = Math.sin(lat_rad);
+  // const cos_lat = Math.cos(lat_rad);
+
+  // const cos_d_lon = Math.cos(lon_rad - ref_lon);
+  // const arg = ref_sin_lat * sin_lat + ref_cos_lat * cos_lat * cos_d_lon;
+  // const c = Math.acos(arg);
+
+  // console.log(c / Math.sin(c));
+  var x = Math.log(Math.tan(((90 + lat) * Math.PI) / 360)) / (Math.PI / 180);
+  x = (k * (x * Math.PI * CONSTANTS_RADIUS_OF_EARTH)) / 180;
+
+  var y = (k * (lon * Math.PI * CONSTANTS_RADIUS_OF_EARTH)) / 180;
+  return [x, y];
 };
