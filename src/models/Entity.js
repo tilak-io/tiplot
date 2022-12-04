@@ -13,18 +13,15 @@ export default class Entity {
   mesh = null;
 
   constructor(e) {
-    console.log(e);
     const size = e.props.length;
     this.useXYZ = e.useXYZ;
-    this.setReference(e.props[0]);
+    this.setReference(e);
     // using a single loop to do all the mapping
     for (let i = 0; i < size; i++) {
       this.timestamp.push(e.props[i].timestamp_tiplot);
-      if (e.useXYZ) {
-        this.addPointToPath(e.props[i], i, size);
-      } else {
-        this.addCoordinatesToPath(e.props[i], i, size);
-      }
+      if (e.useXYZ) this.addPointToPath(e.props[i], i, size);
+      else this.addCoordinatesToPath(e.props[i], i, size);
+
       this.addQuaternion(e.props[i]);
     }
   }
@@ -45,7 +42,6 @@ export default class Entity {
     // Entity path
     const [x, y] = getXY(props.longitude, props.lattitude);
     const z = -props.altitude;
-
     const point = new THREE.Vector3(
       x - this.ref_x,
       y - this.ref_y,
@@ -64,11 +60,21 @@ export default class Entity {
       this.pathPoints = new Float32Array(length * 3);
 
     // Entity path
-    const point = new THREE.Vector3(props.x, props.y, props.z);
+    const point = new THREE.Vector3(
+      props.x - this.ref_x,
+      props.y - this.ref_y,
+      props.z - this.ref_z
+    );
     point.toArray(this.pathPoints, i * 3);
 
     // Entity position
-    this.positions.push(new THREE.Vector3(props.x, props.y, props.z));
+    this.positions.push(
+      new THREE.Vector3(
+        props.x - this.ref_x,
+        props.y - this.ref_y,
+        props.z - this.ref_z
+      )
+    );
   }
 
   //////////////////// Drawing the entity's path
@@ -118,12 +124,19 @@ export default class Entity {
   // Setting the first point as a reference
   //
 
-  setReference(props) {
-    const [x, y] = getXY(props.longitude, props.lattitude);
-    const z = -props.altitude;
-    this.ref_x = x;
-    this.ref_y = y;
-    this.ref_z = z;
+  setReference(e) {
+    // we set the first position as the reference
+    if (e.useXYZ) {
+      this.ref_x = e.props[0].x;
+      this.ref_y = e.props[0].y;
+      this.ref_z = e.props[0].z;
+    } else {
+      const [x, y] = getXY(e.props[0].longitude, e.props[0].lattitude);
+      const z = -e.props[0].altitude;
+      this.ref_x = x;
+      this.ref_y = y;
+      this.ref_z = z;
+    }
   }
 
   //////////////////// Updating the position/attitude
