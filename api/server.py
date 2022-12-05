@@ -1,15 +1,16 @@
 from engineio.async_drivers import gevent
-from flask import Flask, request
+from flask import Flask, request, send_file
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from threading import Thread
 from ulgparser import ULGParser
 from csvparser import CSVParser
 from time import localtime, strftime
-from os import makedirs, path
+from os import makedirs, path, getcwd
 from glob import glob
 from communication import Comm
 from datetime import datetime
+from sys import argv
 import store
 
 app = Flask(__name__)
@@ -20,6 +21,7 @@ socketio = SocketIO(app,cors_allowed_origins="*")
 
 logs_dir = path.expanduser("~/Documents/tiplot/logs/")
 logs_dir = logs_dir.replace("\\", "/")
+
 if not path.exists(logs_dir):
     makedirs(logs_dir)
 
@@ -41,7 +43,7 @@ def choose_parser(file, logs_dir):
 
 @socketio.on("connect")
 def connected():
-    print("-> client has connected " + request.sid)
+    # print("-> client has connected " + request.sid)
     global thread
     if not thread.is_alive():
         print("-> Starting Communications Thread...")
@@ -74,6 +76,14 @@ def upload_log():
 
     return {'ok': ok}
 
+
+@app.route('/model')
+def model_3d():
+    if (len(argv) <= 1):
+        model = getcwd() + "/../obj/main.gltf" # debug mode
+    else:
+        model = argv[1]
+    return send_file(model)
 
 
 
@@ -132,7 +142,8 @@ def get_takeoff_position():
 
 @socketio.on("disconnect")
 def disconnected():
-    print("-> client has disconnected " + request.sid)
+    # print("-> client has disconnected " + request.sid)
+    pass
 
 def print_tiplot():
     print('''

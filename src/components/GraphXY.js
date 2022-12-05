@@ -53,6 +53,7 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
       });
       setXs(options);
 
+      // eslint-disable-next-line
       plot = document.getElementById(`plot-${graphIndex}`);
       new ResizeObserver(stretchHeight).observe(plot);
     });
@@ -65,7 +66,7 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
         "yaxis.autorange": true,
       };
 
-      if (plot.clientHeight != 0) Plotly.relayout(plot, update);
+      if (plot.clientHeight !== 0) Plotly.relayout(plot, update);
     };
     // set the Y array
     socket.on("table_columns", (response) => {

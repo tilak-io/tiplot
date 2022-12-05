@@ -36,7 +36,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       });
       setKeys(options);
     });
-    // vertical resize listener
+    // eslint-disable-next-line
     plot = document.getElementById(`plot-${graphIndex}`);
     new ResizeObserver(stretchHeight).observe(plot);
     // eslint-disable-next-line
@@ -54,7 +54,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
       "yaxis.autorange": true,
     };
 
-    if (plot.clientHeight != 0) Plotly.relayout(plot, update);
+    if (plot.clientHeight !== 0) Plotly.relayout(plot, update);
   };
 
   const addData = async (table, key) => {
@@ -172,26 +172,26 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     plot = document.getElementById(`plot-${graphIndex}`);
     var max_values = [];
     var min_values = [];
-    if (plot.data.length == 0) return;
+    if (plot.data.length === 0) return;
     for (let j = 0; j < plot.data.length; j++) {
       var e = plot.data[j];
-      if (e.visible == "legendonly") continue;
+      if (e.visible === "legendonly") continue;
       var x0 = findClosest(xrange[0], e);
       var x1 = findClosest(xrange[1], e);
       const visible_y_data = e.y.slice(e.x.indexOf(x0), e.x.indexOf(x1));
       max_values.push(Math.max.apply(Math, visible_y_data));
       min_values.push(Math.min.apply(Math, visible_y_data));
       const max =
-        Math.max.apply(Math, max_values) != Infinity
+        Math.max.apply(Math, max_values) !== Infinity
           ? Math.max.apply(Math, max_values)
           : 1;
       const min =
-        Math.min.apply(Math, min_values) != -Infinity
+        Math.min.apply(Math, min_values) !== -Infinity
           ? Math.min.apply(Math, min_values)
           : 0;
 
       var margin = (max - min) / 5;
-      margin = margin == 0 ? 0.5 : margin; // set the margin to 1 in case of max == min
+      margin = margin === 0 ? 0.5 : margin; // set the margin to 1 in case of max == min
       var new_y_range = [min - margin, max + margin];
     }
     return new_y_range;
@@ -218,8 +218,8 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     var min_values = [];
 
     for (let i = 0; i < plots.length; i++) {
-      if (plots[i].data == undefined) continue;
-      if (plots[i].data.length == 0) continue;
+      if (plots[i].data === undefined) continue;
+      if (plots[i].data.length === 0) continue;
       const x_min = Math.min.apply(Math, plots[i].data[0].x);
       const x_max = Math.max.apply(Math, plots[i].data[0].x);
       min_values.push(x_min);
@@ -236,17 +236,16 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     };
 
     for (let i = 0; i < plots.length; i++) {
-      if (plots[i].data == undefined) continue;
+      if (plots[i].data === undefined) continue;
       Plotly.relayout(plots[i], update);
     }
   };
 
   const handleHover = (event) => {
     const x = event.points[0].x;
-    if (window.time_array !== undefined) {
-      if (event.event.altKey) {
-        updateTimelineIndicator(x);
-      }
+    const idx = event.points[0].pointIndex;
+    if (event.event.altKey) {
+      updateTimelineIndicator(x, idx);
     }
 
     // const plots = document.getElementsByClassName("plot-yt");
@@ -323,17 +322,17 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     });
   };
 
-  const updateTimelineIndicator = (t) => {
+  const updateTimelineIndicator = (t, index) => {
     window.currentX = t;
-    plot = document.getElementById(`plot-${graphIndex}`);
-    const timestamp = t - window.t0;
-    window.viewer.clock.currentTime.secondsOfDay =
-      window.viewer.clock.startTime.secondsOfDay + timestamp;
-    // drawTimelineIndicator(window.currentX);
+    // const timestamp = t - window.t0;
+    // window.viewer.clock.currentTime.secondsOfDay =
+    //   window.viewer.clock.startTime.secondsOfDay + timestamp;
+    drawTimelineIndicator(window.currentX);
   };
 
   const drawTimelineIndicator = (x) => {
     const plots = document.getElementsByClassName("plot-yt");
+
     const update = {
       shapes: [
         {
@@ -351,6 +350,7 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
         },
       ],
     };
+
     for (let i = 0; i < plots.length; i++) {
       Plotly.relayout(plots[i], update);
     }

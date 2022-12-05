@@ -34,6 +34,7 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
         };
         break;
       case 2:
+      default:
         update = {
           showlegend: false,
         };
@@ -65,6 +66,7 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
     var update;
     switch (plotType) {
       case 0:
+      default:
         update = {
           mode: "line",
         };

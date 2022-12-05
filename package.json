@@ -1,6 +1,6 @@
 {
   "name": "tiplot",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "private": true,
   "homepage": "./",
   "proxy": "http://localhost:5000",
@@ -13,6 +13,13 @@
       {
         "from": "./backend/",
         "to": "api",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "./obj/",
+        "to": "obj",
         "filter": [
           "**/*"
         ]
@@ -42,6 +49,7 @@
     "react-split-pane": "^0.1.92",
     "socket.io": "^4.5.2",
     "socket.io-client": "^4.5.2",
+    "three": "^0.147.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -79,6 +87,7 @@
     "cross-env": "^7.0.3",
     "electron": "^20.2.0",
     "electron-builder": "^23.3.3",
+    "three-orbit-controls": "^82.1.0",
     "wait-on": "^6.0.1"
   }
 }

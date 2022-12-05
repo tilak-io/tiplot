@@ -1,6 +1,7 @@
 import "./css/overlay.css";
 import Layout from "./components/Layout";
 import Loader from "./components/Loader";
+import Settings from "./components/Settings";
 // import Test from "./components/Test";
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
@@ -50,6 +51,7 @@ function App() {
               path="/home"
               element={<Layout socket={socketInstance} />}
             />
+            <Route exact path="/settings" element={<Settings />} />
             <Route path="*" element={"not found"} />
           </Routes>
         </Router>

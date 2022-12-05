@@ -40,22 +40,30 @@ class Store:
     def getEntitiesProps(self):
         data = []
         for e in self.entities:
-            if e.useRPY:
-                if (e.position['table'] == e.attitude['table']):
-                    merged = pd.DataFrame.from_dict(self.datadict[e.position['table']])
-                else:
-                    merged = pd.merge_asof(self.datadict[e.position['table']], self.datadict[e.attitude['table']], on='timestamp_tiplot').bfill()
-                raw = merged[[e.position['altitude'], e.position['lattitude'], e.position['longitude'],e.attitude['roll'],e.attitude['pitch'],e.attitude['yaw'],'timestamp_tiplot']]
-                renamed = raw.rename(columns={e.position['longitude']: 'longitude', e.position['altitude']: 'altitude',e.position['lattitude']: 'lattitude', e.attitude['roll'] : 'roll',e.attitude['pitch'] : 'pitch',e.attitude['yaw'] : 'yaw'}).to_dict('records')
-                data.append({ "id": e.id,"entity_name": e.name,"alpha": e.alpha,  "useRPY": e.useRPY,"props": renamed})
+            if (e.position['table'] == e.attitude['table']):
+                merged = pd.DataFrame.from_dict(self.datadict[e.position['table']])
             else:
-                if (e.position['table'] == e.attitude['table']):
-                    merged = pd.DataFrame.from_dict(self.datadict[e.position['table']])
-                else:
-                    merged = pd.merge_asof(self.datadict[e.position['table']], self.datadict[e.attitude['table']], on='timestamp_tiplot').bfill()
-                raw = merged[[e.position['altitude'], e.position['lattitude'], e.position['longitude'],e.attitude['q0'],e.attitude['q1'],e.attitude['q2'], e.attitude['q3'],'timestamp_tiplot']]
-                renamed = raw.rename(columns={e.position['longitude']: 'longitude', e.position['altitude']: 'altitude',e.position['lattitude']: 'lattitude', e.attitude['q0'] : 'q0',e.attitude['q1'] : 'q1',e.attitude['q2'] : 'q2',e.attitude['q3'] : 'q3'}).to_dict('records')
-                data.append({"id": e.id,"entity_name": e.name,"alpha": e.alpha,  "useRPY": e.useRPY,"props": renamed})
+                merged = pd.merge_asof(self.datadict[e.position['table']], self.datadict[e.attitude['table']], on='timestamp_tiplot').bfill()
+            if e.useXYZ:
+                position_columns = [e.position['x'], e.position['y'], e.position['z']]
+                position_columns_mapped = { e.position['x']: 'x', e.position['y']: 'y', e.position['z']: 'z'}
+            else:
+                position_columns = [e.position['altitude'], e.position['lattitude'], e.position['longitude']]
+                position_columns_mapped = { e.position['longitude']: 'longitude', e.position['altitude']: 'altitude', e.position['lattitude']: 'lattitude'}
+            if e.useRPY:
+                attitude_columns = [e.attitude['roll'], e.attitude['pitch'], e.attitude['yaw']]
+                attitude_columns_mapped = {e.attitude['roll'] : 'roll', e.attitude['pitch'] : 'pitch', e.attitude['yaw'] : 'yaw'}
+            else:
+                attitude_columns = [e.attitude['q0'],e.attitude['q1'],e.attitude['q2'], e.attitude['q3']]
+                attitude_columns_mapped = {e.attitude['q0'] : 'q0', e.attitude['q1'] : 'q1', e.attitude['q2'] : 'q2', e.attitude['q3'] : 'q3'}
+            columns = position_columns + attitude_columns + ['timestamp_tiplot']
+            mapped_columns = {}
+            mapped_columns.update(position_columns_mapped)
+            mapped_columns.update(attitude_columns_mapped)
+            raw = merged[columns]
+            renamed = raw.rename(columns=mapped_columns).to_dict('records')
+            data.append({"id": e.id,"entity_name": e.name,"alpha": e.alpha,  "useRPY": e.useRPY, "useXYZ": e.useXYZ,"props": renamed})
+
         return data
 
     def getEntities(self):

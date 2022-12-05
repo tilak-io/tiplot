@@ -10,6 +10,7 @@ function Paper({ socket }) {
   useEffect(() => {
     initializeLayout();
     fitGraphsToScreen();
+    // eslint-disable-next-line
   }, [graphNbr]);
 
   const addXT = (index) => {
@@ -52,7 +53,7 @@ function Paper({ socket }) {
     } catch {
       alert("Please import a valid json file");
       localStorage.setItem("current_layout", "[]");
-      var value = [];
+      value = [];
     }
     return value;
   };
@@ -117,7 +118,7 @@ function Paper({ socket }) {
 
   const removeGraph = (index) => {
     var layout = parseLocalStorage("current_layout");
-    const filtered_layout = layout.filter((graph) => graph.id != index);
+    const filtered_layout = layout.filter((graph) => graph.id !== index);
     localStorage.setItem("current_layout", JSON.stringify(filtered_layout));
     initializeLayout();
   };
@@ -131,8 +132,8 @@ function Paper({ socket }) {
       additionalHeight += multiselects[i].clientHeight;
     const plotHeight =
       (window.innerHeight - additionalHeight) / containers.length;
-    for (var i = 0; i < containers.length; i++)
-      containers[i].style.height = plotHeight + "px";
+    for (var j = 0; j < containers.length; j++)
+      containers[j].style.height = plotHeight + "px";
   };
 
   return (

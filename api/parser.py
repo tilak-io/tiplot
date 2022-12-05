@@ -1,5 +1,5 @@
 from cesium_entity import CesiumEntity
-from os import path
+from os import path, makedirs
 import json
 
 class Parser:
