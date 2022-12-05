@@ -2,7 +2,7 @@ import "../css/layout.css";
 import { useState, useEffect } from "react";
 import Paper from "./Paper";
 import View3D from "./View3D";
-import TopBar from "./Navbar";
+import TopBar from "./TopBar";
 import SplitPane from "react-split-pane";
 
 function Layout({ socket }) {

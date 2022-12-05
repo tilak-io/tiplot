@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FcOpenedFolder, FcFile } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
-import TopBar from "./Navbar";
+import TopBar from "./TopBar";
 import "../css/loader.css";
 import "../css/overlay.css";
 
