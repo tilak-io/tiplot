@@ -2,12 +2,10 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 export default class Entity {
-  startIndex = 24000;
   positions = [];
   rotations = [];
-  quaternions = [];
   timestamp = [];
-  currentIndex = this.startIndex;
+  currentIndex = 0;
   isMoving = true;
   pathPoints = null;
   path = new THREE.Line();
@@ -76,7 +74,7 @@ export default class Entity {
 
   ///////////////////// Entity Attitude
   addQuaternion(props) {
-    this.quaternions.push(
+    this.rotations.push(
       new THREE.Quaternion(props.q1, props.q2, props.q3, props.q0)
     );
   }
@@ -97,7 +95,6 @@ export default class Entity {
     );
 
     var material = new THREE.LineBasicMaterial({
-      // color: this.useXYZ ? 0x00ff00ff : 0xffff00,
       color: colors[idx % colors.length],
     });
 
@@ -114,8 +111,7 @@ export default class Entity {
       "http://localhost:5000/model",
       function (gltf) {
         instance.mesh = gltf.scene;
-        scene.add(gltf.scene);
-        instance.mesh.children[0].material.color = new THREE.Color("blue");
+        scene.add(instance.mesh);
       },
       undefined,
       function (error) {
@@ -171,8 +167,7 @@ export default class Entity {
 
     if (this.useRPY)
       this.mesh.setRotationFromEuler(this.rotations[this.currentIndex]);
-    else
-      this.mesh.setRotationFromQuaternion(this.quaternions[this.currentIndex]);
+    else this.mesh.setRotationFromQuaternion(this.rotations[this.currentIndex]);
 
     if (this.isMoving) {
       this.currentIndex++;
