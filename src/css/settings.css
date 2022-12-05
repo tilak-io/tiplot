@@ -1,0 +1,19 @@
+.settings-page {
+  padding-top: 54px;
+}
+
+fieldset {
+  background-color:#CCC;
+  padding:16px;	
+  border-radius: 15px;
+  margin: 25px
+}
+
+legend {
+  margin-bottom:0px;
+  margin-left:16px;
+}
+
+.break {
+  height:10px;
+}

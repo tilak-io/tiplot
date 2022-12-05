@@ -55,3 +55,12 @@ class CesiumEntity:
                    useXYZ=useXYZ,
                    viewModel=viewModel)
 
+    def toJson(self):
+        return({"id": self.id,
+                     "name": self.name,
+                     "alpha": self.alpha,
+                     "useXYZ": self.useXYZ,
+                     "useRPY": self.useRPY,
+                     "position": self.position,
+                     "attitude": self.attitude
+                     })

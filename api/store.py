@@ -69,7 +69,7 @@ class Store:
     def getEntities(self):
         data = []
         for e in self.entities:
-            data.append({"id": e.id, "name": e.name})
+            data.append(e.toJson())
         return data
 
     def getTableColumns(self,key):

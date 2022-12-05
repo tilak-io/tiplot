@@ -64,28 +64,6 @@ def select_log_file(file):
     ok = choose_parser(file[0], logs_dir)
     emit('log_selected', ok)
 
-@app.route('/upload_log', methods=['POST'])
-def upload_log():
-    try:
-        file = request.files['log']
-        if file:
-            file.save(path.join(logs_dir, file.filename))
-            ok = choose_parser(file.filename, logs_dir)
-    except:
-        ok = False
-
-    return {'ok': ok}
-
-
-@app.route('/model')
-def model_3d():
-    if (len(argv) <= 1):
-        model = getcwd() + "/../obj/main.gltf" # debug mode
-    else:
-        model = argv[1]
-    return send_file(model)
-
-
 
 @socketio.on('get_entities_props')
 def get_entities():
@@ -139,6 +117,30 @@ def get_takeoff_position():
           }
         data = {'takeoff': takeoff}
     return data
+
+@app.route('/upload_log', methods=['POST'])
+def upload_log():
+    try:
+        file = request.files['log']
+        if file:
+            file.save(path.join(logs_dir, file.filename))
+            ok = choose_parser(file.filename, logs_dir)
+    except:
+        ok = False
+    return {'ok': ok}
+
+@app.route('/model')
+def model_3d():
+    if (len(argv) <= 1):
+        model = getcwd() + "/../obj/main.gltf" # debug mode
+    else:
+        model = argv[1]
+    return send_file(model)
+
+@app.route('/entities_config')
+def entities_config():
+    config = store.Store.get().getEntities()
+    return config
 
 @socketio.on("disconnect")
 def disconnected():
