@@ -10,6 +10,7 @@ from os import makedirs, path, getcwd
 from glob import glob
 from communication import Comm
 from datetime import datetime
+from sys import argv
 import store
 
 app = Flask(__name__)
@@ -20,6 +21,7 @@ socketio = SocketIO(app,cors_allowed_origins="*")
 
 logs_dir = path.expanduser("~/Documents/tiplot/logs/")
 logs_dir = logs_dir.replace("\\", "/")
+
 if not path.exists(logs_dir):
     makedirs(logs_dir)
 
@@ -77,8 +79,10 @@ def upload_log():
 
 @app.route('/model')
 def model_3d():
-    model = getcwd() + "/../src/obj/root.gltf"
-
+    if (len(argv) <= 1):
+        model = getcwd() + "/../obj/main.gltf" # debug mode
+    else:
+        model = argv[1]
     return send_file(model)
 
 

@@ -3,12 +3,13 @@ const fs = require("fs");
 const { app, BrowserWindow } = require("electron");
 
 const api = path.join(process.resourcesPath, "api/server");
+const model = path.join(process.resourcesPath, "obj/main.gltf");
 
 // just for debugging
 // const api = "/home/hamza/projects/github/tiplot/backend/server";
 
 var spawn = require("child_process").spawn;
-var start = spawn(api, {
+var start = spawn(api, [model], {
   windowsHide: true,
   shell: process.env.ComSpec,
   stdio: "inherit",

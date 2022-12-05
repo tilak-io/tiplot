@@ -1,6 +1,6 @@
 {
   "name": "tiplot",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "private": true,
   "homepage": "./",
   "proxy": "http://localhost:5000",
@@ -13,6 +13,13 @@
       {
         "from": "./backend/",
         "to": "api",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "./obj/",
+        "to": "obj",
         "filter": [
           "**/*"
         ]
