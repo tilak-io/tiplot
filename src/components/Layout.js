@@ -20,14 +20,14 @@ function Layout({ socket }) {
 
   // window resize listener
   useEffect(() => {
-    // var currentWidth = window.innerWidth;
-    // window.onresize = (event) => {
-    //   var width = event.target.outerWidth;
-    //   var currentRatio = size / currentWidth;
-    //   var newWidth = currentRatio * width;
-    //   setSize(newWidth);
-    //   currentWidth = width;
-    // };
+    var currentWidth = window.innerWidth;
+    window.onresize = (event) => {
+      var width = event.target.outerWidth;
+      var currentRatio = size / currentWidth;
+      var newWidth = currentRatio * width;
+      setSize(newWidth);
+      currentWidth = width;
+    };
   });
 
   // <SplitPane split="vertical" size={size} onDragFinished={setSize}>
