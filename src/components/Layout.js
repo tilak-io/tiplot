@@ -13,9 +13,9 @@ function Layout({ socket }) {
   const [showView, setShowView] = useState(true);
 
   const toggle3dView = () => {
-    //   setShowView(!showView);
-    //   if (showView) setSize(window.innerWidth);
-    //   else setSize(defaultSize);
+    setShowView(!showView);
+    if (showView) setSize(window.innerWidth);
+    else setSize(defaultSize);
   };
 
   // window resize listener
@@ -34,7 +34,7 @@ function Layout({ socket }) {
   return (
     <>
       <TopBar page="home" toggle3dView={toggle3dView} showView={showView} />
-      <SplitPane split="vertical" minSize="60%">
+      <SplitPane split="vertical" size={size}>
         <Paper socket={socket} />
         <View3D socket={socket} />
       </SplitPane>

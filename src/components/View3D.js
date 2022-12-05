@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import "../css/cesium.css";
 import Entity from "../models/Entity.js";
 import * as THREE from "three";
@@ -10,9 +10,9 @@ function View3D({ socket }) {
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
   camera.up.set(0, 0, -1);
-  camera.position.set(-20, 0, 0);
+  // camera.position.set(-20, 0, 0);
 
-  // camera.position.set(-5, 5, 2);
+  camera.position.set(-15, -5, -10);
 
   const orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enableDamping = true;
@@ -42,7 +42,7 @@ function View3D({ socket }) {
     });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-    if (mount.current.childElementCount == 0) {
+    if (mount.current.childElementCount === 0) {
       mount.current.appendChild(renderer.domElement);
     }
     renderer.setAnimationLoop(animation);
@@ -50,6 +50,7 @@ function View3D({ socket }) {
     return () => {
       window.location.reload();
     };
+    // eslint-disable-next-line
   }, []);
 
   const initEntity = (e, index) => {

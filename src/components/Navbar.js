@@ -7,21 +7,12 @@ import {
   Modal,
   Button,
 } from "react-bootstrap";
-import {
-  FaPlay,
-  FaPause,
-  FaToggleOn,
-  FaToggleOff,
-  FaForward,
-  FaExpand,
-} from "react-icons/fa";
+import { FaToggleOn, FaToggleOff, FaExpand } from "react-icons/fa";
 import logo from "../img/logo.png";
 
 function TopBar({ page, toggle3dView, showView }) {
-  const [isPlaying, setPlaying] = useState(false);
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
-  const [speed, setSpeed] = useState(1);
   const [isFit, setFit] = useState(true);
 
   const handleClose = () => setShowSaveMsg(false);
@@ -30,39 +21,8 @@ function TopBar({ page, toggle3dView, showView }) {
   useEffect(() => {
     window.fitGraphsToScreen = true;
     mapLayouts();
-
     // eslint-disable-next-line
   }, []);
-
-  const togglePlay = () => {
-    if (window.viewer) {
-      window.viewer.clock.shouldAnimate = !isPlaying;
-      setPlaying(!isPlaying);
-    }
-  };
-
-  const toggleSpeed = () => {
-    if (window.viewer) {
-      switch (speed) {
-        case 1:
-          window.viewer.clock.multiplier = 2;
-          setSpeed(2);
-          break;
-        case 2:
-          window.viewer.clock.multiplier = 5;
-          setSpeed(5);
-          break;
-        case 5:
-          window.viewer.clock.multiplier = 10;
-          setSpeed(10);
-          break;
-        default:
-          window.viewer.clock.multiplier = 1;
-          setSpeed(1);
-          break;
-      }
-    }
-  };
 
   const toggleFit = () => {
     setFit(!isFit);
@@ -165,21 +125,6 @@ function TopBar({ page, toggle3dView, showView }) {
     if (layouts.length > 0) return <NavDropdown.Divider />;
   }
 
-  function PlayButton() {
-    if (!isPlaying)
-      return (
-        <span title="Play">
-          <FaPlay style={{ color: "#00ff4f" }} />
-        </span>
-      );
-    else
-      return (
-        <span title="Pause">
-          <FaPause style={{ color: "#ffff00" }} />
-        </span>
-      );
-  }
-
   function ViewButton() {
     if (showView)
       return (
@@ -195,29 +140,6 @@ function TopBar({ page, toggle3dView, showView }) {
       );
   }
 
-  function SpeedButton() {
-    var color;
-    switch (speed) {
-      case 1:
-        color = "#593f73";
-        break;
-      case 2:
-        color = "#7460bf";
-        break;
-      case 5:
-        color = "#8372f2";
-        break;
-      default:
-        color = "#b3bdf2";
-        break;
-    }
-    return (
-      <span>
-        <FaForward style={{ color: color }} />
-      </span>
-    );
-  }
-
   function FitButton() {
     if (isFit)
       return (
@@ -230,23 +152,16 @@ function TopBar({ page, toggle3dView, showView }) {
   }
 
   function Controls() {
-    if (window.viewer)
-      return (
-        <Nav>
-          <Nav.Link onClick={toggleFit}>
-            <FitButton />
-          </Nav.Link>
-          <Nav.Link onClick={togglePlay}>
-            <PlayButton />
-          </Nav.Link>
-          <Nav.Link onClick={toggleSpeed}>
-            <SpeedButton />
-          </Nav.Link>
-          <Nav.Link onClick={toggle3dView}>
-            <ViewButton />
-          </Nav.Link>
-        </Nav>
-      );
+    return (
+      <Nav>
+        <Nav.Link onClick={toggleFit}>
+          <FitButton />
+        </Nav.Link>
+        <Nav.Link onClick={toggle3dView}>
+          <ViewButton />
+        </Nav.Link>
+      </Nav>
+    );
   }
 
   return (
