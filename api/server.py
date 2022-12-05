@@ -43,7 +43,7 @@ def choose_parser(file, logs_dir):
 
 @socketio.on("connect")
 def connected():
-    print("-> client has connected " + request.sid)
+    # print("-> client has connected " + request.sid)
     global thread
     if not thread.is_alive():
         print("-> Starting Communications Thread...")
@@ -142,7 +142,8 @@ def get_takeoff_position():
 
 @socketio.on("disconnect")
 def disconnected():
-    print("-> client has disconnected " + request.sid)
+    # print("-> client has disconnected " + request.sid)
+    pass
 
 def print_tiplot():
     print('''

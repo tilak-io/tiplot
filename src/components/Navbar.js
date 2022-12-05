@@ -152,16 +152,17 @@ function TopBar({ page, toggle3dView, showView }) {
   }
 
   function Controls() {
-    return (
-      <Nav>
-        <Nav.Link onClick={toggleFit}>
-          <FitButton />
-        </Nav.Link>
-        <Nav.Link onClick={toggle3dView}>
-          <ViewButton />
-        </Nav.Link>
-      </Nav>
-    );
+    if (window.scene)
+      return (
+        <Nav>
+          <Nav.Link onClick={toggleFit}>
+            <FitButton />
+          </Nav.Link>
+          <Nav.Link onClick={toggle3dView}>
+            <ViewButton />
+          </Nav.Link>
+        </Nav>
+      );
   }
 
   return (
