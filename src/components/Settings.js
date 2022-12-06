@@ -137,12 +137,12 @@ function Settings() {
       <TopBar page="settings" />
       <Container className="settings-page">
         <Form>
-          <fieldset>
-            <legend>• View Helpers 🌎</legend>
-            <Form.Check type="checkbox" label="X Axis Grid" />
-            <Form.Check type="checkbox" label="Y Axis Grid" />
-            <Form.Check type="checkbox" label="Z Axis Grid" />
-          </fieldset>
+          {/* <fieldset> */}
+          {/*   <legend>• View Helpers 🌎</legend> */}
+          {/*   <Form.Check type="checkbox" label="X Axis Grid" /> */}
+          {/*   <Form.Check type="checkbox" label="Y Axis Grid" /> */}
+          {/*   <Form.Check type="checkbox" label="Z Axis Grid" /> */}
+          {/* </fieldset> */}
           {current_entities.map((e, i) => (
             <EntityConfig
               key={e.id}
@@ -161,21 +161,19 @@ function Settings() {
           ))}
 
           <Row>
-            <Col className="text-start">
+            <Col className="text-start"></Col>
+
+            <Col className="text-center">
               <Button variant="success" onClick={addEntity}>
                 Add Entity
               </Button>
             </Col>
-            <Col className="text-center">
-              <Button variant="danger" type="submit">
-                Revert Default
-              </Button>
+
+            <Col className="text-end">
               <Button variant="primary" onClick={applyConfig} type="submit">
                 Apply
               </Button>
             </Col>
-
-            <Col className="text-end"></Col>
           </Row>
         </Form>
       </Container>
