@@ -153,8 +153,8 @@ export default class Entity {
       const z = -e.props[0].altitude;
       this.ref_x = x;
       this.ref_y = y;
-      this.ref_z = z;
-      // this.ref_z = 0;
+      // this.ref_z = z;
+      this.ref_z = 0;
     }
   }
 
