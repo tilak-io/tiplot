@@ -74,7 +74,10 @@ def select_log_file(file):
 def get_entities():
     global currentTime
     currentTime = datetime.now()
-    props = store.Store.get().getEntitiesProps()
+    props,err = store.Store.get().getEntitiesProps()
+    if err is not None:
+        print("hehehe" + str(err))
+        emit('error', err)
     emit('entities_props', props)
 
 @socketio.on('get_table_keys')
@@ -88,7 +91,6 @@ def get_table_values(data):
     index = data['index']
     table = data['table']
     keys = data['keys']
-    # keys.append('timestamp')
     keys.append('timestamp_tiplot')
     datadict = store.Store.get().datadict
     try:
@@ -152,10 +154,10 @@ def write_config():
     config = request.get_json()
     if (current_parser == "default"):
         print("-> unable to write config, please choose a parser first")
-        return {'ok': False}
+        return {'ok': False, 'error': 'unable to write config, please choose a parser first'}
     store.Store.get().setEntities(config)
     with open(configs_dir + current_parser + ".json", "w") as outfile:
-        outfile.write(json.dumps(config, indent=4))
+        outfile.write(json.dumps(config, indent=2))
     return {'ok': True}
 
 @socketio.on("disconnect")

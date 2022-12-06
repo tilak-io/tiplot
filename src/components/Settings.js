@@ -1,12 +1,14 @@
 import TopBar from "./TopBar";
 import EntityConfig from "./EntityConfig";
 
+import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import "../css/settings.css";
 
 function Settings() {
   const [current_entities, setCurrentEntities] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getCurrentEntities();
@@ -114,7 +116,12 @@ function Settings() {
       },
       method: "POST",
       body: JSON.stringify(configs),
-    });
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.ok) navigate("/home");
+        else alert(res.error);
+      });
   };
 
   return (

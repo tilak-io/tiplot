@@ -36,6 +36,12 @@ function View3D({ socket }) {
   useEffect(() => {
     // Getting the entities
     socket.emit("get_entities_props");
+
+    // Errors
+    socket.on("error", (error) => {
+      alert(error);
+    });
+
     socket.on("entities_props", (raw_entities) => {
       raw_entities.forEach(initEntity);
     });
@@ -78,6 +84,8 @@ function View3D({ socket }) {
   const resizeCanvasToDisplaySize = () => {
     const view = document.getElementById("view-3d");
     const canvas = renderer.domElement;
+
+    if (!view) return;
 
     const width = view.clientWidth;
     const height = view.clientHeight;

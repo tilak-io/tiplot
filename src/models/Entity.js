@@ -143,6 +143,7 @@ export default class Entity {
       this.ref_x = x;
       this.ref_y = y;
       this.ref_z = z;
+      // this.ref_z = 0;
     }
   }
 
