@@ -5,6 +5,7 @@ from flask_cors import CORS
 from threading import Thread
 from ulgparser import ULGParser
 from csvparser import CSVParser
+from djiparser import DJIParser
 from time import localtime, strftime
 from os import makedirs, path, getcwd
 from glob import glob
@@ -12,29 +13,34 @@ from communication import Comm
 from datetime import datetime
 from sys import argv
 import store
+import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 CORS(app,resources={r"/*":{"origins":"*"}})
-#socketio = SocketIO(app,cors_allowed_origins="*")
 socketio = SocketIO(app,cors_allowed_origins="*")
 
 logs_dir = path.expanduser("~/Documents/tiplot/logs/")
 logs_dir = logs_dir.replace("\\", "/")
 
+configs_dir = path.expanduser("~/Documents/tiplot/config/")
+
 if not path.exists(logs_dir):
     makedirs(logs_dir)
 
 thread = Thread()
+current_parser = "default"
 
 def choose_parser(file, logs_dir):
-    parsers = [ULGParser(), CSVParser()]
+    global current_parser
+    parsers = [ULGParser(), CSVParser(), DJIParser()]
     full_path = logs_dir + file
     for p in parsers:
         try:
             [datadict, entities] = p.parse(full_path)
             store.Store.get().setStore(datadict, entities)
             ok = True
+            current_parser = p.name
             break
         except:
             print("~> wrong format")
@@ -64,34 +70,14 @@ def select_log_file(file):
     ok = choose_parser(file[0], logs_dir)
     emit('log_selected', ok)
 
-@app.route('/upload_log', methods=['POST'])
-def upload_log():
-    try:
-        file = request.files['log']
-        if file:
-            file.save(path.join(logs_dir, file.filename))
-            ok = choose_parser(file.filename, logs_dir)
-    except:
-        ok = False
-
-    return {'ok': ok}
-
-
-@app.route('/model')
-def model_3d():
-    if (len(argv) <= 1):
-        model = getcwd() + "/../obj/main.gltf" # debug mode
-    else:
-        model = argv[1]
-    return send_file(model)
-
-
 
 @socketio.on('get_entities_props')
 def get_entities():
     global currentTime
     currentTime = datetime.now()
-    props = store.Store.get().getEntitiesProps()
+    props,err = store.Store.get().getEntitiesProps()
+    if err is not None:
+        emit('error', err)
     emit('entities_props', props)
 
 @socketio.on('get_table_keys')
@@ -105,7 +91,6 @@ def get_table_values(data):
     index = data['index']
     table = data['table']
     keys = data['keys']
-    # keys.append('timestamp')
     keys.append('timestamp_tiplot')
     datadict = store.Store.get().datadict
     try:
@@ -139,6 +124,41 @@ def get_takeoff_position():
           }
         data = {'takeoff': takeoff}
     return data
+
+@app.route('/upload_log', methods=['POST'])
+def upload_log():
+    try:
+        file = request.files['log']
+        if file:
+            file.save(path.join(logs_dir, file.filename))
+            ok = choose_parser(file.filename, logs_dir)
+    except:
+        ok = False
+    return {'ok': ok}
+
+@app.route('/model')
+def model_3d():
+    if (len(argv) <= 1):
+        model = getcwd() + "/../obj/main.gltf" # debug mode
+    else:
+        model = argv[1]
+    return send_file(model)
+
+@app.route('/entities_config')
+def entities_config():
+    config = store.Store.get().getEntities()
+    return config
+
+@app.route('/write_config', methods=['POST'])
+def write_config():
+    config = request.get_json()
+    if (current_parser == "default"):
+        print("-> unable to write config, please choose a parser first")
+        return {'ok': False, 'error': 'unable to write config, please choose a parser first'}
+    store.Store.get().setEntities(config)
+    with open(configs_dir + current_parser + ".json", "w") as outfile:
+        outfile.write(json.dumps(config, indent=2))
+    return {'ok': True}
 
 @socketio.on("disconnect")
 def disconnected():

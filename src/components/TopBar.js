@@ -214,6 +214,12 @@ function TopBar({ page, toggle3dView, showView }) {
             <Nav.Link href="#/" className={page === "loader" ? "active" : ""}>
               Loader
             </Nav.Link>
+            <Nav.Link
+              href="#/settings"
+              className={page === "settings" ? "active" : ""}
+            >
+              Settings
+            </Nav.Link>
             <NavDropdown title="Layouts" id="navbarScrollingDropdown">
               {layouts}
               <ShowFirstDivider />

@@ -15,6 +15,10 @@ export default class Entity {
     const size = e.props.length;
     this.useXYZ = e.useXYZ;
     this.useRPY = e.useRPY;
+    this.pathColor = e.pathColor;
+    this.color = e.color;
+    this.alpha = e.alpha;
+    this.wireframe = e.wireframe;
     this.setReference(e);
     // using a single loop to do all the mapping
     for (let i = 0; i < size; i++) {
@@ -95,7 +99,7 @@ export default class Entity {
     );
 
     var material = new THREE.LineBasicMaterial({
-      color: colors[idx % colors.length],
+      color: this.pathColor,
     });
 
     const line = new THREE.Line(geometry, material);
@@ -111,6 +115,13 @@ export default class Entity {
       "http://localhost:5000/model",
       function (gltf) {
         instance.mesh = gltf.scene;
+        instance.mesh.children[0].children[0].material.transparent = true;
+        instance.mesh.children[0].children[0].material.opacity = instance.alpha;
+        instance.mesh.children[0].children[0].material.color = new THREE.Color(
+          instance.color
+        );
+        instance.mesh.children[0].children[0].material.wireframe =
+          instance.wireframe;
         scene.add(instance.mesh);
       },
       undefined,
@@ -142,7 +153,8 @@ export default class Entity {
       const z = -e.props[0].altitude;
       this.ref_x = x;
       this.ref_y = y;
-      this.ref_z = z;
+      // this.ref_z = z;
+      this.ref_z = 0;
     }
   }
 
@@ -182,7 +194,6 @@ export default class Entity {
 //
 const CONSTANTS_RADIUS_OF_EARTH = 6371000; // radius of the earth
 const k = 0.677; // PX4 constant
-const colors = ["yellow", "purple", "orange", "blue", "green", "red"]; // color array for the entity paths
 
 const findInTimeArray = (x, array) => {
   return array.reduce((a, b) => {

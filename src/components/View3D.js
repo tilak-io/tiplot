@@ -26,16 +26,18 @@ function View3D({ socket }) {
   gridx.rotation.x = Math.PI / 2;
   scene.add(gridx);
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  const ambientLight = new THREE.AmbientLight(0xffffff);
   scene.add(ambientLight);
-
-  const dirLight = new THREE.DirectionalLight(0xefefff, 1.5);
-  dirLight.position.set(0, 0, 100);
-  scene.add(dirLight);
 
   useEffect(() => {
     // Getting the entities
     socket.emit("get_entities_props");
+
+    // Errors
+    socket.on("error", (error) => {
+      alert(error);
+    });
+
     socket.on("entities_props", (raw_entities) => {
       raw_entities.forEach(initEntity);
     });
@@ -78,6 +80,8 @@ function View3D({ socket }) {
   const resizeCanvasToDisplaySize = () => {
     const view = document.getElementById("view-3d");
     const canvas = renderer.domElement;
+
+    if (!view) return;
 
     const width = view.clientWidth;
     const height = view.clientHeight;
