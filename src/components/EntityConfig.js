@@ -2,7 +2,8 @@ import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 
 function EntityConfig({
-  index,
+  removeEntity,
+  eId,
   name,
   pathColor,
   alpha,
@@ -19,26 +20,26 @@ function EntityConfig({
   }, []);
 
   const handlePositionTypeChanged = () => {
-    const xyzContainer = document.getElementById("XYZ");
-    const coordinatesContainer = document.getElementById("Coordinates");
+    const xyzContainer = document.getElementById(`XYZ-${eId}`);
+    const coordinatesContainer = document.getElementById(`Coordinates-${eId}`);
     xyzContainer.style.display = _useXYZ ? "none" : "block";
     coordinatesContainer.style.display = _useXYZ ? "block" : "none";
     setXYZ(!_useXYZ);
   };
 
   const handleAttitudeTypeChanged = () => {
-    const rpyContainer = document.getElementById("RPY");
-    const quaternionsContainer = document.getElementById("Quaternions");
+    const rpyContainer = document.getElementById(`RPY-${eId}`);
+    const quaternionsContainer = document.getElementById(`Quaternions-${eId}`);
     rpyContainer.style.display = _useRPY ? "none" : "block";
     quaternionsContainer.style.display = _useRPY ? "block" : "none";
     setRPY(!_useRPY);
   };
 
   const hideUnusedFields = () => {
-    const xyzContainer = document.getElementById("XYZ");
-    const coordinatesContainer = document.getElementById("Coordinates");
-    const rpyContainer = document.getElementById("RPY");
-    const quaternionsContainer = document.getElementById("Quaternions");
+    const xyzContainer = document.getElementById(`XYZ-${eId}`);
+    const coordinatesContainer = document.getElementById(`Coordinates-${eId}`);
+    const rpyContainer = document.getElementById(`RPY-${eId}`);
+    const quaternionsContainer = document.getElementById(`Quaternions-${eId}`);
 
     rpyContainer.style.display = useRPY ? "block" : "none";
     quaternionsContainer.style.display = useRPY ? "none" : "block";
@@ -46,62 +47,20 @@ function EntityConfig({
     coordinatesContainer.style.display = useXYZ ? "none" : "block";
   };
 
-  const getValue = (id) => {
-    return document.getElementById(id).value;
-  };
-
-  const getEntityConfig = () => {
-    const position = _useXYZ
-      ? {
-          table: getValue("positionTable"),
-          x: getValue("x"),
-          y: getValue("y"),
-          z: getValue("z"),
-        }
-      : {
-          table: getValue("positionTable"),
-          longitude: getValue("lon"),
-          lattitude: getValue("lat"),
-          altitude: getValue("alt"),
-        };
-    const attitude = _useRPY
-      ? {
-          table: getValue("attitudeTable"),
-          roll: getValue("roll"),
-          pitch: getValue("pitch"),
-          yaw: getValue("yaw"),
-        }
-      : {
-          table: getValue("attitudeTable"),
-          q0: getValue("qw"),
-          q1: getValue("qx"),
-          q2: getValue("qy"),
-          q3: getValue("qz"),
-        };
-    const config = {
-      name: getValue("name"),
-      alpha: getValue("alpha"),
-      useRPY: _useRPY,
-      useXYZ: _useXYZ,
-      position: position,
-      attitude: attitude,
-    };
-    console.log(config);
-  };
   return (
-    <fieldset id="">
+    <fieldset id={`entity-${eId}`}>
       <Row>
         <Col className="text-start">
           <legend>• Entity 🛩️</legend>
         </Col>
         <Col className="text-end">
-          <Button variant="close"></Button>
+          <Button variant="close" onClick={() => removeEntity(eId)}></Button>
         </Col>
       </Row>
       <Form.Control
         type="text"
         placeholder="Name"
-        id="name"
+        id={`name-${eId}`}
         defaultValue={name}
       />
       <Form.Control
@@ -116,7 +75,7 @@ function EntityConfig({
         min={0}
         max={1}
         step={0.1}
-        id="alpha"
+        id={`alpha-${eId}`}
         defaultValue={alpha}
       />
       <div className="break" />
@@ -125,59 +84,60 @@ function EntityConfig({
       <Form.Control
         type="text"
         placeholder="Table"
-        id="positionTable"
-        defaultValue={position["table"]}
+        id={`positionTable-${eId}`}
+        defaultValue={position["table"] ?? ""}
         required
       />
       <Form.Check
+        id={`useXYZ-${eId}`}
         type="switch"
         label="use X/Y/Z"
         defaultChecked={useXYZ}
         onChange={handlePositionTypeChanged}
       />
-      <Form.Group id="XYZ">
+      <Form.Group id={`XYZ-${eId}`}>
         <Form.Control
           type="text"
           placeholder="X"
-          id="x"
+          id={`x-${eId}`}
           required={_useXYZ}
           defaultValue={position["x"]}
         />
         <Form.Control
           type="text"
           placeholder="Y"
-          id="y"
+          id={`y-${eId}`}
           required={_useXYZ}
           defaultValue={position["y"]}
         />
         <Form.Control
           type="text"
           placeholder="Z"
-          id="z"
+          id={`z-${eId}`}
           required={_useXYZ}
           defaultValue={position["z"]}
         />
       </Form.Group>
 
-      <Form.Group id="Coordinates">
+      <Form.Group id={`Coordinates-${eId}`}>
         <Form.Control
           type="text"
           placeholder="Longitude"
-          id="lon"
+          id={`lon-${eId}`}
           required={!_useXYZ}
           defaultValue={position["longitude"]}
         />
         <Form.Control
           type="text"
           placeholder="Latitude"
-          id="lat"
+          id={`lat-${eId}`}
           required={!_useXYZ}
           defaultValue={position["lattitude"]}
         />
         <Form.Control
           type="text"
           placeholder="Altitude"
-          id="alt"
+          id={`alt-${eId}`}
           required={!_useXYZ}
           defaultValue={position["altitude"]}
         />
@@ -188,65 +148,66 @@ function EntityConfig({
       <Form.Control
         type="text"
         placeholder="Table"
-        id="attitudeTable"
+        id={`attitudeTable-${eId}`}
         required
-        defaultValue={attitude["table"]}
+        defaultValue={attitude["table"] ?? ""}
       />
       <Form.Check
         type="switch"
+        id={`useRPY-${eId}`}
         label="use roll/pitch/yaw"
         defaultChecked={useRPY}
         onChange={handleAttitudeTypeChanged}
       />
-      <Form.Group id="RPY">
+      <Form.Group id={`RPY-${eId}`}>
         <Form.Control
           type="text"
           placeholder="Roll"
-          id="roll"
+          id={`roll-${eId}`}
           required={_useRPY}
           defaultValue={attitude["roll"]}
         />
         <Form.Control
           type="text"
           placeholder="Pitch"
-          id="pitch"
+          id={`pitch-${eId}`}
           required={_useRPY}
           defaultValue={attitude["pitch"]}
         />
         <Form.Control
           type="text"
           placeholder="Yaw"
-          id="yaw"
+          id={`yaw-${eId}`}
           required={_useRPY}
           defaultValue={attitude["yaw"]}
         />
       </Form.Group>
-      <Form.Group id="Quaternions">
+      <Form.Group id={`Quaternions-${eId}`}>
         <Form.Control
           type="text"
           placeholder="Qx"
-          id="qx"
+          id={`qx-${eId}`}
           required={!_useRPY}
           defaultValue={attitude["q1"]}
         />
         <Form.Control
           type="text"
           placeholder="Qy"
-          id="qy"
+          id={`qy-${eId}`}
           required={!_useRPY}
           defaultValue={attitude["q2"]}
         />
         <Form.Control
           type="text"
           placeholder="Qz"
-          id="qz"
+          id={`qz-${eId}`}
           required={!_useRPY}
           defaultValue={attitude["q3"]}
         />
         <Form.Control
           type="text"
           placeholder="Qw"
-          id="qw"
+          id={`qw-${eId}`}
           required={!_useRPY}
           defaultValue={attitude["q0"]}
         />

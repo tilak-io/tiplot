@@ -12,22 +12,26 @@ from communication import Comm
 from datetime import datetime
 from sys import argv
 import store
+import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 CORS(app,resources={r"/*":{"origins":"*"}})
-#socketio = SocketIO(app,cors_allowed_origins="*")
 socketio = SocketIO(app,cors_allowed_origins="*")
 
 logs_dir = path.expanduser("~/Documents/tiplot/logs/")
 logs_dir = logs_dir.replace("\\", "/")
 
+configs_dir = path.expanduser("~/Documents/tiplot/config/")
+
 if not path.exists(logs_dir):
     makedirs(logs_dir)
 
 thread = Thread()
+current_parser = "default"
 
 def choose_parser(file, logs_dir):
+    global current_parser
     parsers = [ULGParser(), CSVParser()]
     full_path = logs_dir + file
     for p in parsers:
@@ -35,6 +39,7 @@ def choose_parser(file, logs_dir):
             [datadict, entities] = p.parse(full_path)
             store.Store.get().setStore(datadict, entities)
             ok = True
+            current_parser = p.name
             break
         except:
             print("~> wrong format")
@@ -141,6 +146,17 @@ def model_3d():
 def entities_config():
     config = store.Store.get().getEntities()
     return config
+
+@app.route('/write_config', methods=['POST'])
+def write_config():
+    config = request.get_json()
+    if (current_parser == "default"):
+        print("-> unable to write config, please choose a parser first")
+        return {'ok': False}
+    store.Store.get().setEntities(config)
+    with open(configs_dir + current_parser + ".json", "w") as outfile:
+        outfile.write(json.dumps(config, indent=4))
+    return {'ok': True}
 
 @socketio.on("disconnect")
 def disconnected():

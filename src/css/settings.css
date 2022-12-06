@@ -6,7 +6,7 @@ fieldset {
   background-color:#CCC;
   padding:16px;	
   border-radius: 15px;
-  margin: 25px
+  margin: 25px 0px;
 }
 
 legend {

@@ -1,5 +1,6 @@
 import pandas as pd
 import threading
+from cesium_entity import CesiumEntity
 
 class Store:
     __instance = None
@@ -71,6 +72,13 @@ class Store:
         for e in self.entities:
             data.append(e.toJson())
         return data
+
+    def setEntities(self, entities):
+        mapped = []
+        for entity in entities:
+            mapped.append(CesiumEntity.fromJson(entity))
+        self.entities = mapped
+
 
     def getTableColumns(self,key):
         nested = list(self.datadict[key].keys())
