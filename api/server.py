@@ -76,7 +76,6 @@ def get_entities():
     currentTime = datetime.now()
     props,err = store.Store.get().getEntitiesProps()
     if err is not None:
-        print("hehehe" + str(err))
         emit('error', err)
     emit('entities_props', props)
 

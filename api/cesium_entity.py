@@ -2,6 +2,9 @@ class CesiumEntity:
     next_id = 0
     def __init__(self,
                  name,
+                 color,
+                 wireframe,
+                 pathColor,
                  position,
                  attitude,
                  alpha=1,
@@ -10,6 +13,9 @@ class CesiumEntity:
                  viewModel=None):
 
         self.name = name
+        self.color = color
+        self.wireframe = wireframe
+        self.pathColor = pathColor
         self.position = position
         self.attitude = attitude
         self.alpha = alpha
@@ -46,8 +52,27 @@ class CesiumEntity:
         else:
             viewModel = None
 
+        if "pathColor" in json:
+            pathColor = json['pathColor']
+        else:
+            pathColor = "blue"
+
+        if "color" in json:
+            color = json['color']
+        else:
+            color = "white"
+
+
+        if "wireframe" in json:
+            wireframe = json['wireframe']
+        else:
+            wireframe = False
+
         return cls(
                    name=name,
+                   color=color,
+                   wireframe=wireframe,
+                   pathColor=pathColor,
                    position=position,
                    attitude=attitude,
                    alpha=alpha,
@@ -57,10 +82,13 @@ class CesiumEntity:
 
     def toJson(self):
         return({"id": self.id,
-                     "name": self.name,
-                     "alpha": self.alpha,
-                     "useXYZ": self.useXYZ,
-                     "useRPY": self.useRPY,
-                     "position": self.position,
-                     "attitude": self.attitude
-                     })
+                "name": self.name,
+                "color": self.color,
+                "wireframe": self.wireframe,
+                "pathColor": self.pathColor,
+                "alpha": self.alpha,
+                "useXYZ": self.useXYZ,
+                "useRPY": self.useRPY,
+                "position": self.position,
+                "attitude": self.attitude
+                })

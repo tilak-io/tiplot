@@ -41,18 +41,21 @@ function Settings() {
 
     const attitude = {
       table: "vehicle_attitude",
-      roll: "roll",
-      pitch: "pitch",
-      yaw: "yaw",
+      q1: "q[1]",
+      q2: "q[2]",
+      q3: "q[3]",
+      q0: "q[0]",
     };
 
     const entity = {
       id: id,
       name: `new entity ${id}`,
-      pathColor: "red",
+      color: "white",
+      pathColor: "blue",
+      wireframe: false,
       alpha: 1,
       useXYZ: true,
-      useRPY: true,
+      useRPY: false,
       position: position,
       attitude: attitude,
     };
@@ -66,6 +69,8 @@ function Settings() {
   const getEntityConfig = (eId) => {
     const _useXYZ = document.getElementById(`useXYZ-${eId}`).checked;
     const _useRPY = document.getElementById(`useRPY-${eId}`).checked;
+    const wireframe = document.getElementById(`wireframe-${eId}`).checked;
+
     const position = _useXYZ
       ? {
           table: getValue(`positionTable-${eId}`),
@@ -98,6 +103,9 @@ function Settings() {
       alpha: getValue(`alpha-${eId}`),
       useRPY: _useRPY,
       useXYZ: _useXYZ,
+      pathColor: getValue(`pathColor-${eId}`),
+      wireframe: wireframe,
+      color: getValue(`color-${eId}`),
       position: position,
       attitude: attitude,
     };
@@ -140,7 +148,9 @@ function Settings() {
               key={e.id}
               eId={e.id}
               name={e.name}
-              pathColor="red"
+              pathColor={e.pathColor}
+              color={e.color}
+              wireframe={e.wireframe}
               alpha={e.alpha}
               useRPY={e.useRPY}
               useXYZ={e.useXYZ}

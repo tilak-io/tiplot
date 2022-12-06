@@ -17,3 +17,11 @@ legend {
 .break {
   height:10px;
 }
+
+.form-check {
+  margin-top:10px;
+}
+
+.form-control {
+  margin-top: 4px;
+}

@@ -65,7 +65,15 @@ class Store:
                 mapped_columns.update(attitude_columns_mapped)
                 raw = merged[columns]
                 renamed = raw.rename(columns=mapped_columns).to_dict('records')
-                data.append({"id": e.id,"entity_name": e.name,"alpha": e.alpha,  "useRPY": e.useRPY, "useXYZ": e.useXYZ,"props": renamed})
+                data.append({"id": e.id,
+                             "entity_name": e.name,
+                             "alpha": e.alpha,
+                             "useRPY": e.useRPY,
+                             "useXYZ": e.useXYZ,
+                             "props": renamed,
+                             "color": e.color,
+                             "wireframe": e.wireframe,
+                             "pathColor": e.pathColor})
             except KeyError as error:
                 err = str(error)
                 print("-> Error " + str(error))
