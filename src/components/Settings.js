@@ -2,12 +2,13 @@ import TopBar from "./TopBar";
 import EntityConfig from "./EntityConfig";
 
 import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Row, Col } from "react-bootstrap";
+import { Container, Form, Button, Row, Col, Spinner } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import "../css/settings.css";
 
 function Settings() {
   const [current_entities, setCurrentEntities] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +24,7 @@ function Settings() {
       .then((res) => res.json())
       .then((res) => {
         setCurrentEntities(res);
+        setLoading(false);
       });
   };
 
@@ -120,7 +122,7 @@ function Settings() {
         originHelper: false,
         xGrid: false,
         yGrid: false,
-        zGrid: true,
+        zGrid: false,
       };
     else value = JSON.parse(value);
     return value;
@@ -166,14 +168,16 @@ function Settings() {
     localStorage.setItem("general_settings", JSON.stringify(general_settings));
   };
 
-  const isChecked = () => {
-    return true;
-  };
+  const showSettings = loading ? "hide" : "show";
+  const showLoading = loading ? "show" : "hide";
 
   return (
     <>
       <TopBar page="settings" />
-      <Container className="settings-page">
+      <Container className={"loading " + showLoading}>
+        <Spinner variant="primary" />
+      </Container>
+      <Container className={"settings-page " + showSettings}>
         <Form>
           <fieldset>
             <legend>• View Helpers 🌎</legend>

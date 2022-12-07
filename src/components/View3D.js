@@ -99,7 +99,7 @@ function View3D({ socket }) {
         originHelper: false,
         xGrid: false,
         yGrid: false,
-        zGrid: true,
+        zGrid: false,
       };
     else value = JSON.parse(value);
     return value;
