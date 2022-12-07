@@ -50,7 +50,7 @@ function Settings() {
       q0: "q[0]",
     };
 
-    const entity = {
+    const default_entity = {
       id: id,
       name: `new entity ${id}`,
       color: "white",
@@ -59,10 +59,11 @@ function Settings() {
       alpha: 1,
       useXYZ: true,
       useRPY: false,
+      tracked: false,
       position: position,
       attitude: attitude,
     };
-    setCurrentEntities([...current_entities, entity]);
+    setCurrentEntities([...current_entities, default_entity]);
   };
 
   const getValue = (id) => {
@@ -73,6 +74,7 @@ function Settings() {
     const _useXYZ = document.getElementById(`useXYZ-${eId}`).checked;
     const _useRPY = document.getElementById(`useRPY-${eId}`).checked;
     const wireframe = document.getElementById(`wireframe-${eId}`).checked;
+    const tracked = document.getElementById(`tracked-${eId}`).checked;
 
     const position = _useXYZ
       ? {
@@ -109,6 +111,7 @@ function Settings() {
       pathColor: getValue(`pathColor-${eId}`),
       wireframe: wireframe,
       color: getValue(`color-${eId}`),
+      tracked: tracked,
       position: position,
       attitude: attitude,
     };
@@ -218,6 +221,7 @@ function Settings() {
               alpha={e.alpha}
               useRPY={e.useRPY}
               useXYZ={e.useXYZ}
+              tracked={e.tracked}
               position={e.position}
               attitude={e.attitude}
               removeEntity={removeEntity}

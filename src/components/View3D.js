@@ -57,8 +57,16 @@ function View3D({ socket }) {
     entities[index].loadObj(scene, index);
   };
 
+  const getTrackedEntity = () => {
+    var tracked = entities[0]; // by default, the first entity is the tracked one
+    entities.forEach((e) => {
+      if (e.tracked) tracked = e;
+    });
+    return tracked;
+  };
+
   const updateEntities = () => {
-    const target = entities[0];
+    const target = getTrackedEntity();
     if (!target.mesh) return;
     stalker.subVectors(camera.position, target.mesh.position);
     entities.forEach((e) => e.update());

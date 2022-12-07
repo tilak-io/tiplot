@@ -11,6 +11,7 @@ function EntityConfig({
   alpha,
   useXYZ,
   useRPY,
+  tracked,
   position,
   attitude,
 }) {
@@ -105,6 +106,16 @@ function EntityConfig({
             label="Wireframe"
             id={`wireframe-${eId}`}
             defaultChecked={wireframe}
+          />
+        </Col>
+
+        <Col>
+          <Form.Check
+            type="radio"
+            label="Tracked"
+            id={`tracked-${eId}`}
+            name="tracked"
+            defaultChecked={tracked}
           />
         </Col>
       </Row>
