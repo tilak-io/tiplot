@@ -6,7 +6,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 function View3D({ socket }) {
   const mount = useRef(0);
-  var renderer = new THREE.WebGLRenderer();
+  var renderer = new THREE.WebGLRenderer({ antialias: true });
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
   window.scene = scene;
@@ -17,6 +17,7 @@ function View3D({ socket }) {
 
   const orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enableDamping = true;
+  orbit.dampingFactor = 0.8;
   orbit.maxDistance = 1500;
 
   const stalker = new THREE.Vector3();
@@ -125,6 +126,7 @@ function View3D({ socket }) {
     if (general_settings.yGrid) scene.add(yGrid);
     if (general_settings.zGrid) scene.add(zGrid);
     if (general_settings.originHelper) scene.add(originHelper);
+    scene.background = new THREE.Color(general_settings.backgroundColor);
   };
 
   return (

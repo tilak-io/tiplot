@@ -2,7 +2,15 @@ import TopBar from "./TopBar";
 import EntityConfig from "./EntityConfig";
 
 import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Row, Col, Spinner } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Button,
+  Row,
+  Col,
+  Spinner,
+  InputGroup,
+} from "react-bootstrap";
 import { useState, useEffect } from "react";
 import "../css/settings.css";
 
@@ -122,6 +130,7 @@ function Settings() {
     var value = localStorage.getItem(key);
     if (value === "" || value === null)
       value = {
+        backgroundColor: "#f0f0f0",
         originHelper: false,
         xGrid: false,
         yGrid: false,
@@ -157,17 +166,25 @@ function Settings() {
     const yGrid = document.getElementById("yGrid");
     const zGrid = document.getElementById("zGrid");
     const originHelper = document.getElementById("originHelper");
+    const backgroundColor = document.getElementById("backgroundColor");
     const general_settings = parseLocalStorage("general_settings");
     xGrid.checked = general_settings.xGrid;
     yGrid.checked = general_settings.yGrid;
     zGrid.checked = general_settings.zGrid;
     originHelper.checked = general_settings.originHelper;
+    backgroundColor.value = general_settings.backgroundColor;
   };
 
   const toggleGrid = (e) => {
     const target = e.target;
     const general_settings = parseLocalStorage("general_settings");
     general_settings[target.id] = target.checked;
+    localStorage.setItem("general_settings", JSON.stringify(general_settings));
+  };
+
+  const handleBackgroundChange = (e) => {
+    const general_settings = parseLocalStorage("general_settings");
+    general_settings.backgroundColor = e.target.value;
     localStorage.setItem("general_settings", JSON.stringify(general_settings));
   };
 
@@ -184,7 +201,6 @@ function Settings() {
         <Form>
           <fieldset>
             <legend>• View Helpers 🌎</legend>
-
             <Form.Check
               id="originHelper"
               type="checkbox"
@@ -209,6 +225,18 @@ function Settings() {
               label="Z Axis Grid"
               onChange={toggleGrid}
             />
+            <br />
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="backgroundColorLabel">
+                Background Color
+              </InputGroup.Text>
+              <Form.Control
+                onChange={handleBackgroundChange}
+                id="backgroundColor"
+                aria-label="Background Color"
+                aria-describedby="backgroundColorLabel"
+              />
+            </InputGroup>
           </fieldset>
           {current_entities.map((e, i) => (
             <EntityConfig
