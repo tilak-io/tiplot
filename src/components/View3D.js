@@ -46,6 +46,7 @@ function View3D({ socket }) {
     }
     renderer.setAnimationLoop(animation);
 
+    renderer.domElement.addEventListener("dblclick", focusEntity, false);
     return () => {
       window.location.reload();
     };
@@ -129,6 +130,11 @@ function View3D({ socket }) {
     scene.background = new THREE.Color(general_settings.backgroundColor);
   };
 
+  const focusEntity = () => {
+    camera.position.x = orbit.target.x - 15;
+    camera.position.y = orbit.target.y - 5;
+    camera.position.z = orbit.target.z - 10;
+  };
   return (
     <div id="view-3d">
       <div ref={mount} />
