@@ -22,17 +22,14 @@ function View3D({ socket }) {
   const stalker = new THREE.Vector3();
   const entities = [];
 
-  var gridx = new THREE.GridHelper(1500, 150);
-  gridx.rotation.x = Math.PI / 2;
-  scene.add(gridx);
-
   const ambientLight = new THREE.AmbientLight(0xffffff);
   scene.add(ambientLight);
 
   useEffect(() => {
+    // Helpers setup
+    setupHelpers();
     // Getting the entities
     socket.emit("get_entities_props");
-
     // Errors
     socket.on("error", (error) => {
       alert(error);
@@ -93,6 +90,33 @@ function View3D({ socket }) {
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
     }
+  };
+
+  const parseLocalStorage = (key) => {
+    var value = localStorage.getItem(key);
+    if (value === "" || value === null)
+      value = {
+        originHelper: false,
+        xGrid: false,
+        yGrid: false,
+        zGrid: true,
+      };
+    else value = JSON.parse(value);
+    return value;
+  };
+
+  const setupHelpers = () => {
+    const general_settings = parseLocalStorage("general_settings");
+    const xGrid = new THREE.GridHelper(1500, 150);
+    const yGrid = new THREE.GridHelper(1500, 150);
+    const zGrid = new THREE.GridHelper(1500, 150);
+    const originHelper = new THREE.AxesHelper(5);
+    xGrid.rotateZ(Math.PI / 2);
+    zGrid.rotateX(Math.PI / 2);
+    if (general_settings.xGrid) scene.add(xGrid);
+    if (general_settings.yGrid) scene.add(yGrid);
+    if (general_settings.zGrid) scene.add(zGrid);
+    if (general_settings.originHelper) scene.add(originHelper);
   };
 
   return (

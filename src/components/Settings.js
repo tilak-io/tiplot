@@ -11,6 +11,7 @@ function Settings() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    getCurrentSettings();
     getCurrentEntities();
     return () => {
       window.location.reload();
@@ -112,7 +113,21 @@ function Settings() {
     return config;
   };
 
+  const parseLocalStorage = (key) => {
+    var value = localStorage.getItem(key);
+    if (value === "" || value === null)
+      value = {
+        originHelper: false,
+        xGrid: false,
+        yGrid: false,
+        zGrid: true,
+      };
+    else value = JSON.parse(value);
+    return value;
+  };
+
   const applyConfig = () => {
+    // Entity Configs
     const configs = [];
     current_entities.forEach((e) => {
       const c = getEntityConfig(e.id);
@@ -132,17 +147,62 @@ function Settings() {
       });
   };
 
+  const getCurrentSettings = () => {
+    const xGrid = document.getElementById("xGrid");
+    const yGrid = document.getElementById("yGrid");
+    const zGrid = document.getElementById("zGrid");
+    const originHelper = document.getElementById("originHelper");
+    const general_settings = parseLocalStorage("general_settings");
+    xGrid.checked = general_settings.xGrid;
+    yGrid.checked = general_settings.yGrid;
+    zGrid.checked = general_settings.zGrid;
+    originHelper.checked = general_settings.originHelper;
+  };
+
+  const toggleGrid = (e) => {
+    const target = e.target;
+    const general_settings = parseLocalStorage("general_settings");
+    general_settings[target.id] = target.checked;
+    localStorage.setItem("general_settings", JSON.stringify(general_settings));
+  };
+
+  const isChecked = () => {
+    return true;
+  };
+
   return (
     <>
       <TopBar page="settings" />
       <Container className="settings-page">
         <Form>
-          {/* <fieldset> */}
-          {/*   <legend>• View Helpers 🌎</legend> */}
-          {/*   <Form.Check type="checkbox" label="X Axis Grid" /> */}
-          {/*   <Form.Check type="checkbox" label="Y Axis Grid" /> */}
-          {/*   <Form.Check type="checkbox" label="Z Axis Grid" /> */}
-          {/* </fieldset> */}
+          <fieldset>
+            <legend>• View Helpers 🌎</legend>
+
+            <Form.Check
+              id="originHelper"
+              type="checkbox"
+              label="Origin Helper"
+              onChange={toggleGrid}
+            />
+            <Form.Check
+              id="xGrid"
+              type="checkbox"
+              label="X Axis Grid"
+              onChange={toggleGrid}
+            />
+            <Form.Check
+              id="yGrid"
+              type="checkbox"
+              label="Y Axis Grid"
+              onChange={toggleGrid}
+            />
+            <Form.Check
+              id="zGrid"
+              type="checkbox"
+              label="Z Axis Grid"
+              onChange={toggleGrid}
+            />
+          </fieldset>
           {current_entities.map((e, i) => (
             <EntityConfig
               key={e.id}
