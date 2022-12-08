@@ -3,6 +3,7 @@ import { MdZoomOutMap } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
 import { HiOutlineTicket } from "react-icons/hi";
 import { AiOutlineDotChart, AiOutlineLineChart } from "react-icons/ai";
+import { BiMoveHorizontal } from "react-icons/bi";
 import { TbChartDots } from "react-icons/tb";
 import Plotly from "plotly.js/dist/plotly";
 
@@ -10,6 +11,7 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
   const [showLegend, setShowLegend] = useState(true);
   const [plotType, setPlotType] = useState(1);
   const [legendAnchor, setLegendAnchor] = useState(1);
+  const [rslider, setRSlider] = useState(true);
 
   const toggleLegend = () => {
     var update;
@@ -108,6 +110,17 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
     return icon;
   }
 
+  const toggleRangeslider = () => {
+    setRSlider(!rslider);
+    const rs = rslider ? {} : false;
+    const update = {
+      xaxis: { rangeslider: rs },
+    };
+    const plot = document.getElementById(plotId);
+
+    Plotly.relayout(plot, update);
+  };
+
   return (
     <div className="plot-options">
       <span onClick={() => removeGraph(graphIndex)}>
@@ -128,6 +141,12 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
       <span onClick={autoscale}>
         <MdZoomOutMap style={{ width: "100%" }} />
       </span>
+
+      {/* <span onClick={toggleRangeslider}> */}
+      {/*   <BiMoveHorizontal */}
+      {/*     style={{ color: rslider ? "grey" : "black", width: "100%" }} */}
+      {/*   /> */}
+      {/* </span> */}
     </div>
   );
 }
