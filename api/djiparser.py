@@ -8,6 +8,7 @@ class DJIParser(Parser):
     def __init__(self):
         super().__init__()
         self.name = "dji_parser"
+        self.initDefaultEntitiy()
         self.initEntities()
 
     def quaternionToEuler(self,q):
@@ -73,11 +74,13 @@ class DJIParser(Parser):
         self.datadict = {"data": out} 
         return [self.datadict, self.entities]
 
-    def setDefaultEntities(self):
-        entity = CesiumEntity(
+    def initDefaultEntitiy(self):
+        self.default_entity = CesiumEntity(
             name='dji dat default entity',
             useRPY=True,
             useXYZ=False,
+            color="#ffffff",
+            pathColor="#0000ff",
             position={
                 'table':'data',
                 'longitude':'longitude',
@@ -90,4 +93,6 @@ class DJIParser(Parser):
                 'pitch':'pitch',
                 'yaw':'yaw',
             })
-        self.addEntity(entity) 
+
+    def setDefaultEntities(self):
+        self.addEntity(self.default_entity)

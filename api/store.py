@@ -73,6 +73,7 @@ class Store:
                              "props": renamed,
                              "color": e.color,
                              "wireframe": e.wireframe,
+                             "tracked": e.tracked,
                              "pathColor": e.pathColor})
             except KeyError as error:
                 err = str(error)

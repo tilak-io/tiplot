@@ -6,7 +6,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 function View3D({ socket }) {
   const mount = useRef(0);
-  var renderer = new THREE.WebGLRenderer();
+  var renderer = new THREE.WebGLRenderer({ antialias: true });
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
   window.scene = scene;
@@ -17,22 +17,20 @@ function View3D({ socket }) {
 
   const orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enableDamping = true;
+  orbit.dampingFactor = 0.8;
   orbit.maxDistance = 1500;
 
   const stalker = new THREE.Vector3();
   const entities = [];
 
-  var gridx = new THREE.GridHelper(1500, 150);
-  gridx.rotation.x = Math.PI / 2;
-  scene.add(gridx);
-
   const ambientLight = new THREE.AmbientLight(0xffffff);
   scene.add(ambientLight);
 
   useEffect(() => {
+    // Helpers setup
+    setupHelpers();
     // Getting the entities
     socket.emit("get_entities_props");
-
     // Errors
     socket.on("error", (error) => {
       alert(error);
@@ -48,6 +46,7 @@ function View3D({ socket }) {
     }
     renderer.setAnimationLoop(animation);
 
+    renderer.domElement.addEventListener("dblclick", focusEntity, false);
     return () => {
       window.location.reload();
     };
@@ -60,8 +59,16 @@ function View3D({ socket }) {
     entities[index].loadObj(scene, index);
   };
 
+  const getTrackedEntity = () => {
+    var tracked = entities[0]; // by default, the first entity is the tracked one
+    entities.forEach((e) => {
+      if (e.tracked) tracked = e;
+    });
+    return tracked;
+  };
+
   const updateEntities = () => {
-    const target = entities[0];
+    const target = getTrackedEntity();
     if (!target.mesh) return;
     stalker.subVectors(camera.position, target.mesh.position);
     entities.forEach((e) => e.update());
@@ -95,6 +102,39 @@ function View3D({ socket }) {
     }
   };
 
+  const parseLocalStorage = (key) => {
+    var value = localStorage.getItem(key);
+    if (value === "" || value === null)
+      value = {
+        originHelper: false,
+        xGrid: false,
+        yGrid: false,
+        zGrid: false,
+      };
+    else value = JSON.parse(value);
+    return value;
+  };
+
+  const setupHelpers = () => {
+    const general_settings = parseLocalStorage("general_settings");
+    const xGrid = new THREE.GridHelper(1500, 150);
+    const yGrid = new THREE.GridHelper(1500, 150);
+    const zGrid = new THREE.GridHelper(1500, 150);
+    const originHelper = new THREE.AxesHelper(5);
+    xGrid.rotateZ(Math.PI / 2);
+    zGrid.rotateX(Math.PI / 2);
+    if (general_settings.xGrid) scene.add(xGrid);
+    if (general_settings.yGrid) scene.add(yGrid);
+    if (general_settings.zGrid) scene.add(zGrid);
+    if (general_settings.originHelper) scene.add(originHelper);
+    scene.background = new THREE.Color(general_settings.backgroundColor);
+  };
+
+  const focusEntity = () => {
+    camera.position.x = orbit.target.x - 15;
+    camera.position.y = orbit.target.y - 5;
+    camera.position.z = orbit.target.z - 10;
+  };
   return (
     <div id="view-3d">
       <div ref={mount} />

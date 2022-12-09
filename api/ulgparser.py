@@ -8,6 +8,7 @@ class ULGParser(Parser):
         super().__init__()
         self.name = "ulg_parser"
         self.ulg = None
+        self.initDefaultEntity()
         self.initEntities()
 
     def parse(self,filename):
@@ -22,8 +23,10 @@ class ULGParser(Parser):
             self.datadict[name]['timestamp_tiplot'] = self.datadict[name]['timestamp'] / 1e6
         return [self.datadict, self.entities]
 
-    def setDefaultEntities(self):
-        entity = CesiumEntity(name='ulg default entity',
+    def initDefaultEntity(self):
+        self.default_entity = CesiumEntity(name='ulg default entity',
+                              color="#ffffff",
+                              pathColor="#0000ff",
                               useRPY=False,
                               useXYZ=True,
                               position={
@@ -39,4 +42,6 @@ class ULGParser(Parser):
                                   'q2':'q[2]',
                                   'q3':'q[3]',
                               })
-        self.addEntity(entity) 
+
+    def setDefaultEntities(self):
+        self.addEntity(self.default_entity)

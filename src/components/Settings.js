@@ -2,15 +2,25 @@ import TopBar from "./TopBar";
 import EntityConfig from "./EntityConfig";
 
 import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Row, Col } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Button,
+  Row,
+  Col,
+  Spinner,
+  InputGroup,
+} from "react-bootstrap";
 import { useState, useEffect } from "react";
 import "../css/settings.css";
 
 function Settings() {
   const [current_entities, setCurrentEntities] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    getCurrentSettings();
     getCurrentEntities();
     return () => {
       window.location.reload();
@@ -22,44 +32,22 @@ function Settings() {
       .then((res) => res.json())
       .then((res) => {
         setCurrentEntities(res);
+        setLoading(false);
+      });
+  };
+
+  const addEntity = () => {
+    fetch("http://localhost:5000/default_entity")
+      .then((res) => res.json())
+      .then((res) => {
+        res.id = parseInt(Math.random() * 10000);
+        setCurrentEntities([...current_entities, res]);
       });
   };
 
   const removeEntity = (id) => {
     const remaining = current_entities.filter((e) => e.id != id);
     setCurrentEntities(remaining);
-  };
-
-  const addEntity = () => {
-    const id = parseInt(Math.random() * 10000);
-    const position = {
-      table: "vehicle_local_position",
-      x: "x",
-      y: "y",
-      z: "z",
-    };
-
-    const attitude = {
-      table: "vehicle_attitude",
-      q1: "q[1]",
-      q2: "q[2]",
-      q3: "q[3]",
-      q0: "q[0]",
-    };
-
-    const entity = {
-      id: id,
-      name: `new entity ${id}`,
-      color: "white",
-      pathColor: "blue",
-      wireframe: false,
-      alpha: 1,
-      useXYZ: true,
-      useRPY: false,
-      position: position,
-      attitude: attitude,
-    };
-    setCurrentEntities([...current_entities, entity]);
   };
 
   const getValue = (id) => {
@@ -70,6 +58,7 @@ function Settings() {
     const _useXYZ = document.getElementById(`useXYZ-${eId}`).checked;
     const _useRPY = document.getElementById(`useRPY-${eId}`).checked;
     const wireframe = document.getElementById(`wireframe-${eId}`).checked;
+    const tracked = document.getElementById(`tracked-${eId}`).checked;
 
     const position = _useXYZ
       ? {
@@ -106,13 +95,29 @@ function Settings() {
       pathColor: getValue(`pathColor-${eId}`),
       wireframe: wireframe,
       color: getValue(`color-${eId}`),
+      tracked: tracked,
       position: position,
       attitude: attitude,
     };
     return config;
   };
 
+  const parseLocalStorage = (key) => {
+    var value = localStorage.getItem(key);
+    if (value === "" || value === null)
+      value = {
+        backgroundColor: "#f0f0f0",
+        originHelper: false,
+        xGrid: false,
+        yGrid: false,
+        zGrid: false,
+      };
+    else value = JSON.parse(value);
+    return value;
+  };
+
   const applyConfig = () => {
+    // Entity Configs
     const configs = [];
     current_entities.forEach((e) => {
       const c = getEntityConfig(e.id);
@@ -132,17 +137,85 @@ function Settings() {
       });
   };
 
+  const getCurrentSettings = () => {
+    const xGrid = document.getElementById("xGrid");
+    const yGrid = document.getElementById("yGrid");
+    const zGrid = document.getElementById("zGrid");
+    const originHelper = document.getElementById("originHelper");
+    const backgroundColor = document.getElementById("backgroundColor");
+    const general_settings = parseLocalStorage("general_settings");
+    xGrid.checked = general_settings.xGrid;
+    yGrid.checked = general_settings.yGrid;
+    zGrid.checked = general_settings.zGrid;
+    originHelper.checked = general_settings.originHelper;
+    backgroundColor.value = general_settings.backgroundColor;
+  };
+
+  const toggleGrid = (e) => {
+    const target = e.target;
+    const general_settings = parseLocalStorage("general_settings");
+    general_settings[target.id] = target.checked;
+    localStorage.setItem("general_settings", JSON.stringify(general_settings));
+  };
+
+  const handleBackgroundChange = (e) => {
+    const general_settings = parseLocalStorage("general_settings");
+    general_settings.backgroundColor = e.target.value;
+    localStorage.setItem("general_settings", JSON.stringify(general_settings));
+  };
+
+  const showSettings = loading ? "hide" : "show";
+  const showLoading = loading ? "show" : "hide";
+
   return (
     <>
       <TopBar page="settings" />
-      <Container className="settings-page">
+      <Container className={"loading " + showLoading}>
+        <Spinner variant="primary" />
+      </Container>
+      <Container className={"settings-page " + showSettings}>
         <Form>
-          {/* <fieldset> */}
-          {/*   <legend>• View Helpers 🌎</legend> */}
-          {/*   <Form.Check type="checkbox" label="X Axis Grid" /> */}
-          {/*   <Form.Check type="checkbox" label="Y Axis Grid" /> */}
-          {/*   <Form.Check type="checkbox" label="Z Axis Grid" /> */}
-          {/* </fieldset> */}
+          <fieldset>
+            <legend>• View Helpers 🌎</legend>
+            <Form.Check
+              id="originHelper"
+              type="checkbox"
+              label="Origin Helper"
+              onChange={toggleGrid}
+            />
+            <Form.Check
+              id="xGrid"
+              type="checkbox"
+              label="X Axis Grid"
+              onChange={toggleGrid}
+            />
+            <Form.Check
+              id="yGrid"
+              type="checkbox"
+              label="Y Axis Grid"
+              onChange={toggleGrid}
+            />
+            <Form.Check
+              id="zGrid"
+              type="checkbox"
+              label="Z Axis Grid"
+              onChange={toggleGrid}
+            />
+            <br />
+            <InputGroup>
+              <InputGroup.Text id="backgroundColorLabel">
+                Background Color
+              </InputGroup.Text>
+
+              <Form.Control
+                onChange={handleBackgroundChange}
+                id="backgroundColor"
+                type="color"
+                aria-label="Background Color"
+                aria-describedby="backgroundColorLabel"
+              />
+            </InputGroup>
+          </fieldset>
           {current_entities.map((e, i) => (
             <EntityConfig
               key={e.id}
@@ -154,6 +227,7 @@ function Settings() {
               alpha={e.alpha}
               useRPY={e.useRPY}
               useXYZ={e.useXYZ}
+              tracked={e.tracked}
               position={e.position}
               attitude={e.attitude}
               removeEntity={removeEntity}

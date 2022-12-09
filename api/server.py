@@ -6,6 +6,7 @@ from threading import Thread
 from ulgparser import ULGParser
 from csvparser import CSVParser
 from djiparser import DJIParser
+from arduparser import ArduParser
 from time import localtime, strftime
 from os import makedirs, path, getcwd
 from glob import glob
@@ -29,18 +30,18 @@ if not path.exists(logs_dir):
     makedirs(logs_dir)
 
 thread = Thread()
-current_parser = "default"
+current_parser = None
 
 def choose_parser(file, logs_dir):
     global current_parser
-    parsers = [ULGParser(), CSVParser(), DJIParser()]
+    parsers = [ULGParser(), CSVParser(), DJIParser(), ArduParser()]
     full_path = logs_dir + file
     for p in parsers:
         try:
             [datadict, entities] = p.parse(full_path)
             store.Store.get().setStore(datadict, entities)
             ok = True
-            current_parser = p.name
+            current_parser = p
             break
         except:
             print("~> wrong format")
@@ -149,14 +150,23 @@ def entities_config():
     config = store.Store.get().getEntities()
     return config
 
+@app.route('/default_entity')
+def default_entity():
+    if current_parser is not None:
+        default = current_parser.default_entity.toJson()
+    else:
+        #setting ulg entity as default
+        default = ULGParser().default_entity.toJson()
+    return default
+
 @app.route('/write_config', methods=['POST'])
 def write_config():
     config = request.get_json()
-    if (current_parser == "default"):
+    if (current_parser is None):
         print("-> unable to write config, please choose a parser first")
         return {'ok': False, 'error': 'unable to write config, please choose a parser first'}
     store.Store.get().setEntities(config)
-    with open(configs_dir + current_parser + ".json", "w") as outfile:
+    with open(configs_dir + current_parser.name + ".json", "w") as outfile:
         outfile.write(json.dumps(config, indent=2))
     return {'ok': True}
 

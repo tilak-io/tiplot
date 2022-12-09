@@ -19,6 +19,7 @@ export default class Entity {
     this.color = e.color;
     this.alpha = e.alpha;
     this.wireframe = e.wireframe;
+    this.tracked = e.tracked;
     this.setReference(e);
     // using a single loop to do all the mapping
     for (let i = 0; i < size; i++) {

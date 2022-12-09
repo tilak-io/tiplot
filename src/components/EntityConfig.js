@@ -1,4 +1,4 @@
-import { Container, Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import { useState, useEffect } from "react";
 
 function EntityConfig({
@@ -11,6 +11,7 @@ function EntityConfig({
   alpha,
   useXYZ,
   useRPY,
+  tracked,
   position,
   attitude,
 }) {
@@ -61,42 +62,54 @@ function EntityConfig({
       </Row>
       <Row>
         <Col>
-          <Form.Control
-            type="text"
-            placeholder="Name"
-            id={`name-${eId}`}
-            defaultValue={name}
-          />
+          <InputGroup>
+            <InputGroup.Text>Name</InputGroup.Text>
+            <Form.Control
+              type="text"
+              placeholder="Name"
+              id={`name-${eId}`}
+              defaultValue={name}
+            />
+          </InputGroup>
         </Col>
         <Col>
-          <Form.Control
-            type="text"
-            placeholder="Color"
-            id={`color-${eId}`}
-            defaultValue={color}
-          />
+          <InputGroup>
+            <InputGroup.Text>Color</InputGroup.Text>
+            <Form.Control
+              type="color"
+              placeholder="Color"
+              id={`color-${eId}`}
+              defaultValue={color}
+            />
+          </InputGroup>
         </Col>
         <Col>
-          <Form.Control
-            type="number"
-            placeholder="Alpha"
-            min={0}
-            max={1}
-            step={0.1}
-            id={`alpha-${eId}`}
-            defaultValue={alpha}
-          />
+          <InputGroup>
+            <InputGroup.Text>Opacity</InputGroup.Text>
+            <Form.Control
+              type="number"
+              placeholder="Alpha"
+              min={0}
+              max={1}
+              step={0.1}
+              id={`alpha-${eId}`}
+              defaultValue={alpha}
+            />
+          </InputGroup>
         </Col>
       </Row>
 
       <Row>
         <Col>
-          <Form.Control
-            type="text"
-            placeholder="Path Color"
-            id={`pathColor-${eId}`}
-            defaultValue={pathColor}
-          />
+          <InputGroup>
+            <InputGroup.Text>Path Color</InputGroup.Text>
+            <Form.Control
+              type="color"
+              placeholder="Path Color"
+              id={`pathColor-${eId}`}
+              defaultValue={pathColor}
+            />
+          </InputGroup>
         </Col>
 
         <Col>
@@ -107,24 +120,39 @@ function EntityConfig({
             defaultChecked={wireframe}
           />
         </Col>
+
+        <Col>
+          <Form.Check
+            type="radio"
+            label="Tracked"
+            id={`tracked-${eId}`}
+            name="tracked"
+            defaultChecked={tracked}
+          />
+        </Col>
       </Row>
       <div className="break" />
 
       <legend>• Position</legend>
-      <Form.Control
-        type="text"
-        placeholder="Table"
-        id={`positionTable-${eId}`}
-        defaultValue={position["table"] ?? ""}
-        required
-      />
-      <Form.Check
-        id={`useXYZ-${eId}`}
-        type="switch"
-        label="use X/Y/Z"
-        defaultChecked={useXYZ}
-        onChange={handlePositionTypeChanged}
-      />
+
+      <InputGroup>
+        <InputGroup.Text>Table</InputGroup.Text>
+        <Form.Control
+          type="text"
+          placeholder="Table"
+          id={`positionTable-${eId}`}
+          defaultValue={position["table"] ?? ""}
+          required
+        />
+        <div className="break" />
+        <Form.Check
+          id={`useXYZ-${eId}`}
+          type="switch"
+          label="use X/Y/Z"
+          defaultChecked={useXYZ}
+          onChange={handlePositionTypeChanged}
+        />
+      </InputGroup>
       <Form.Group id={`XYZ-${eId}`}>
         <Row>
           <Col>
@@ -191,20 +219,25 @@ function EntityConfig({
       <div className="break" />
 
       <legend>• Attitude</legend>
-      <Form.Control
-        type="text"
-        placeholder="Table"
-        id={`attitudeTable-${eId}`}
-        required
-        defaultValue={attitude["table"] ?? ""}
-      />
-      <Form.Check
-        type="switch"
-        id={`useRPY-${eId}`}
-        label="use roll/pitch/yaw"
-        defaultChecked={useRPY}
-        onChange={handleAttitudeTypeChanged}
-      />
+
+      <InputGroup>
+        <InputGroup.Text>Table</InputGroup.Text>
+        <Form.Control
+          type="text"
+          placeholder="Table"
+          id={`attitudeTable-${eId}`}
+          required
+          defaultValue={attitude["table"] ?? ""}
+        />
+        <div className="break" />
+        <Form.Check
+          type="switch"
+          id={`useRPY-${eId}`}
+          label="use roll/pitch/yaw"
+          defaultChecked={useRPY}
+          onChange={handleAttitudeTypeChanged}
+        />
+      </InputGroup>
       <Form.Group id={`RPY-${eId}`}>
         <Row>
           <Col>

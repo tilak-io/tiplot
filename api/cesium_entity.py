@@ -6,6 +6,7 @@ class CesiumEntity:
                  attitude,
                  color="white",
                  wireframe=False,
+                 tracked=True,
                  pathColor="blue",
                  alpha=1,
                  useRPY=False,
@@ -21,6 +22,7 @@ class CesiumEntity:
         self.alpha = alpha
         self.useRPY = useRPY
         self.useXYZ = useXYZ
+        self.tracked = tracked
         #self.takeoffKey = takeoff_key
         self.viewModel = viewModel
         self.id = CesiumEntity.next_id
@@ -68,6 +70,11 @@ class CesiumEntity:
         else:
             wireframe = False
 
+        if "tracked" in json:
+            tracked = json['tracked']
+        else:
+            tracked = True
+
         return cls(
                    name=name,
                    color=color,
@@ -78,6 +85,7 @@ class CesiumEntity:
                    alpha=alpha,
                    useRPY=useRPY,
                    useXYZ=useXYZ,
+                   tracked=tracked,
                    viewModel=viewModel)
 
     def toJson(self):
@@ -89,6 +97,7 @@ class CesiumEntity:
                 "alpha": self.alpha,
                 "useXYZ": self.useXYZ,
                 "useRPY": self.useRPY,
+                "tracked": self.tracked,
                 "position": self.position,
                 "attitude": self.attitude
                 })
