@@ -248,9 +248,10 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
 
   const handleHover = (event) => {
     const x = event.points[0].x;
+    const n = event.points[0].data.x.length;
     const idx = event.points[0].pointIndex;
     if (event.event.altKey) {
-      updateTimelineIndicator(x, idx);
+      updateTimelineIndicator(x, idx / n);
     }
 
     // const plots = document.getElementsByClassName("plot-yt");
@@ -279,10 +280,10 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
 
   const handleClick = (event) => {
     const x = event.points[0].x;
-    if (window.time_array !== undefined) {
-      if (event.event.ctrlKey) {
-        updateTimelineIndicator(x);
-      }
+    const n = event.points[0].data.x.length;
+    const idx = event.points[0].pointIndex;
+    if (event.event.ctrlKey) {
+      updateTimelineIndicator(x, idx / n);
     }
   };
 
@@ -329,15 +330,12 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
 
   const updateTimelineIndicator = (t, index) => {
     window.currentX = t;
-    // const timestamp = t - window.t0;
-    // window.viewer.clock.currentTime.secondsOfDay =
-    //   window.viewer.clock.startTime.secondsOfDay + timestamp;
     drawTimelineIndicator(window.currentX);
+    drawCrosshair(index);
   };
 
   const drawTimelineIndicator = (x) => {
     const plots = document.getElementsByClassName("plot-yt");
-
     const update = {
       shapes: [
         {
@@ -357,6 +355,52 @@ function Graph({ graphIndex, socket, updateKeys, initialKeys, removeGraph }) {
     };
 
     for (let i = 0; i < plots.length; i++) {
+      Plotly.relayout(plots[i], update);
+    }
+  };
+
+  const drawCrosshair = (p) => {
+    const plots = document.getElementsByClassName("plot-xy");
+
+    for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data.length === 0) continue;
+      const nx = plots[i].data[0].x.length;
+      const ny = plots[i].data[0].y.length;
+      const ix = parseInt(p * nx);
+      const iy = parseInt(p * ny);
+      const x = plots[i].data[0].x[ix];
+      const y = plots[i].data[0].y[iy];
+
+      const update = {
+        shapes: [
+          {
+            type: "line",
+            yref: "paper",
+            x0: x,
+            y0: 0,
+            x1: x,
+            y1: 1,
+            line: {
+              color: "red",
+              width: 1.5,
+              // dash: "dot",
+            },
+          },
+          {
+            type: "line",
+            xref: "paper",
+            x0: 0,
+            y0: y,
+            x1: 1,
+            y1: y,
+            line: {
+              color: "red",
+              width: 1.5,
+              // dash: "dot",
+            },
+          },
+        ],
+      };
       Plotly.relayout(plots[i], update);
     }
   };

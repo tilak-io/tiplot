@@ -6,16 +6,20 @@ import GraphOptions from "./GraphOptions";
 
 const defaultLayout = {
   margin: {
-    t: 0,
+    t: 10,
+    b: 25,
+    l: 50,
+    r: 25,
   },
-  hoverdistance: -1,
+
+  hovermode: "closest",
   xaxis: {
+    spikecolor: "black",
     spikemode: "across",
-    spikesnap: "closest",
   },
   yaxis: {
+    spikecolor: "black",
     spikemode: "across",
-    spikesnap: "closest",
   },
 };
 function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
@@ -136,58 +140,101 @@ function GraphXY({ socket, graphIndex, updateKeys, initialKeys, removeGraph }) {
   };
 
   const handleHover = (event) => {
-    let i = 0;
-    const index = event.points[0].pointIndex;
-    const nbrPoints = event.points[0].data.x.length;
-    // const x = event.points[0].x;
-
-    if (window.time_array !== undefined) {
-      const start = window.time_array[0];
-      const stop = window.time_array[window.time_array.length - 1];
-      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
-      if (event.event.altKey)
-        window.viewer.clock.currentTime.secondsOfDay =
-          window.viewer.clock.startTime.secondsOfDay +
-          (index / nbrPoints) * totalSecs;
-    }
-    while (document.getElementById(`plot-${i}`)) {
-      var plot = document.getElementById(`plot-${i}`);
-      i++;
-      if (graphIndex === i - 1) continue;
-      if (plot.data.length === 0) continue;
-      // mimic hover for x/y graphs
-      if (plot.classList.contains("plot-xy")) {
-        const factor = plot.data[0].x.length / nbrPoints;
-        const mapped_index = parseInt(factor * index);
-
-        Plotly.Fx.hover(plot, {
-          xval: plot.data[0].x[mapped_index],
-          yval: plot.data[0].y[mapped_index],
-        });
-      }
-
-      // mimic hover for t/y graphs
-      if (plot.classList.contains("plot-yt")) {
-        // hide the spike
-        Plotly.Fx.hover(plot, {
-          xpx: -100,
-        });
-      }
+    const n = event.points[0].data.x.length;
+    const idx = event.points[0].pointIndex;
+    if (event.event.altKey) {
+      updateTimelineIndicator(idx / n);
     }
   };
 
   const handleClick = (event) => {
-    const index = event.points[0].pointIndex;
-    const nbrPoints = event.points[0].data.x.length;
-    // const x = event.points[0].x;
-    if (window.time_array !== undefined) {
-      const start = window.time_array[0];
-      const stop = window.time_array[window.time_array.length - 1];
-      const totalSecs = window.Cesium.JulianDate.secondsDifference(stop, start);
-      if (event.event.ctrlKey)
-        window.viewer.clock.currentTime.secondsOfDay =
-          window.viewer.clock.startTime.secondsOfDay +
-          (index / nbrPoints) * totalSecs;
+    const n = event.points[0].data.x.length;
+    const idx = event.points[0].pointIndex;
+    if (event.event.ctrlKey) {
+      updateTimelineIndicator(idx / n);
+    }
+  };
+
+  const updateTimelineIndicator = (p) => {
+    drawTimelineIndicator(p);
+    drawCrosshair(p);
+  };
+
+  const drawTimelineIndicator = (p) => {
+    const plots = document.getElementsByClassName("plot-yt");
+
+    for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data.length === 0) continue;
+      const nx = plots[i].data[0].x.length;
+      const index = parseInt(p * nx);
+      const x = plots[i].data[0].x[index];
+      const update = {
+        shapes: [
+          {
+            type: "line",
+            x0: x,
+            y0: 0,
+            x1: x,
+            yref: "paper",
+            y1: 1,
+            line: {
+              color: "red",
+              width: 1.5,
+              // dash: "dot",
+            },
+          },
+        ],
+      };
+      window.currentX = x;
+      Plotly.relayout(plots[i], update);
+    }
+  };
+
+  const drawCrosshair = (p) => {
+    const plots = document.getElementsByClassName("plot-xy");
+
+    for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data.length === 0) continue;
+      const nx = plots[i].data[0].x.length;
+      const ny = plots[i].data[0].y.length;
+
+      const ix = parseInt(p * nx);
+      const iy = parseInt(p * ny);
+
+      const x = plots[i].data[0].x[ix];
+      const y = plots[i].data[0].y[iy];
+
+      const update = {
+        shapes: [
+          {
+            type: "line",
+            yref: "paper",
+            x0: x,
+            y0: 0,
+            x1: x,
+            y1: 1,
+            line: {
+              color: "red",
+              width: 1.5,
+              // dash: "dot",
+            },
+          },
+          {
+            type: "line",
+            xref: "paper",
+            x0: 0,
+            y0: y,
+            x1: 1,
+            y1: y,
+            line: {
+              color: "red",
+              width: 1.5,
+              // dash: "dot",
+            },
+          },
+        ],
+      };
+      Plotly.relayout(plots[i], update);
     }
   };
 
