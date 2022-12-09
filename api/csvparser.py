@@ -7,6 +7,7 @@ class CSVParser(Parser):
     def __init__(self):
         super().__init__()
         self.name = "csv_parser"
+        self.initDefaultEntitiy()
         self.initEntities()
 
     def parse(self,filename):
@@ -20,8 +21,8 @@ class CSVParser(Parser):
         self.datadict = {"data": csv} 
         return [self.datadict, self.entities]
 
-    def setDefaultEntities(self):
-        entity = CesiumEntity(
+    def initDefaultEntitiy(self):
+        self.default_entity = CesiumEntity(
             name='csv default entity',
             alpha=1,
             useRPY=True,
@@ -38,4 +39,7 @@ class CSVParser(Parser):
                 'pitch':'pitch',
                 'yaw':'yaw',
             })
-        self.addEntity(entity) 
+
+
+    def setDefaultEntities(self):
+        self.addEntity(self.default_entity)

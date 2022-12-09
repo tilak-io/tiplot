@@ -7,6 +7,7 @@ class ArduParser(Parser):
     def __init__(self):
         super().__init__()
         self.name = "ardu_parser"
+        self.initDefaultEntity()
         self.initEntities()
 
     def parse(self,filename):
@@ -35,8 +36,8 @@ class ArduParser(Parser):
         return [self.datadict, self.entities]
 
 
-    def setDefaultEntities(self):
-        entity = CesiumEntity(name='ulg default entity',
+    def initDefaultEntity(self):
+        self.default_entity = CesiumEntity(name='ardu pilot default entity',
                               useRPY=True,
                               useXYZ=False,
                               position={
@@ -51,4 +52,6 @@ class ArduParser(Parser):
                                   'pitch': 'Pitch',
                                   'yaw': 'Yaw',
                               })
-        self.addEntity(entity) 
+
+    def setDefaultEntities(self):
+        self.addEntity(self.default_entity)
