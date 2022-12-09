@@ -36,42 +36,18 @@ function Settings() {
       });
   };
 
+  const addEntity = () => {
+    fetch("http://localhost:5000/default_entity")
+      .then((res) => res.json())
+      .then((res) => {
+        res.id = parseInt(Math.random() * 10000);
+        setCurrentEntities([...current_entities, res]);
+      });
+  };
+
   const removeEntity = (id) => {
     const remaining = current_entities.filter((e) => e.id != id);
     setCurrentEntities(remaining);
-  };
-
-  const addEntity = () => {
-    const id = parseInt(Math.random() * 10000);
-    const position = {
-      table: "vehicle_local_position",
-      x: "x",
-      y: "y",
-      z: "z",
-    };
-
-    const attitude = {
-      table: "vehicle_attitude",
-      q1: "q[1]",
-      q2: "q[2]",
-      q3: "q[3]",
-      q0: "q[0]",
-    };
-
-    const default_entity = {
-      id: id,
-      name: `new entity ${id}`,
-      color: "white",
-      pathColor: "blue",
-      wireframe: false,
-      alpha: 1,
-      useXYZ: true,
-      useRPY: false,
-      tracked: false,
-      position: position,
-      attitude: attitude,
-    };
-    setCurrentEntities([...current_entities, default_entity]);
   };
 
   const getValue = (id) => {

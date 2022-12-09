@@ -38,7 +38,7 @@ class ArduParser(Parser):
 
     def initDefaultEntity(self):
         self.default_entity = CesiumEntity(name='ardu pilot default entity',
-                              useRPY=True,
+                              useRPY=False,
                               useXYZ=False,
                               position={
                                   'table':'AHR2',
@@ -48,9 +48,10 @@ class ArduParser(Parser):
                               },
                               attitude={
                                   'table':'AHR2',
-                                  'roll': 'Roll',
-                                  'pitch': 'Pitch',
-                                  'yaw': 'Yaw',
+                                  'q0':'Q1',
+                                  'q1':'Q2',
+                                  'q2':'Q3',
+                                  'q3':'Q4',
                               })
 
     def setDefaultEntities(self):
