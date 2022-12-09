@@ -25,6 +25,8 @@ class ULGParser(Parser):
 
     def initDefaultEntity(self):
         self.default_entity = CesiumEntity(name='ulg default entity',
+                              color="#ffffff",
+                              pathColor="#0000ff",
                               useRPY=False,
                               useXYZ=True,
                               position={

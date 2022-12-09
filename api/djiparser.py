@@ -79,6 +79,8 @@ class DJIParser(Parser):
             name='dji dat default entity',
             useRPY=True,
             useXYZ=False,
+            color="#ffffff",
+            pathColor="#0000ff",
             position={
                 'table':'data',
                 'longitude':'longitude',

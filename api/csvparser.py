@@ -23,6 +23,8 @@ class CSVParser(Parser):
 
     def initDefaultEntitiy(self):
         self.default_entity = CesiumEntity(
+            color="#ffffff",
+            pathColor="#0000ff",
             name='csv default entity',
             alpha=1,
             useRPY=True,

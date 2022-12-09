@@ -41,6 +41,8 @@ class ArduParser(Parser):
         self.default_entity = CesiumEntity(name='ardu pilot default entity',
                               useRPY=False,
                               useXYZ=False,
+                              color="#ffffff",
+                              pathColor="#0000ff",
                               position={
                                   'table':'AHR2',
                                   'longitude': 'Lng',
