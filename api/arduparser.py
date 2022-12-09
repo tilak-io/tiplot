@@ -16,6 +16,7 @@ class ArduParser(Parser):
         
         while mlog.remaining:
             m = mlog.recv_match()
+            if (m is None): break
             name = m.get_type()
             data = m.to_dict()
             if 'TimeUS' in list(data.keys()):
