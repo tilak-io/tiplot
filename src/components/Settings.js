@@ -202,13 +202,15 @@ function Settings() {
               onChange={toggleGrid}
             />
             <br />
-            <InputGroup className="mb-3">
+            <InputGroup>
               <InputGroup.Text id="backgroundColorLabel">
                 Background Color
               </InputGroup.Text>
+
               <Form.Control
                 onChange={handleBackgroundChange}
                 id="backgroundColor"
+                type="color"
                 aria-label="Background Color"
                 aria-describedby="backgroundColorLabel"
               />
