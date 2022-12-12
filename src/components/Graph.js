@@ -72,6 +72,15 @@ function Graph({ id }) {
     ) {
       plotData.syncHorizontalAxis(event);
     }
+
+    // Custom Scale Y Axis
+    if (
+      event["xaxis.range[0]"] != null &&
+      event["yaxis.range[0]"] == null &&
+      event["custom"]
+    ) {
+      plotData.autoScaleVerticalAxis(event);
+    }
   }
 
   return (

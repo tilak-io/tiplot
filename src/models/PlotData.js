@@ -117,4 +117,46 @@ export default class PlotData {
       Plotly.relayout(plots[i], update);
     }
   };
+
+  getScaledYAxis = (xrange) => {
+    const plot = document.getElementById(`plot-${this.id}`);
+    var max_values = [];
+    var min_values = [];
+    if (plot.data.length === 0) return;
+    for (let j = 0; j < plot.data.length; j++) {
+      var e = plot.data[j];
+      if (e.visible === "legendonly") continue;
+      var x0 = this.findClosest(xrange[0], e);
+      var x1 = this.findClosest(xrange[1], e);
+      const visible_y_data = e.y.slice(e.x.indexOf(x0), e.x.indexOf(x1));
+      max_values.push(Math.max.apply(Math, visible_y_data));
+      min_values.push(Math.min.apply(Math, visible_y_data));
+      const max =
+        Math.max.apply(Math, max_values) !== Infinity
+          ? Math.max.apply(Math, max_values)
+          : 1;
+      const min =
+        Math.min.apply(Math, min_values) !== -Infinity
+          ? Math.min.apply(Math, min_values)
+          : 0;
+
+      var margin = (max - min) / 5;
+      margin = margin === 0 ? 0.5 : margin; // set the margin to 1 in case of max == min
+      var new_y_range = [min - margin, max + margin];
+    }
+    return new_y_range;
+  };
+
+  autoScaleVerticalAxis = (event) => {
+    const plot = document.getElementById(`plot-${this.id}`);
+    var xrange = [event["xaxis.range[0]"], event["xaxis.range[1]"]];
+    var yrange = this.getScaledYAxis(xrange);
+    const update = {
+      custom: true,
+      "xaxis.range": xrange,
+      "yaxis.range": yrange,
+    };
+    Plotly.relayout(plot, update);
+
+  }
 }
