@@ -17,7 +17,7 @@ function Paper({ socket }) {
     var graph = (
       <Graph
         key={index}
-        graphIndex={index}
+        id={index}
         socket={socket}
         updateKeys={updateKeys}
         removeGraph={removeGraph}
@@ -90,7 +90,7 @@ function Paper({ socket }) {
         graph = (
           <Graph
             key={plot.id}
-            graphIndex={plot.id}
+            id={plot.id}
             socket={socket}
             updateKeys={updateKeys}
             initialKeys={plot.keys}

@@ -148,10 +148,10 @@ def write_config():
         outfile.write(json.dumps(config, indent=2))
     return {'ok': True}
 
-@app.route('/table_keys')
+@app.route('/tables')
 def get_table_keys():
-    keys = store.Store.get().getNestedKeys()
-    response = {"keys": keys}
+    tables = store.Store.get().getNestedKeys()
+    response = {"tables": tables}
     return response
 
 @app.route('/table_values', methods=['POST'])

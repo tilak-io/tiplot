@@ -3,8 +3,20 @@ import Plot from "react-plotly.js";
 import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 import GraphOptions from "./GraphOptions";
+import PlotData from "../models/PlotData";
 
 function Graph({ id }) {
+  const plotData = new PlotData(id);
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    getOptions();
+  }, []);
+
+  const getOptions = async () => {
+    const opt = await plotData.getOptions();
+    setOptions(opt);
+  }
 
 
   return (
@@ -12,9 +24,9 @@ function Graph({ id }) {
       <Select
         id={`select-${id}`}
         className="multiselect"
-        // options={keys}
         isMulti
-        // onChange={handleChange}
+        options={options}
+        // onChange={handleSelectChange}
         // value={selectedValue}
         closeMenuOnSelect={false}
       />
@@ -26,7 +38,7 @@ function Graph({ id }) {
           // onRelayout={relayoutHandler}
           // onHover={handleHover}
           // onClick={handleClick}
-          // useResizeHandler
+          useResizeHandler
           layout={{
             autoresize: true,
             showlegend: true,
