@@ -1,6 +1,5 @@
 import Select from "react-select";
 import Plot from "react-plotly.js";
-import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 import GraphOptions from "./GraphOptions";
 import PlotData from "../models/PlotData";
@@ -29,7 +28,6 @@ function Graph({ id }) {
     setData(d);
   }
 
-
   const handleSelectChange = (keysList, actionMeta) => {
     switch (actionMeta.action) {
       case "select-option":
@@ -44,6 +42,15 @@ function Graph({ id }) {
         break;
       default:
         break;
+    }
+  }
+
+  const handleHover = (event) => {
+    const x = event.points[0].x;
+    const n = event.points[0].data.x.length;
+    const idx = event.points[0].pointIndex;
+    if (event.event.altKey) {
+      plotData.updateTimelineIndicator(x, idx / n);
     }
   }
 
@@ -64,7 +71,7 @@ function Graph({ id }) {
           divId={`plot-${id}`}
           data={data}
           // onRelayout={relayoutHandler}
-          // onHover={handleHover}
+          onHover={handleHover}
           // onClick={handleClick}
           useResizeHandler
           layout={{

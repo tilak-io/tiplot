@@ -1,3 +1,5 @@
+import Plotly from "plotly.js/dist/plotly";
+
 export default class PlotData {
 
   constructor(id) {
@@ -25,6 +27,7 @@ export default class PlotData {
     return options;
   }
 
+
   getData = async (field) => {
     const response = await fetch("http://localhost:5000/table_values", {
       headers: {
@@ -50,9 +53,48 @@ export default class PlotData {
     return {
       x: x_values,
       y: y_values,
-      name: `${table}/${y_name}`
+      name: `${table}/${y_name}`,
+      hovertemplate: `${table}: %{y:.2f}<extra></extra>`,
     }
-
   }
+
+  // find the closest point to 'x' in 'array'
+  findClosest = (x, array) => {
+    return array.x.reduce((a, b) => {
+      return Math.abs(b - x) < Math.abs(a - x) ? b : a;
+    });
+  };
+
+  updateTimelineIndicator = (timestamp, index) => {
+    window.currentX = timestamp;
+    this.drawTimelineIndicator(timestamp);
+    // drawCrosshair(index);
+  };
+
+  drawTimelineIndicator = (x) => {
+    const plots = document.getElementsByClassName("plot-yt");
+    const update = {
+      custom: true,
+      shapes: [
+        {
+          type: "line",
+          x0: x,
+          y0: 0,
+          x1: x,
+          yref: "paper",
+          y1: 1,
+          line: {
+            color: "red",
+            width: 1.5,
+          },
+        },
+      ],
+    };
+
+    for (let i = 0; i < plots.length; i++) {
+      Plotly.relayout(plots[i], update);
+    }
+  };
+
 
 }
