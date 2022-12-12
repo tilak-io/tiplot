@@ -2,8 +2,10 @@ import Plotly from "plotly.js/dist/plotly";
 
 export default class PlotData {
 
-  constructor(id) {
+  constructor(id, initialKeys) {
     this.id = id;
+    this.initialKeys = initialKeys;
+    this.plotInitialData();
   }
 
   getOptions = async () => {
@@ -157,6 +159,9 @@ export default class PlotData {
       "yaxis.range": yrange,
     };
     Plotly.relayout(plot, update);
-
   }
+
+  plotInitialData = async () => {
+
+  };
 }

@@ -4,14 +4,24 @@ import { useState, useEffect } from "react";
 import GraphOptions from "./GraphOptions";
 import PlotData from "../models/PlotData";
 
-function Graph({ id }) {
-  const plotData = new PlotData(id);
+function Graph({ id, initialKeys, updateKeys, removeGraph }) {
+  const plotData = new PlotData(id, initialKeys);
   const [options, setOptions] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    getInitialData();
     getOptions();
   }, []);
+
+  const getInitialData = async () => {
+    setSelectedOptions(initialKeys);
+    await initialKeys.forEach((option) => {
+      // plotData.getData(option.value).then((d) => setData([...data, d]));
+    });
+
+  }
 
   const getOptions = async () => {
     const opt = await plotData.getOptions();
@@ -29,6 +39,8 @@ function Graph({ id }) {
   }
 
   const handleSelectChange = (keysList, actionMeta) => {
+    setSelectedOptions(keysList);
+    updateKeys(id, keysList);
     switch (actionMeta.action) {
       case "select-option":
         addData(actionMeta.option.value);
@@ -83,6 +95,7 @@ function Graph({ id }) {
     }
   }
 
+
   return (
     <div>
       <Select
@@ -91,7 +104,7 @@ function Graph({ id }) {
         isMulti
         options={options}
         onChange={handleSelectChange}
-        // value={selectedValue}
+        value={selectedOptions}
         closeMenuOnSelect={false}
       />
       <div className="d-flex resizable">
@@ -127,7 +140,7 @@ function Graph({ id }) {
         <GraphOptions
           plotId={`plot-${id}`}
           graphIndex={id}
-        // removeGraph={removeGraph}
+          removeGraph={removeGraph}
         />
       </div>
     </div>
