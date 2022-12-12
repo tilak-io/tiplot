@@ -81,28 +81,6 @@ def get_entities():
         emit('error', err)
     emit('entities_props', props)
 
-@socketio.on('get_table_keys')
-def get_table_keys(index):
-    keys = store.Store.get().getNestedKeys()
-    response = {"index": index, "keys":keys}
-    emit('table_keys', response)
-
-@socketio.on('get_table_values')
-def get_table_values(data):
-    index = data['index']
-    table = data['table']
-    keys = data['keys']
-    keys.append('timestamp_tiplot')
-    datadict = store.Store.get().datadict
-    try:
-        values = datadict[table][keys].fillna(0).to_dict('records')
-        print("-> Served x: " + keys[1] + ", y:" + keys[0])
-    except:
-        values = []
-        print("~> Could not find: " + keys[0])
-    response = {"index": index,"y": keys[0], "x": keys[1],"table": table, "values": values}
-    emit('table_values', response)
-
 @socketio.on('get_table_columns')
 def get_table_columns(data):
     index = data['index']
@@ -169,6 +147,29 @@ def write_config():
     with open(configs_dir + current_parser.name + ".json", "w") as outfile:
         outfile.write(json.dumps(config, indent=2))
     return {'ok': True}
+
+@app.route('/table_keys')
+def get_table_keys():
+    keys = store.Store.get().getNestedKeys()
+    response = {"keys": keys}
+    return response
+
+@app.route('/table_values', methods=['POST'])
+def get_table_values(data):
+    index = data['index']
+    table = data['table']
+    keys = data['keys']
+    keys.append('timestamp_tiplot')
+    datadict = store.Store.get().datadict
+    try:
+        values = datadict[table][keys].fillna(0).to_dict('records')
+        print("-> Served x: " + keys[1] + ", y:" + keys[0])
+    except:
+        values = []
+        print("~> Could not find: " + keys[0])
+    response = {"y": keys[0], "x": keys[1], "table": table, "values": values}
+    return response
+
 
 @socketio.on("disconnect")
 def disconnected():
