@@ -96,5 +96,25 @@ export default class PlotData {
     }
   };
 
+  autoRange = (event) => {
+    const plots = document.getElementsByClassName("plot-yt");
+    event["custom"] = true;
+    for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data === undefined) continue;
+      Plotly.relayout(plots[i], event);
+    }
+  }
 
+  syncHorizontalAxis = (event) => {
+    const plots = document.getElementsByClassName("plot-yt");
+    const update = {
+      "xaxis.range[0]": event["xaxis.range[0]"],
+      "xaxis.range[1]": event["xaxis.range[1]"],
+      custom: true,
+    };
+
+    for (let i = 0; i < plots.length; i++) {
+      Plotly.relayout(plots[i], update);
+    }
+  };
 }
