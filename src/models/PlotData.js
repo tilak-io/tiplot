@@ -1,3 +1,4 @@
 export default class PlotData {
-  constructor() { }
+  constructor() {
+  }
 }
