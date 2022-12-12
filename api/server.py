@@ -155,19 +155,17 @@ def get_table_keys():
     return response
 
 @app.route('/table_values', methods=['POST'])
-def get_table_values(data):
-    index = data['index']
-    table = data['table']
-    keys = data['keys']
-    keys.append('timestamp_tiplot')
+def get_table_values():
+    field = request.get_json()
+    table = field['key']
+    column = field['column']
+    columns = [column, 'timestamp_tiplot']
     datadict = store.Store.get().datadict
     try:
-        values = datadict[table][keys].fillna(0).to_dict('records')
-        print("-> Served x: " + keys[1] + ", y:" + keys[0])
+        values = datadict[table][columns].fillna(0).to_dict('records')
     except:
         values = []
-        print("~> Could not find: " + keys[0])
-    response = {"y": keys[0], "x": keys[1], "table": table, "values": values}
+    response = {"table": table, "x": columns[1], "y": columns[0], "values": values}
     return response
 
 

@@ -8,6 +8,7 @@ import PlotData from "../models/PlotData";
 function Graph({ id }) {
   const plotData = new PlotData(id);
   const [options, setOptions] = useState([]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     getOptions();
@@ -18,6 +19,33 @@ function Graph({ id }) {
     setOptions(opt);
   }
 
+  const addData = async (field) => {
+    const d = await plotData.getData(field);
+    setData([...data, d]);
+  }
+
+  const removeData = (field) => {
+    const d = data.filter((e) => e.name != `${field.key}/${field.column}`);
+    setData(d);
+  }
+
+
+  const handleSelectChange = (keysList, actionMeta) => {
+    switch (actionMeta.action) {
+      case "select-option":
+        addData(actionMeta.option.value);
+        break;
+      case "remove-value":
+      case "pop-value":
+        removeData(actionMeta.removedValue.value);
+        break;
+      case "clear":
+        setData([]);
+        break;
+      default:
+        break;
+    }
+  }
 
   return (
     <div>
@@ -26,7 +54,7 @@ function Graph({ id }) {
         className="multiselect"
         isMulti
         options={options}
-        // onChange={handleSelectChange}
+        onChange={handleSelectChange}
         // value={selectedValue}
         closeMenuOnSelect={false}
       />
@@ -34,7 +62,7 @@ function Graph({ id }) {
         <Plot
           className="plot-yt"
           divId={`plot-${id}`}
-          // data={data}
+          data={data}
           // onRelayout={relayoutHandler}
           // onHover={handleHover}
           // onClick={handleClick}
