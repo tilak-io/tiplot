@@ -1,48 +1,43 @@
 import React, { useState, useEffect } from "react";
 import Graph from "./Graph";
 import GraphXY from "./GraphXY";
+import { v4 as uuid } from "uuid";
 
 function Paper({ socket }) {
-  const [graphNbr, setGraphNbr] = useState(0);
   const [rows, setRows] = useState([]);
-  const [currentId, setId] = useState(0);
 
   useEffect(() => {
     initializeLayout();
     // fitGraphsToScreen();
     // eslint-disable-next-line
-  }, [graphNbr]);
+  }, []);
 
-  const addXT = (index) => {
+  const addXT = () => {
+    const id = uuid();
     var graph = (
       <Graph
-        key={index}
-        id={index}
-        socket={socket}
+        key={id}
+        id={id}
         updateKeys={updateKeys}
         removeGraph={removeGraph}
       />
     );
     setRows([...rows, graph]);
-    setGraphNbr(graphNbr + 1);
-    setId(currentId + 1);
-    addGraphToLayout("yt", index);
+    addGraphToLayout("yt", id);
   };
 
-  const addXY = (index) => {
+  const addXY = () => {
+    const id = uuid();
     var graph = (
       <GraphXY
-        key={index}
-        id={index}
-        socket={socket}
+        key={id}
+        id={id}
         updateKeys={updateKeys}
         removeGraph={removeGraph}
       />
     );
     setRows([...rows, graph]);
-    setGraphNbr(graphNbr + 1);
-    setId(currentId + 1);
-    addGraphToLayout("xy", index);
+    addGraphToLayout("xy", id);
   };
 
   const parseLocalStorage = (key) => {
@@ -60,7 +55,6 @@ function Paper({ socket }) {
 
   const handleRemove = () => {
     setRows(rows.slice(0, -1));
-    setGraphNbr(graphNbr - 1);
     var layout = parseLocalStorage("current_layout");
     layout.pop();
     localStorage.setItem("current_layout", JSON.stringify(layout));
@@ -91,7 +85,6 @@ function Paper({ socket }) {
           <Graph
             key={plot.id}
             id={plot.id}
-            socket={socket}
             updateKeys={updateKeys}
             initialKeys={plot.keys}
             removeGraph={removeGraph}
@@ -102,7 +95,6 @@ function Paper({ socket }) {
           <GraphXY
             key={plot.id}
             id={plot.id}
-            socket={socket}
             initialKeys={plot.keys}
             updateKeys={updateKeys}
             removeGraph={removeGraph}
@@ -112,8 +104,6 @@ function Paper({ socket }) {
       lastPlot = plot;
     });
     setRows(graphs);
-    setGraphNbr(layout.length);
-    if (lastPlot !== undefined) setId(lastPlot.id + 1);
   };
 
   const removeGraph = (index) => {
@@ -143,17 +133,11 @@ function Paper({ socket }) {
       <center>
         <br />
         <div className="container">
-          <button
-            className="btn btn-primary btn"
-            onClick={() => addXT(currentId)}
-          >
+          <button className="btn btn-primary btn" onClick={() => addXT()}>
             + XT
           </button>
           &nbsp;
-          <button
-            className="btn btn-secondary btn"
-            onClick={() => addXY(currentId)}
-          >
+          <button className="btn btn-secondary btn" onClick={() => addXY()}>
             + XY
           </button>
           &nbsp;
