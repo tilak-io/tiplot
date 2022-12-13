@@ -29,14 +29,15 @@ function Test() {
   const fitGraphsToScreen = () => {
     const containers = document.getElementsByClassName("plot-yt");
     const multiselects = document.getElementsByClassName("multiselect");
-    var additionalHeight = 0; // buttons + navbar height
+    var additionalHeight = 54; // buttons + navbar height
     for (var i = 0; i < multiselects.length; i++)
       additionalHeight += multiselects[i].clientHeight;
+    console.log(additionalHeight);
     const plotHeight =
       (window.innerHeight - additionalHeight) / containers.length;
     for (var j = 0; j < containers.length; j++)
       containers[j].style.height = plotHeight + "px";
-    setRowHeight(plotHeight);
+    setRowHeight(plotHeight + 38);
   };
 
   const updateKeys = () => {};

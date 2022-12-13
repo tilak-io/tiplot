@@ -22,12 +22,12 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     const plot = document.getElementById(`plot-${id}`);
     var update = {
       autoresize: true,
-      width: plot.clientWidth,
-      height: plot.clientHeight,
+      width: plot?.clientWidth,
+      height: plot?.clientHeight,
       "yaxis.autorange": true,
     };
 
-    if (plot.clientHeight !== 0) Plotly.relayout(plot, update);
+    if (plot) Plotly.relayout(plot, update);
   };
 
   const getInitialData = async () => {
