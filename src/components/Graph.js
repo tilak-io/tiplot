@@ -16,27 +16,31 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   }, []);
 
   const getInitialData = async () => {
+    if (initialKeys == null) return;
     setSelectedOptions(initialKeys);
-    await initialKeys.forEach((option) => {
-      // plotData.getData(option.value).then((d) => setData([...data, d]));
-    });
-
-  }
+    const initialData = [];
+    for (let i = 0; i < initialKeys.length; i++) {
+      const option = initialKeys[i].value;
+      const d = await plotData.getData(option);
+      initialData.push(d);
+    }
+    setData(initialData);
+  };
 
   const getOptions = async () => {
     const opt = await plotData.getOptions();
     setOptions(opt);
-  }
+  };
 
   const addData = async (field) => {
     const d = await plotData.getData(field);
     setData([...data, d]);
-  }
+  };
 
   const removeData = (field) => {
     const d = data.filter((e) => e.name != `${field.key}/${field.column}`);
     setData(d);
-  }
+  };
 
   const handleSelectChange = (keysList, actionMeta) => {
     setSelectedOptions(keysList);
@@ -55,7 +59,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
       default:
         break;
     }
-  }
+  };
 
   const handleHover = (event) => {
     const x = event.points[0].x;
@@ -64,7 +68,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     if (event.event.altKey) {
       plotData.updateTimelineIndicator(x, idx / n);
     }
-  }
+  };
 
   const relayoutHandler = (event) => {
     // Auto Scale
@@ -78,10 +82,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     }
 
     // XAxis Changed
-    if (
-      event["xaxis.range[0]"] != null &&
-      event["custom"] == null
-    ) {
+    if (event["xaxis.range[0]"] != null && event["custom"] == null) {
       plotData.syncHorizontalAxis(event);
     }
 
@@ -93,8 +94,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     ) {
       plotData.autoScaleVerticalAxis(event);
     }
-  }
-
+  };
 
   return (
     <div>
@@ -130,7 +130,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
               l: 50,
               r: 25,
             },
-            hovermode: "x unified"
+            hovermode: "x unified",
           }}
           config={{
             displayModeBar: false,

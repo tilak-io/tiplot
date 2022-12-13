@@ -1,7 +1,6 @@
 import Plotly from "plotly.js/dist/plotly";
 
 export default class PlotData {
-
   constructor(id, initialKeys) {
     this.id = id;
     this.initialKeys = initialKeys;
@@ -10,8 +9,9 @@ export default class PlotData {
 
   getOptions = async () => {
     const options = [];
-    const response = await fetch("http://localhost:5000/tables")
-      .then((res) => res.json());
+    const response = await fetch("http://localhost:5000/tables").then((res) =>
+      res.json()
+    );
     const tables = response.tables;
     tables.forEach((table) => {
       var key = Object.keys(table)[0];
@@ -19,16 +19,15 @@ export default class PlotData {
       columns.forEach((column) => {
         options.push({
           value: {
-            "key": key,
-            "column": column
+            key: key,
+            column: column,
           },
           label: `${key}/${column}`,
         });
       });
     });
     return options;
-  }
-
+  };
 
   getData = async (field) => {
     const response = await fetch("http://localhost:5000/table_values", {
@@ -36,12 +35,10 @@ export default class PlotData {
         "Content-Type": "application/json",
       },
       method: "POST",
-      body: JSON.stringify(field)
-    })
-      .then((res) => res.json());
+      body: JSON.stringify(field),
+    }).then((res) => res.json());
 
-
-    const table = response["table"]
+    const table = response["table"];
     const x_name = response["x"];
     const x_values = [];
     const y_name = response["y"];
@@ -57,8 +54,8 @@ export default class PlotData {
       y: y_values,
       name: `${table}/${y_name}`,
       hovertemplate: `${table}: %{y:.2f}<extra></extra>`,
-    }
-  }
+    };
+  };
 
   // find the closest point to 'x' in 'array'
   findClosest = (x, array) => {
@@ -105,7 +102,7 @@ export default class PlotData {
       if (plots[i].data === undefined) continue;
       Plotly.relayout(plots[i], event);
     }
-  }
+  };
 
   syncHorizontalAxis = (event) => {
     const plots = document.getElementsByClassName("plot-yt");
@@ -159,9 +156,7 @@ export default class PlotData {
       "yaxis.range": yrange,
     };
     Plotly.relayout(plot, update);
-  }
-
-  plotInitialData = async () => {
-
   };
+
+  plotInitialData = async () => {};
 }
