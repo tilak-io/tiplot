@@ -33,7 +33,7 @@ function Paper({ socket }) {
     var graph = (
       <GraphXY
         key={index}
-        graphIndex={index}
+        id={index}
         socket={socket}
         updateKeys={updateKeys}
         removeGraph={removeGraph}
@@ -101,7 +101,7 @@ function Paper({ socket }) {
         graph = (
           <GraphXY
             key={plot.id}
-            graphIndex={plot.id}
+            id={plot.id}
             socket={socket}
             initialKeys={plot.keys}
             updateKeys={updateKeys}

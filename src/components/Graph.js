@@ -63,10 +63,8 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
 
   const handleHover = (event) => {
     const x = event.points[0].x;
-    const n = event.points[0].data.x.length;
-    const idx = event.points[0].pointIndex;
     if (event.event.altKey) {
-      plotData.updateTimelineIndicator(x, idx / n);
+      plotData.updateTimelineIndicator(x);
     }
   };
 

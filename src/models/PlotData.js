@@ -72,13 +72,17 @@ export default class PlotData {
     const x_values = [];
     const y_name = response["y"];
     const y_values = [];
+    const t_name = "timestamp_tiplot";
+    const t_values = [];
     response.values.forEach((e) => {
       x_values.push(e[x_name]);
       y_values.push(e[y_name]);
+      t_values.push(e[t_name]);
     });
     return {
       x: x_values,
       y: y_values,
+      t: t_values,
       name: `${y_name}/${x_name}`,
       hovertemplate: `${table}: %{y:.2f}<extra></extra>`,
     };
@@ -86,15 +90,15 @@ export default class PlotData {
 
   // find the closest point to 'x' in 'array'
   findClosest = (x, array) => {
-    return array.x.reduce((a, b) => {
+    return array.reduce((a, b) => {
       return Math.abs(b - x) < Math.abs(a - x) ? b : a;
     });
   };
 
-  updateTimelineIndicator = (timestamp, index) => {
+  updateTimelineIndicator = (timestamp) => {
     window.currentX = timestamp;
     this.drawTimelineIndicator(timestamp);
-    // drawCrosshair(index);
+    this.drawCrosshair(timestamp);
   };
 
   drawTimelineIndicator = (x) => {
@@ -119,6 +123,51 @@ export default class PlotData {
 
     for (let i = 0; i < plots.length; i++) {
       Plotly.relayout(plots[i], update);
+    }
+  };
+
+  drawCrosshair = (x) => {
+    const plots = document.getElementsByClassName("plot-xy");
+    for (let i = 0; i < plots.length; i++) {
+      const plot = plots[i];
+      if (plot.data.length == 0) return;
+      const t = plot.data[0].t;
+      const closest = this.findClosest(x, t);
+      const index = t.indexOf(closest);
+      const xp = plot.data[0].x[index];
+      const yp = plot.data[0].y[index];
+      const update = {
+        custom: true,
+        shapes: [
+          {
+            type: "line",
+            yref: "paper",
+            x0: xp,
+            y0: 0,
+            x1: xp,
+            y1: 1,
+            line: {
+              color: "red",
+              width: 1.5,
+            },
+          },
+
+          {
+            type: "line",
+            xref: "paper",
+            x0: 0,
+            y0: yp,
+            x1: 1,
+            y1: yp,
+            line: {
+              color: "red",
+              width: 1.5,
+            },
+          },
+        ],
+      };
+
+      Plotly.relayout(plot, update);
     }
   };
 
@@ -152,8 +201,8 @@ export default class PlotData {
     for (let j = 0; j < plot.data.length; j++) {
       var e = plot.data[j];
       if (e.visible === "legendonly") continue;
-      var x0 = this.findClosest(xrange[0], e);
-      var x1 = this.findClosest(xrange[1], e);
+      var x0 = this.findClosest(xrange[0], e.x);
+      var x1 = this.findClosest(xrange[1], e.x);
       const visible_y_data = e.y.slice(e.x.indexOf(x0), e.x.indexOf(x1));
       max_values.push(Math.max.apply(Math, visible_y_data));
       min_values.push(Math.min.apply(Math, visible_y_data));
