@@ -3,6 +3,7 @@ import Plot from "react-plotly.js";
 import { useState, useEffect } from "react";
 import GraphOptions from "./GraphOptions";
 import PlotData from "../models/PlotData";
+import Plotly from "plotly.js/dist/plotly";
 
 function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   const plotData = new PlotData(id, initialKeys);
@@ -13,7 +14,21 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   useEffect(() => {
     getInitialData();
     getOptions();
+    const plot = document.getElementById(`plot-${id}`);
+    new ResizeObserver(stretchHeight).observe(plot);
   }, []);
+
+  const stretchHeight = () => {
+    const plot = document.getElementById(`plot-${id}`);
+    var update = {
+      autoresize: true,
+      width: plot.clientWidth,
+      height: plot.clientHeight,
+      "yaxis.autorange": true,
+    };
+
+    if (plot.clientHeight !== 0) Plotly.relayout(plot, update);
+  };
 
   const getInitialData = async () => {
     if (initialKeys == null) return;
@@ -105,7 +120,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         value={selectedOptions}
         closeMenuOnSelect={false}
       />
-      <div className="d-flex resizable">
+      <div className="d-flex">
         <Plot
           className="plot-yt"
           divId={`plot-${id}`}
@@ -135,11 +150,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
           }}
         />
 
-        <GraphOptions
-          plotId={`plot-${id}`}
-          graphIndex={id}
-          removeGraph={removeGraph}
-        />
+        <GraphOptions plotId={`plot-${id}`} id={id} removeGraph={removeGraph} />
       </div>
     </div>
   );

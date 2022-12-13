@@ -7,7 +7,7 @@ import { BiMoveHorizontal } from "react-icons/bi";
 import { TbChartDots } from "react-icons/tb";
 import Plotly from "plotly.js/dist/plotly";
 
-function GraphOptions({ plotId, graphIndex, removeGraph }) {
+function GraphOptions({ plotId, id, removeGraph }) {
   const [showLegend, setShowLegend] = useState(true);
   const [plotType, setPlotType] = useState(1);
   const [legendAnchor, setLegendAnchor] = useState(1);
@@ -123,7 +123,7 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
 
   return (
     <div className="plot-options">
-      <span onClick={() => removeGraph(graphIndex)}>
+      <span onClick={() => removeGraph(id)}>
         <BsTrash style={{ width: "100%", color: "red" }} />
       </span>
 

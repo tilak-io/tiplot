@@ -105,11 +105,7 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
             displayModeBar: false,
           }}
         />
-        <GraphOptions
-          plotId={`plot-${id}`}
-          graphIndex={id}
-          removeGraph={removeGraph}
-        />
+        <GraphOptions plotId={`plot-${id}`} id={id} removeGraph={removeGraph} />
       </div>
     </div>
   );
