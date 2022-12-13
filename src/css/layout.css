@@ -60,6 +60,12 @@ body {
   overflow: auto;
 }
 
+.react-grid-layout {
+  margin-top: 54px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
 /* custom scrollbar */
 /* width */
 ::-webkit-scrollbar {

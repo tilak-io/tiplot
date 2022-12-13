@@ -10,7 +10,7 @@ import {
 import { FaToggleOn, FaToggleOff, FaExpand } from "react-icons/fa";
 import logo from "../img/logo.png";
 
-function TopBar({ page, toggle3dView, showView }) {
+function TopBar({ page, toggle3dView, showView, addX }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
   const [isFit, setFit] = useState(true);
@@ -152,17 +152,20 @@ function TopBar({ page, toggle3dView, showView }) {
   }
 
   function Controls() {
-    if (window.scene)
-      return (
-        <Nav>
-          <Nav.Link onClick={toggleFit}>
-            <FitButton />
-          </Nav.Link>
-          <Nav.Link onClick={toggle3dView}>
-            <ViewButton />
-          </Nav.Link>
-        </Nav>
-      );
+    // if (window.scene)
+    return (
+      <Nav>
+        <Nav.Link onClick={addX}>
+          <span>+</span>
+        </Nav.Link>
+        <Nav.Link onClick={toggleFit}>
+          <FitButton />
+        </Nav.Link>
+        <Nav.Link onClick={toggle3dView}>
+          <ViewButton />
+        </Nav.Link>
+      </Nav>
+    );
   }
 
   return (
