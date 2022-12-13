@@ -4,7 +4,6 @@ export default class PlotData {
   constructor(id, initialKeys) {
     this.id = id;
     this.initialKeys = initialKeys;
-    this.plotInitialData();
   }
 
   getOptions = async () => {
@@ -233,6 +232,4 @@ export default class PlotData {
     };
     Plotly.relayout(plot, update);
   };
-
-  plotInitialData = async () => {};
 }
