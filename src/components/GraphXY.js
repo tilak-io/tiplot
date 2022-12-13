@@ -35,7 +35,17 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
 
   const addData = async (x, y) => {
     const d = await plotData.getDataXY(x, y);
+    console.log(d);
     setData([d]);
+  };
+
+  const handleHover = (event) => {
+    const index = event.points[0].pointIndex;
+    const data = event.points[0].data;
+    const x = data.t[index];
+    if (event.event.altKey) {
+      plotData.updateTimelineIndicator(x);
+    }
   };
 
   return (
@@ -55,6 +65,7 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
           className="plot-xy"
           divId={`plot-${id}`}
           data={data}
+          onHover={handleHover}
           useResizeHandler
           layout={{
             margin: {
