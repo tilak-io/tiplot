@@ -14,8 +14,17 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    getInitialData();
     getOptions();
   }, []);
+
+  const getInitialData = async () => {
+    if (initialKeys == null) return;
+    if (initialKeys.length !== 2) return;
+    setSelectedX(initialKeys[0]);
+    setSelectedY(initialKeys[1]);
+    addData(initialKeys[0].value, initialKeys[1].value);
+  };
 
   const getOptions = async () => {
     const opt = await plotData.getOptions();
@@ -23,17 +32,21 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
   };
 
   const handleChangeX = (e) => {
-    setSelectedX(e.value);
+    setSelectedX(e);
     const opt = options_x.filter((o) => o.value.table == e.value.table);
     setOptionsY(opt);
 
     if (selected_y == null) return;
-    if (selected_y.table == e.value.table) addData(e.value, selected_y);
+    if (selected_y.value.table == e.value.table) {
+      addData(e.value, selected_y.value);
+      updateKeys(id, [e, selected_y]);
+    }
   };
 
   const handleChangeY = (e) => {
-    setSelectedY(e.value);
-    addData(selected_x, e.value);
+    setSelectedY(e);
+    addData(selected_x.value, e.value);
+    updateKeys(id, [selected_x, e]);
   };
 
   const addData = async (x, y) => {
@@ -56,11 +69,13 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
         className="multiselect"
         options={options_x}
         onChange={handleChangeX}
+        value={selected_x}
       />
       <Select
         className="multiselect"
         options={options_y}
         onChange={handleChangeY}
+        value={selected_y}
       />
       <div className="d-flex resizable">
         <Plot
