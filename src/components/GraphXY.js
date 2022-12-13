@@ -9,8 +9,8 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
   const plotData = new PlotData(id, initialKeys);
   const [options_x, setOptionsX] = useState([]);
   const [options_y, setOptionsY] = useState([]);
-  const [selected_x, setSelectedX] = useState("");
-  const [selected_y, setSelectedY] = useState("");
+  const [selected_x, setSelectedX] = useState(null);
+  const [selected_y, setSelectedY] = useState(null);
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -26,6 +26,9 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
     setSelectedX(e.value);
     const opt = options_x.filter((o) => o.value.table == e.value.table);
     setOptionsY(opt);
+
+    if (selected_y == null) return;
+    if (selected_y.table == e.value.table) addData(e.value, selected_y);
   };
 
   const handleChangeY = (e) => {
@@ -35,7 +38,6 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
 
   const addData = async (x, y) => {
     const d = await plotData.getDataXY(x, y);
-    console.log(d);
     setData([d]);
   };
 
