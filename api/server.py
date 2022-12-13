@@ -58,14 +58,6 @@ def connected():
         thread.daemon = True
         thread.start()
 
-@socketio.on('get_log_files')
-def get_logs():
-    files = [(path.basename(x), path.getsize(x), strftime(
-        '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
-    data = {'path': logs_dir, 'files': files}
-    emit('log_files', data)
-
-
 @socketio.on('select_log_file')
 def select_log_file(file):
     ok = choose_parser(file[0], logs_dir)
@@ -180,6 +172,15 @@ def get_xy_values():
         values = []
     response = {"table": table, "x": columns[0], "y": columns[1] , "values": values}
     return response
+
+@app.route('/log_files')
+def get_logs():
+    files = [(path.basename(x), path.getsize(x), strftime(
+        '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
+    data = {'path': logs_dir, 'files': files}
+    return data
+
+
 
 @socketio.on("disconnect")
 def disconnected():

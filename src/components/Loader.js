@@ -14,14 +14,7 @@ function Loader({ socket }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // requesting the log files
-    socket.emit("get_log_files");
-
-    // handling the signals
-    socket.on("log_files", (logs) => {
-      setLogsDir(logs.path);
-      setFiles(logs.files);
-    });
+    getLogFiles();
 
     socket.on("log_selected", (ok) => {
       setLoading(false);
@@ -36,6 +29,7 @@ function Loader({ socket }) {
 
     socket.on("connect", () => {
       setConnected(true);
+      getLogFiles();
     });
 
     // eslint-disable-next-line
@@ -61,6 +55,14 @@ function Loader({ socket }) {
         if (res.ok) navigate("/home");
         else alert("unsupported format");
       });
+  };
+
+  const getLogFiles = async () => {
+    const logs = await fetch("http://localhost:5000/log_files").then((res) =>
+      res.json()
+    );
+    setLogsDir(logs.path);
+    setFiles(logs.files);
   };
 
   const show = connected ? "hide" : "show";
