@@ -38,7 +38,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   };
 
   const removeData = (field) => {
-    const d = data.filter((e) => e.name != `${field.key}/${field.column}`);
+    const d = data.filter((e) => e.name != `${field.table}/${field.column}`);
     setData(d);
   };
 

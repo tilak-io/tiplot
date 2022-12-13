@@ -11,6 +11,7 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
   const [options_y, setOptionsY] = useState([]);
   const [selected_x, setSelectedX] = useState("");
   const [selected_y, setSelectedY] = useState("");
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     getOptions();
@@ -23,12 +24,18 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
 
   const handleChangeX = (e) => {
     setSelectedX(e.value);
-    const opt = options_x.filter((o) => o.value.key == e.value.key);
+    const opt = options_x.filter((o) => o.value.table == e.value.table);
     setOptionsY(opt);
   };
 
   const handleChangeY = (e) => {
     setSelectedY(e.value);
+    addData(selected_x, e.value);
+  };
+
+  const addData = async (x, y) => {
+    const d = await plotData.getDataXY(x, y);
+    setData([d]);
   };
 
   return (
@@ -47,6 +54,8 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
         <Plot
           className="plot-xy"
           divId={`plot-${id}`}
+          data={data}
+          useResizeHandler
           layout={{
             margin: {
               t: 10,

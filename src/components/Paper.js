@@ -9,7 +9,7 @@ function Paper({ socket }) {
 
   useEffect(() => {
     initializeLayout();
-    fitGraphsToScreen();
+    // fitGraphsToScreen();
     // eslint-disable-next-line
   }, [graphNbr]);
 

@@ -13,46 +13,73 @@ export default class PlotData {
       res.json()
     );
     const tables = response.tables;
-    tables.forEach((table) => {
-      var key = Object.keys(table)[0];
-      var columns = Object.values(table)[0];
+    tables.forEach((t) => {
+      var table = Object.keys(t)[0];
+      var columns = Object.values(t)[0];
       columns.forEach((column) => {
         options.push({
           value: {
-            key: key,
+            table: table,
             column: column,
           },
-          label: `${key}/${column}`,
+          label: `${table}/${column}`,
         });
       });
     });
     return options;
   };
 
+  // get data for yt graphs
   getData = async (field) => {
-    const response = await fetch("http://localhost:5000/table_values", {
+    const response = await fetch("http://localhost:5000/values_yt", {
       headers: {
         "Content-Type": "application/json",
       },
       method: "POST",
       body: JSON.stringify(field),
     }).then((res) => res.json());
-
     const table = response["table"];
-    const x_name = response["x"];
+    const column = response["column"];
+    const x_name = "timestamp_tiplot";
     const x_values = [];
-    const y_name = response["y"];
+    const y_name = column;
     const y_values = [];
-
     response.values.forEach((e) => {
       x_values.push(e[x_name]);
       y_values.push(e[y_name]);
     });
-
     return {
       x: x_values,
       y: y_values,
       name: `${table}/${y_name}`,
+      hovertemplate: `${table}: %{y:.2f}<extra></extra>`,
+    };
+  };
+
+  // get data for xy graphs
+  getDataXY = async (x, y) => {
+    const field = { table: x.table, columns: [x.column, y.column] };
+    const response = await fetch("http://localhost:5000/values_xy", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(field),
+    }).then((res) => res.json());
+    const table = response["table"];
+    const column = response["column"];
+    const x_name = response["x"];
+    const x_values = [];
+    const y_name = response["y"];
+    const y_values = [];
+    response.values.forEach((e) => {
+      x_values.push(e[x_name]);
+      y_values.push(e[y_name]);
+    });
+    return {
+      x: x_values,
+      y: y_values,
+      name: `${y_name}/${x_name}`,
       hovertemplate: `${table}: %{y:.2f}<extra></extra>`,
     };
   };

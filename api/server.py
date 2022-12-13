@@ -154,20 +154,32 @@ def get_table_keys():
     response = {"tables": tables}
     return response
 
-@app.route('/table_values', methods=['POST'])
-def get_table_values():
+@app.route('/values_yt', methods=['POST'])
+def get_yt_values():
     field = request.get_json()
-    table = field['key']
+    table = field['table']
     column = field['column']
-    columns = [column, 'timestamp_tiplot']
+    datadict = store.Store.get().datadict
+    try:
+        values = datadict[table][[column, "timestamp_tiplot"]].fillna(0).to_dict('records')
+    except:
+        values = []
+    response = {"table": table, "column": column , "values": values}
+    return response
+
+@app.route('/values_xy', methods=['POST'])
+def get_xy_values():
+    field = request.get_json()
+    table = field['table']
+    columns = field['columns']
+    columns.append("timestamp_tiplot")
     datadict = store.Store.get().datadict
     try:
         values = datadict[table][columns].fillna(0).to_dict('records')
     except:
         values = []
-    response = {"table": table, "x": columns[1], "y": columns[0], "values": values}
+    response = {"table": table, "x": columns[0], "y": columns[1] , "values": values}
     return response
-
 
 @socketio.on("disconnect")
 def disconnected():
