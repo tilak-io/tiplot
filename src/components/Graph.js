@@ -51,7 +51,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         break;
       case "remove-value":
       case "pop-value":
-        removeData(actionMeta.removedValue.value);
+        if (actionMeta.removedValue) removeData(actionMeta.removedValue.value);
         break;
       case "clear":
         setData([]);
