@@ -232,4 +232,15 @@ export default class PlotData {
     };
     Plotly.relayout(plot, update);
   };
+
+  stretchHeight = () => {
+    const plot = document.getElementById(`plot-${this.id}`);
+    var update = {
+      autoresize: true,
+      width: plot?.clientWidth,
+      height: plot?.clientHeight,
+      "yaxis.autorange": true,
+    };
+    if (plot) Plotly.relayout(plot, update);
+  };
 }

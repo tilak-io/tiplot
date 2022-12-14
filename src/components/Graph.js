@@ -13,6 +13,9 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   useEffect(() => {
     getInitialData();
     getOptions();
+
+    const plot = document.getElementById(`plot-${id}`);
+    new ResizeObserver(stretchHeight).observe(plot);
   }, []);
 
   const getInitialData = async () => {
@@ -25,6 +28,10 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
       initialData.push(d);
     }
     setData(initialData);
+  };
+
+  const stretchHeight = () => {
+    plotData.stretchHeight();
   };
 
   const getOptions = async () => {

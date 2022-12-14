@@ -15,6 +15,8 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
   useEffect(() => {
     getInitialData();
     getOptions();
+    const plot = document.getElementById(`plot-${id}`);
+    new ResizeObserver(stretchHeight).observe(plot);
   }, []);
 
   const getInitialData = async () => {
@@ -23,6 +25,10 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
     setSelectedX(initialKeys[0]);
     setSelectedY(initialKeys[1]);
     addData(initialKeys[0].value, initialKeys[1].value);
+  };
+
+  const stretchHeight = () => {
+    plotData.stretchHeight();
   };
 
   const getOptions = async () => {
