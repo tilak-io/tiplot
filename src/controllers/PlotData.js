@@ -170,11 +170,43 @@ export default class PlotData {
   };
 
   autoRange = (event) => {
+    // const plots = document.getElementsByClassName("plot-yt");
+    // event["custom"] = true;
+    // for (let i = 0; i < plots.length; i++) {
+    //   if (plots[i].data === undefined) continue;
+    //   Plotly.relayout(plots[i], event);
+    // }
     const plots = document.getElementsByClassName("plot-yt");
-    event["custom"] = true;
+    var max_values = [];
+    var min_values = [];
+
     for (let i = 0; i < plots.length; i++) {
       if (plots[i].data === undefined) continue;
-      Plotly.relayout(plots[i], event);
+      if (plots[i].data.length === 0) continue;
+
+      // TODO: investigate
+      try {
+        const x_min = Math.min.apply(Math, plots[i].data[0].x);
+        const x_max = Math.max.apply(Math, plots[i].data[0].x);
+        min_values.push(x_min);
+        max_values.push(x_max);
+      } catch (e) {
+        alert(e);
+      }
+    }
+
+    const all_min = Math.min.apply(Math, min_values);
+    const all_max = Math.max.apply(Math, max_values);
+
+    const update = {
+      custom: true,
+      "xaxis.range": [all_min, all_max],
+      "yaxis.autorange": true,
+    };
+
+    for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data === undefined) continue;
+      Plotly.relayout(plots[i], update);
     }
   };
 
