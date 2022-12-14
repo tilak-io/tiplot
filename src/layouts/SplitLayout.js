@@ -1,7 +1,7 @@
 import "../../node_modules/react-grid-layout/css/styles.css";
 import "../css/layout.css";
 import { useState, useEffect } from "react";
-import { Responsive, WidthProvider } from "react-grid-layout";
+import RGL, { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuid } from "uuid";
 import TopBar from "../components/TopBar";
 import Graph from "../components/Graph";
@@ -9,7 +9,7 @@ import GraphXY from "../components/GraphXY";
 import View3D from "../components/View3D";
 import SplitPane from "react-split-pane";
 
-const ReactGridLayout = WidthProvider(Responsive);
+const ReactGridLayout = WidthProvider(RGL);
 
 function SplitLayout({ socket }) {
   const [graphs, setGraphs] = useState([]);
@@ -140,8 +140,7 @@ function SplitLayout({ socket }) {
             margin={[0, 0]}
             rowHeight={rowHeight}
             className="layout"
-            breakpoints={{ lg: 1200 }}
-            cols={{ lg: 1 }}
+            cols={1}
             draggableHandle=".drag-button"
           >
             {graphs}
