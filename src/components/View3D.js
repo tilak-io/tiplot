@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import "../css/cesium.css";
-import Entity from "../models/Entity.js";
+import Entity from "../controllers/Entity.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import Plot from "react-plotly.js";
-import PlotData from "../models/PlotData";
+import PlotData from "../controllers/PlotData";
 import GraphOptions from "./GraphOptions";
 
 function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {

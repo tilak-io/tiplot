@@ -2,7 +2,7 @@ import Select from "react-select";
 import Plot from "react-plotly.js";
 import { useState, useEffect } from "react";
 import GraphOptions from "./GraphOptions";
-import PlotData from "../models/PlotData";
+import PlotData from "../controllers/PlotData";
 
 function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   const plotData = new PlotData(id, initialKeys);
