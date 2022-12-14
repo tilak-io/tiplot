@@ -64,7 +64,7 @@ function Test() {
         rowHeight={rowHeight}
         className="layout"
         cols={{ lg: 1, md: 1, sm: 1, xs: 1, xxs: 1 }}
-        draggableHandle=".plot-options"
+        draggableHandle=".drag-button"
       >
         {graphs}
       </ResponsiveGridLayout>

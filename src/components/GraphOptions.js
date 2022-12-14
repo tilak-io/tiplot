@@ -5,6 +5,7 @@ import { HiOutlineTicket } from "react-icons/hi";
 import { AiOutlineDotChart, AiOutlineLineChart } from "react-icons/ai";
 import { BiMoveHorizontal } from "react-icons/bi";
 import { TbChartDots } from "react-icons/tb";
+import { RiDragMove2Line } from "react-icons/ri";
 import Plotly from "plotly.js/dist/plotly";
 
 function GraphOptions({ plotId, id, removeGraph }) {
@@ -140,6 +141,10 @@ function GraphOptions({ plotId, id, removeGraph }) {
 
       <span onClick={autoscale}>
         <MdZoomOutMap style={{ width: "100%" }} />
+      </span>
+
+      <span className="drag-button">
+        <RiDragMove2Line style={{ width: "100%" }} />
       </span>
 
       {/* <span onClick={toggleRangeslider}> */}
