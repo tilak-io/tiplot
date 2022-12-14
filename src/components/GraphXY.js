@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import Plot from "react-plotly.js";
-import Plotly from "plotly.js/dist/plotly";
 import PlotData from "../models/PlotData";
 import GraphOptions from "./GraphOptions";
 
@@ -40,6 +39,8 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
     if (selected_y.value.table == e.value.table) {
       addData(e.value, selected_y.value);
       updateKeys(id, [e, selected_y]);
+    } else {
+      setSelectedY(null);
     }
   };
 
@@ -64,7 +65,7 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
   };
 
   return (
-    <div>
+    <div className="plot-container">
       <Select
         className="multiselect"
         options={options_x}
@@ -77,7 +78,7 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
         onChange={handleChangeY}
         value={selected_y}
       />
-      <div className="d-flex resizable">
+      <div className="d-flex flex-xy">
         <Plot
           className="plot-xy"
           divId={`plot-${id}`}

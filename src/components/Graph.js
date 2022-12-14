@@ -3,7 +3,6 @@ import Plot from "react-plotly.js";
 import { useState, useEffect } from "react";
 import GraphOptions from "./GraphOptions";
 import PlotData from "../models/PlotData";
-import Plotly from "plotly.js/dist/plotly";
 
 function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   const plotData = new PlotData(id, initialKeys);
@@ -14,21 +13,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   useEffect(() => {
     getInitialData();
     getOptions();
-    const plot = document.getElementById(`plot-${id}`);
-    new ResizeObserver(stretchHeight).observe(plot);
   }, []);
-
-  const stretchHeight = () => {
-    const plot = document.getElementById(`plot-${id}`);
-    var update = {
-      autoresize: true,
-      width: plot?.clientWidth,
-      height: plot?.clientHeight,
-      "yaxis.autorange": true,
-    };
-
-    if (plot) Plotly.relayout(plot, update);
-  };
 
   const getInitialData = async () => {
     if (initialKeys == null) return;
@@ -95,7 +80,10 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     }
 
     // XAxis Changed
-    if (event["xaxis.range[0]"] != null && event["custom"] == null) {
+    if (
+      (event["xaxis.range[0]"] !== null || event["xaxis.range"] !== null) &&
+      event["custom"] == null
+    ) {
       plotData.syncHorizontalAxis(event);
     }
 
@@ -110,7 +98,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   };
 
   return (
-    <div>
+    <div className="plot-container">
       <Select
         id={`select-${id}`}
         className="multiselect"
@@ -120,7 +108,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         value={selectedOptions}
         closeMenuOnSelect={false}
       />
-      <div className="d-flex">
+      <div className="d-flex flex-yt">
         <Plot
           className="plot-yt"
           divId={`plot-${id}`}
@@ -149,7 +137,6 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
             displayModeBar: false,
           }}
         />
-
         <GraphOptions plotId={`plot-${id}`} id={id} removeGraph={removeGraph} />
       </div>
     </div>

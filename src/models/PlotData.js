@@ -66,7 +66,6 @@ export default class PlotData {
       body: JSON.stringify(field),
     }).then((res) => res.json());
     const table = response["table"];
-    const column = response["column"];
     const x_name = response["x"];
     const x_values = [];
     const y_name = response["y"];
@@ -182,6 +181,7 @@ export default class PlotData {
   syncHorizontalAxis = (event) => {
     const plots = document.getElementsByClassName("plot-yt");
     const update = {
+      "xaxis.range": event["xaxis.range"],
       "xaxis.range[0]": event["xaxis.range[0]"],
       "xaxis.range[1]": event["xaxis.range[1]"],
       custom: true,

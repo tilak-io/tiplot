@@ -10,6 +10,7 @@ body {
   margin-top: 54px;
   background-color: #ddd;
   overflow-x: hidden;
+
   overflow-y: scroll;
   /* height: 100%; */
 
@@ -44,14 +45,36 @@ body {
   background-color: #14182d;
 }
 
+.plot-container {
+  height: 100%;
+}
+
+.layout {
+  padding-top: 56px;
+}
+
+.fit-to-screen {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 100vh;
+}
+
+.flex-yt {
+  height: calc(100% - 38px);
+}
+
+.flex-xy {
+  height: calc(100% - 76px);
+}
+
 .plot-options {
   background-color: #fff;
   width: 40px;
 }
+
 .plot-yt,
 .plot-xy {
   width: calc(100% - 30px);
-  height: 50%;
 }
 
 .resizable {
@@ -61,10 +84,11 @@ body {
 }
 
 .react-grid-layout {
-  /* margin-top: 54px; */
-  padding-top: 54px;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  /* padding-top: 54px; */
+  /* background-color: green; */
+
+  /* overflow-x: hidden; */
+  /* overflow-y: hidden; */
 }
 
 /* .react-grid-item { */

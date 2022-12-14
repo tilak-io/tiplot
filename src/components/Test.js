@@ -13,26 +13,27 @@ function Test() {
   const [rowHeight, setRowHeight] = useState(window.innerHeight);
 
   useEffect(() => {
-    fitGraphsToScreen();
+    // const multiselectHeight = 38;
+    var usedHeight = 56;
+    // graphs.forEach((g) => {
+    // if (g.type == "yt") usedHeight += multiselectHeight;
+    // else usedHeight += 2 * multiselectHeight;
+    // });
+
+    setRowHeight((window.innerHeight - usedHeight) / graphs.length);
   }, [graphs]);
 
   const addGraphYT = () => {
-    const id = uuid();
-    const graph = (
-      <div key={id} style={{ backgroundColor: "red" }}>
-        <Graph id={id} updateKeys={updateKeys} removeGraph={removeGraph} />
-      </div>
-    );
+    const graph = {
+      id: uuid(),
+      type: "yt",
+      initialKeys: [],
+    };
     setGraphs([...graphs, graph]);
   };
 
   const addGraphXY = () => {
-    const id = uuid();
-    const graph = (
-      <div key={id} style={{ backgroundColor: "red" }}>
-        <GraphXY id={id} updateKeys={updateKeys} removeGraph={removeGraph} />
-      </div>
-    );
+    const graph = { id: uuid(), type: "xy", initialKeys: [] };
     setGraphs([...graphs, graph]);
   };
 
@@ -41,33 +42,53 @@ function Test() {
     setGraphs(g);
   };
 
-  const fitGraphsToScreen = () => {
-    const containers = document.getElementsByClassName("plot-yt");
-    const multiselects = document.getElementsByClassName("multiselect");
-    var additionalHeight = 0; // buttons + navbar height
-    for (var i = 0; i < multiselects.length; i++)
-      additionalHeight += multiselects[i].clientHeight;
-    const plotHeight =
-      (window.innerHeight - additionalHeight) / containers.length;
-    for (var j = 0; j < containers.length; j++)
-      containers[j].style.height = plotHeight + "px";
-    setRowHeight(plotHeight + 38);
+  function GraphType({ element }) {
+    return element.type == "yt" ? (
+      <Graph
+        key={element.id}
+        id={element.id}
+        initialKeys={element.initialKeys}
+        updateKeys={updateKeys}
+        removeGraph={removeGraph}
+      />
+    ) : (
+      <GraphXY
+        key={element.id}
+        id={element.id}
+        initialKeys={element.initialKeys}
+        updateKeys={updateKeys}
+        removeGraph={removeGraph}
+      />
+    );
+  }
+
+  const updateKeys = (id, keys) => {
+    const copy = graphs;
+    const g = copy.find((e) => e.id === id);
+    g.initialKeys = keys;
+    console.log(g);
+    // setGraphs(copy);
   };
 
-  const updateKeys = () => {};
   return (
     <>
       <TopBar addYT={addGraphYT} addXY={addGraphXY} />
-      <ResponsiveGridLayout
-        isResizable={false}
-        margin={[0, 0]}
-        rowHeight={rowHeight}
-        className="layout"
-        cols={{ lg: 1, md: 1, sm: 1, xs: 1, xxs: 1 }}
-        draggableHandle=".drag-button"
-      >
-        {graphs}
-      </ResponsiveGridLayout>
+      <div className="fit-to-screen">
+        <ResponsiveGridLayout
+          isResizable={false}
+          margin={[0, 0]}
+          rowHeight={rowHeight}
+          className="layout"
+          cols={{ lg: 1, md: 1, sm: 1, xs: 1, xxs: 1 }}
+          draggableHandle=".drag-button"
+        >
+          {graphs.map((g) => (
+            <div key={uuid()}>
+              <GraphType element={g} />
+            </div>
+          ))}
+        </ResponsiveGridLayout>
+      </div>
     </>
   );
 }
