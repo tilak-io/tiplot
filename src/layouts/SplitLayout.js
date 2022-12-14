@@ -1,14 +1,17 @@
 import "../../node_modules/react-grid-layout/css/styles.css";
+import "../css/layout.css";
 import { useState, useEffect } from "react";
-import TopBar from "./TopBar";
-import RGL, { Responsive, WidthProvider } from "react-grid-layout";
-import Graph from "./Graph";
-import GraphXY from "./GraphXY";
+import { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuid } from "uuid";
+import TopBar from "../components/TopBar";
+import Graph from "../components/Graph";
+import GraphXY from "../components/GraphXY";
+import View3D from "../components/View3D";
+import SplitPane from "react-split-pane";
 
 const ReactGridLayout = WidthProvider(Responsive);
 
-function Test() {
+function SplitLayout({ socket }) {
   const [graphs, setGraphs] = useState([]);
   const [rowHeight, setRowHeight] = useState(null);
   const [positions, setPositions] = useState([]);
@@ -30,7 +33,7 @@ function Test() {
           id={id}
           initialKeys={[]}
           updateKeys={updateKeys}
-          removeGraph={() => removeGraph()}
+          removeGraph={removeGraph}
         />
       </div>
     );
@@ -46,7 +49,7 @@ function Test() {
           id={id}
           initialKeys={[]}
           updateKeys={updateKeys}
-          removeGraph={() => removeGraph()}
+          removeGraph={removeGraph}
         />
       </div>
     );
@@ -127,24 +130,27 @@ function Test() {
 
   return (
     <>
-      <TopBar addYT={addGraphYT} addXY={addGraphXY} />
-      <div className="fit-to-screen">
-        <ReactGridLayout
-          layout={positions}
-          onLayoutChange={handleLayoutChange}
-          isResizable={false}
-          margin={[0, 0]}
-          rowHeight={rowHeight}
-          className="layout"
-          breakpoints={{ lg: 1200 }}
-          cols={{ lg: 1 }}
-          draggableHandle=".drag-button"
-        >
-          {graphs}
-        </ReactGridLayout>
-      </div>
+      <TopBar page="home" addYT={addGraphYT} addXY={addGraphXY} />
+      <SplitPane split="vertical" size="55%">
+        <div className="fit-to-screen">
+          <ReactGridLayout
+            layout={positions}
+            onLayoutChange={handleLayoutChange}
+            isResizable={false}
+            margin={[0, 0]}
+            rowHeight={rowHeight}
+            className="layout"
+            breakpoints={{ lg: 1200 }}
+            cols={{ lg: 1 }}
+            draggableHandle=".drag-button"
+          >
+            {graphs}
+          </ReactGridLayout>
+        </div>
+        <View3D socket={socket} />{" "}
+      </SplitPane>
     </>
   );
 }
 
-export default Test;
+export default SplitLayout;

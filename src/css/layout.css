@@ -7,21 +7,17 @@ body {
 }
 
 .Pane1 {
-  margin-top: 54px;
+  /* margin-top: 54px; */
   background-color: #ddd;
   overflow-x: hidden;
+  overflow-y: hidden;
 
-  overflow-y: scroll;
-  /* height: 100%; */
-
-  height: calc(100% - 54px);
 }
 
 .Pane2 {
   background-color: #000;
   overflow-x: hidden;
   height: 100%;
-  /* height: calc(100% - 54px); */
 }
 
 .Resizer {
@@ -50,7 +46,11 @@ body {
 }
 
 .layout {
-  padding-top: 56px;
+  margin-top: 56px;
+}
+
+.react-grid-item  {
+  width: 100% !important;
 }
 
 .fit-to-screen {

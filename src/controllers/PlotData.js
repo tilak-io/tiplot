@@ -30,6 +30,7 @@ export default class PlotData {
 
   // get data for yt graphs
   getData = async (field) => {
+    this.autoRange();
     const response = await fetch("http://localhost:5000/values_yt", {
       headers: {
         "Content-Type": "application/json",

@@ -6,6 +6,7 @@ import Test from "./components/Test";
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
+import SplitLayout from "./layouts/SplitLayout";
 
 function App() {
   const [socketInstance, setSocketInstance] = useState("");
@@ -47,12 +48,10 @@ function App() {
               element={<Loader socket={socketInstance} />}
             />
             <Route
-              exact
               path="/home"
-              element={<Layout socket={socketInstance} />}
+              element={<SplitLayout socket={socketInstance} />}
             />
             <Route exact path="/settings" element={<Settings />} />
-            <Route path="/test" element={<Test />} />
             <Route path="*" element={"not found"} />
           </Routes>
         </Router>
