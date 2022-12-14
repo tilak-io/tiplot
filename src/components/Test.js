@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import TopBar from "./TopBar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import Graph from "./Graph";
-
+import GraphXY from "./GraphXY";
 import { v4 as uuid } from "uuid";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -16,8 +16,23 @@ function Test() {
     fitGraphsToScreen();
   }, [graphs]);
 
-  const addGraph = () => {
-    const graph = { id: uuid() };
+  const addGraphYT = () => {
+    const id = uuid();
+    const graph = (
+      <div key={id} style={{ backgroundColor: "red" }}>
+        <Graph id={id} updateKeys={updateKeys} removeGraph={removeGraph} />
+      </div>
+    );
+    setGraphs([...graphs, graph]);
+  };
+
+  const addGraphXY = () => {
+    const id = uuid();
+    const graph = (
+      <div key={id} style={{ backgroundColor: "red" }}>
+        <GraphXY id={id} updateKeys={updateKeys} removeGraph={removeGraph} />
+      </div>
+    );
     setGraphs([...graphs, graph]);
   };
 
@@ -29,10 +44,9 @@ function Test() {
   const fitGraphsToScreen = () => {
     const containers = document.getElementsByClassName("plot-yt");
     const multiselects = document.getElementsByClassName("multiselect");
-    var additionalHeight = 54; // buttons + navbar height
+    var additionalHeight = 0; // buttons + navbar height
     for (var i = 0; i < multiselects.length; i++)
       additionalHeight += multiselects[i].clientHeight;
-    console.log(additionalHeight);
     const plotHeight =
       (window.innerHeight - additionalHeight) / containers.length;
     for (var j = 0; j < containers.length; j++)
@@ -43,7 +57,7 @@ function Test() {
   const updateKeys = () => {};
   return (
     <>
-      <TopBar addX={addGraph} />
+      <TopBar addYT={addGraphYT} addXY={addGraphXY} />
       <ResponsiveGridLayout
         isResizable={false}
         margin={[0, 0]}
@@ -52,15 +66,7 @@ function Test() {
         cols={{ lg: 1, md: 1, sm: 1, xs: 1, xxs: 1 }}
         draggableHandle=".plot-options"
       >
-        {graphs.map((g) => (
-          <div key={g.id} style={{ backgroundColor: "red", height: 100 }}>
-            <Graph
-              id={g.id}
-              updateKeys={updateKeys}
-              removeGraph={removeGraph}
-            />
-          </div>
-        ))}
+        {graphs}
       </ResponsiveGridLayout>
     </>
   );

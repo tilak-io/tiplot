@@ -8,9 +8,10 @@ import {
   Button,
 } from "react-bootstrap";
 import { FaToggleOn, FaToggleOff, FaExpand } from "react-icons/fa";
+import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
 import logo from "../img/logo.png";
 
-function TopBar({ page, toggle3dView, showView, addX }) {
+function TopBar({ page, toggle3dView, showView, addYT, addXY }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
   const [isFit, setFit] = useState(true);
@@ -155,11 +156,14 @@ function TopBar({ page, toggle3dView, showView, addX }) {
     // if (window.scene)
     return (
       <Nav>
-        <Nav.Link onClick={addX}>
-          <span>+</span>
+        <Nav.Link onClick={addYT}>
+          <FcRadarPlot />
         </Nav.Link>
-        <Nav.Link onClick={toggleFit}>
-          <FitButton />
+        <Nav.Link onClick={addXY}>
+          <FcScatterPlot />
+          {/* </Nav.Link> */}
+          {/* <Nav.Link onClick={toggleFit}> */}
+          {/*   <FitButton /> */}
         </Nav.Link>
         <Nav.Link onClick={toggle3dView}>
           <ViewButton />

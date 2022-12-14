@@ -51,7 +51,7 @@ body {
 .plot-yt,
 .plot-xy {
   width: calc(100% - 30px);
-  height: 100%;
+  height: 50%;
 }
 
 .resizable {
@@ -61,10 +61,15 @@ body {
 }
 
 .react-grid-layout {
-  margin-top: 54px;
+  /* margin-top: 54px; */
+  padding-top: 54px;
   overflow-x: hidden;
   overflow-y: hidden;
 }
+
+/* .react-grid-item { */
+/*   height: auto !important; */
+/* } */
 
 /* custom scrollbar */
 /* width */
