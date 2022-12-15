@@ -9,7 +9,7 @@ import {
 } from "react-bootstrap";
 import { FaToggleOn, FaToggleOff, FaExpand } from "react-icons/fa";
 import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
-import logo from "../img/logo.png";
+import logo from "../static/img/logo.png";
 
 function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   const [layouts, setLayouts] = useState([]);

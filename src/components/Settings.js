@@ -12,7 +12,7 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import "../css/settings.css";
+import "../static/css/settings.css";
 
 function Settings() {
   const [current_entities, setCurrentEntities] = useState([]);

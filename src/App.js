@@ -1,4 +1,4 @@
-import "./css/overlay.css";
+import "./static/css/overlay.css";
 import Loader from "./components/Loader";
 import Settings from "./components/Settings";
 import Test from "./components/Test";

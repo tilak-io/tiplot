@@ -3,8 +3,8 @@ import { FcOpenedFolder, FcFile } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
 import ToolBar from "./ToolBar";
-import "../css/loader.css";
-import "../css/overlay.css";
+import "../static/css/loader.css";
+import "../static/css/overlay.css";
 
 function Loader({ socket }) {
   const [files, setFiles] = useState([]);

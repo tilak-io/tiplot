@@ -1,5 +1,5 @@
 import "../../node_modules/react-grid-layout/css/styles.css";
-import "../css/layout.css";
+import "../static/css/layout.css";
 import { useState, useEffect } from "react";
 import RGL, { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuid } from "uuid";
