@@ -11,7 +11,7 @@ import { FaToggleOn, FaToggleOff, FaExpand } from "react-icons/fa";
 import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
 import logo from "../img/logo.png";
 
-function ToolBar({ page, toggle3dView, showView, addYT, addXY }) {
+function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
   const [isFit, setFit] = useState(true);
@@ -153,14 +153,14 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY }) {
   }
 
   function Controls() {
-    // if (window.scene)
+    if (!showControls) return;
     return (
       <Nav>
         <Nav.Link onClick={addYT}>
-          <FcRadarPlot />
+          <FcScatterPlot />
         </Nav.Link>
         <Nav.Link onClick={addXY}>
-          <FcScatterPlot />
+          <FcRadarPlot />
           {/* </Nav.Link> */}
           {/* <Nav.Link onClick={toggleFit}> */}
           {/*   <FitButton /> */}
