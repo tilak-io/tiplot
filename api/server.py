@@ -58,12 +58,6 @@ def connected():
         thread.daemon = True
         thread.start()
 
-@socketio.on('select_log_file')
-def select_log_file(file):
-    ok = choose_parser(file[0], logs_dir)
-    emit('log_selected', ok)
-
-
 @socketio.on('get_entities_props')
 def get_entities():
     global currentTime
@@ -179,6 +173,13 @@ def get_logs():
         '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
     data = {'path': logs_dir, 'files': files}
     return data
+
+
+@app.route('/select_log', methods=['POST'])
+def select_log():
+    file = request.get_json()
+    ok = choose_parser(file[0], logs_dir)
+    return {"ok": ok}
 
 
 

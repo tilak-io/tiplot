@@ -16,19 +16,13 @@ function Loader({ socket }) {
   useEffect(() => {
     getLogFiles();
 
-    socket.on("log_selected", (ok) => {
-      setLoading(false);
-      if (ok) navigate("/home");
-      else alert("unsupported format");
-    });
-
     // when recieving entities from jupyter notebook
     socket.on("entities_loaded", () => {
       navigate("/home");
     });
 
     socket.on("connect", () => {
-      setConnected(true);
+      // First app launch
       getLogFiles();
     });
 
@@ -37,7 +31,20 @@ function Loader({ socket }) {
 
   const parse = (file) => {
     setLoading(true);
-    socket.emit("select_log_file", file);
+    fetch("http://localhost:5000/select_log", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(file),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setLoading(false);
+        if (res.ok) navigate("/home");
+        else alert("unsupported format");
+      });
+    // socket.emit("select_log_file", file);
   };
 
   const handleChange = (event) => {
@@ -61,6 +68,7 @@ function Loader({ socket }) {
     const logs = await fetch("http://localhost:5000/log_files").then((res) =>
       res.json()
     );
+    setConnected(true);
     setLogsDir(logs.path);
     setFiles(logs.files);
   };

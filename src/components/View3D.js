@@ -48,7 +48,7 @@ function View3D({ socket }) {
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
     return () => {
-      window.location.reload();
+      // window.location.reload();
     };
     // eslint-disable-next-line
   }, []);
