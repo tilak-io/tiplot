@@ -90,6 +90,7 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
           divId={`plot-${id}`}
           data={data}
           onHover={handleHover}
+          onClick={handleHover}
           useResizeHandler
           layout={{
             margin: {
