@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FcOpenedFolder, FcFile } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
-import TopBar from "./TopBar";
+import ToolBar from "./ToolBar";
 import "../css/loader.css";
 import "../css/overlay.css";
 
@@ -69,7 +69,7 @@ function Loader({ socket }) {
   const showLoading = loading ? "show" : "hide";
   return (
     <>
-      <TopBar page="loader" />
+      <ToolBar page="loader" />
       <div className="loader-page">
         <div className={`overlay ${show}`}></div>
         <div className={`spanner ${show}`}>

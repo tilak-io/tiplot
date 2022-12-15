@@ -1,6 +1,6 @@
 import "../../node_modules/react-grid-layout/css/styles.css";
 import { useState, useEffect } from "react";
-import TopBar from "./TopBar";
+import ToolBar from "./ToolBar";
 import RGL, { Responsive, WidthProvider } from "react-grid-layout";
 import Graph from "./Graph";
 import GraphXY from "./GraphXY";
@@ -127,7 +127,7 @@ function Test() {
 
   return (
     <>
-      <TopBar addYT={addGraphYT} addXY={addGraphXY} />
+      <ToolBar addYT={addGraphYT} addXY={addGraphXY} />
       <div className="fit-to-screen">
         <ReactGridLayout
           layout={positions}

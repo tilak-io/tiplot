@@ -1,4 +1,4 @@
-import TopBar from "./TopBar";
+import ToolBar from "./ToolBar";
 import EntityConfig from "./EntityConfig";
 
 import { useNavigate } from "react-router-dom";
@@ -169,7 +169,7 @@ function Settings() {
 
   return (
     <>
-      <TopBar page="settings" />
+      <ToolBar page="settings" />
       <Container className={"loading " + showLoading}>
         <Spinner variant="primary" />
       </Container>

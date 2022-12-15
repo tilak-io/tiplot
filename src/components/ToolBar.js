@@ -11,7 +11,7 @@ import { FaToggleOn, FaToggleOff, FaExpand } from "react-icons/fa";
 import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
 import logo from "../img/logo.png";
 
-function TopBar({ page, toggle3dView, showView, addYT, addXY }) {
+function ToolBar({ page, toggle3dView, showView, addYT, addXY }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
   const [isFit, setFit] = useState(true);
@@ -252,4 +252,4 @@ function TopBar({ page, toggle3dView, showView, addYT, addXY }) {
     </>
   );
 }
-export default TopBar;
+export default ToolBar;

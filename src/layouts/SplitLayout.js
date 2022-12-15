@@ -3,7 +3,7 @@ import "../css/layout.css";
 import { useState, useEffect } from "react";
 import RGL, { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuid } from "uuid";
-import TopBar from "../components/TopBar";
+import ToolBar from "../components/ToolBar.js";
 import Graph from "../components/Graph";
 import GraphXY from "../components/GraphXY";
 import View3D from "../components/View3D";
@@ -130,7 +130,7 @@ function SplitLayout({ socket }) {
 
   return (
     <>
-      <TopBar page="home" addYT={addGraphYT} addXY={addGraphXY} />
+      <ToolBar page="home" addYT={addGraphYT} addXY={addGraphXY} />
       <SplitPane split="vertical" size="55%">
         <div className="fit-to-screen">
           <ReactGridLayout
