@@ -1,5 +1,4 @@
 import "./css/overlay.css";
-import Layout from "./components/Layout";
 import Loader from "./components/Loader";
 import Settings from "./components/Settings";
 import Test from "./components/Test";
