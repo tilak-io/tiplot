@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FcOpenedFolder, FcFile } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
-import TopBar from "./TopBar";
-import "../css/loader.css";
-import "../css/overlay.css";
+import ToolBar from "./ToolBar";
+import "../static/css/loader.css";
+import "../static/css/overlay.css";
 
 function Loader({ socket }) {
   const [files, setFiles] = useState([]);
@@ -14,20 +14,7 @@ function Loader({ socket }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // requesting the log files
-    socket.emit("get_log_files");
-
-    // handling the signals
-    socket.on("log_files", (logs) => {
-      setLogsDir(logs.path);
-      setFiles(logs.files);
-    });
-
-    socket.on("log_selected", (ok) => {
-      setLoading(false);
-      if (ok) navigate("/home");
-      else alert("unsupported format");
-    });
+    getLogFiles();
 
     // when recieving entities from jupyter notebook
     socket.on("entities_loaded", () => {
@@ -35,7 +22,8 @@ function Loader({ socket }) {
     });
 
     socket.on("connect", () => {
-      setConnected(true);
+      // First app launch
+      getLogFiles();
     });
 
     // eslint-disable-next-line
@@ -43,7 +31,20 @@ function Loader({ socket }) {
 
   const parse = (file) => {
     setLoading(true);
-    socket.emit("select_log_file", file);
+    fetch("http://localhost:5000/select_log", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(file),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setLoading(false);
+        if (res.ok) navigate("/home");
+        else alert("unsupported format");
+      });
+    // socket.emit("select_log_file", file);
   };
 
   const handleChange = (event) => {
@@ -63,11 +64,20 @@ function Loader({ socket }) {
       });
   };
 
+  const getLogFiles = async () => {
+    const logs = await fetch("http://localhost:5000/log_files").then((res) =>
+      res.json()
+    );
+    setConnected(true);
+    setLogsDir(logs.path);
+    setFiles(logs.files);
+  };
+
   const show = connected ? "hide" : "show";
   const showLoading = loading ? "show" : "hide";
   return (
     <>
-      <TopBar page="loader" />
+      <ToolBar page="loader" />
       <div className="loader-page">
         <div className={`overlay ${show}`}></div>
         <div className={`spanner ${show}`}>

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import "../css/cesium.css";
-import Entity from "../models/Entity.js";
+import "../static/css/cesium.css";
+import Entity from "../controllers/Entity.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
@@ -48,7 +48,7 @@ function View3D({ socket }) {
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
     return () => {
-      window.location.reload();
+      // window.location.reload();
     };
     // eslint-disable-next-line
   }, []);

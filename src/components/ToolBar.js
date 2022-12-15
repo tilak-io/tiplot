@@ -8,9 +8,10 @@ import {
   Button,
 } from "react-bootstrap";
 import { FaToggleOn, FaToggleOff, FaExpand } from "react-icons/fa";
-import logo from "../img/logo.png";
+import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
+import logo from "../static/img/logo.png";
 
-function TopBar({ page, toggle3dView, showView }) {
+function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
   const [isFit, setFit] = useState(true);
@@ -152,17 +153,23 @@ function TopBar({ page, toggle3dView, showView }) {
   }
 
   function Controls() {
-    if (window.scene)
-      return (
-        <Nav>
-          <Nav.Link onClick={toggleFit}>
-            <FitButton />
-          </Nav.Link>
-          <Nav.Link onClick={toggle3dView}>
-            <ViewButton />
-          </Nav.Link>
-        </Nav>
-      );
+    if (!showControls) return;
+    return (
+      <Nav>
+        <Nav.Link onClick={addYT}>
+          <FcScatterPlot />
+        </Nav.Link>
+        <Nav.Link onClick={addXY}>
+          <FcRadarPlot />
+          {/* </Nav.Link> */}
+          {/* <Nav.Link onClick={toggleFit}> */}
+          {/*   <FitButton /> */}
+        </Nav.Link>
+        <Nav.Link onClick={toggle3dView}>
+          <ViewButton />
+        </Nav.Link>
+      </Nav>
+    );
   }
 
   return (
@@ -245,4 +252,4 @@ function TopBar({ page, toggle3dView, showView }) {
     </>
   );
 }
-export default TopBar;
+export default ToolBar;

@@ -7,20 +7,17 @@ body {
 }
 
 .Pane1 {
-  margin-top: 54px;
+  /* margin-top: 54px; */
   background-color: #ddd;
   overflow-x: hidden;
-  overflow-y: scroll;
-  /* height: 100%; */
+  overflow-y: hidden;
 
-  height: calc(100% - 54px);
 }
 
 .Pane2 {
   background-color: #000;
   overflow-x: hidden;
   height: 100%;
-  /* height: calc(100% - 54px); */
 }
 
 .Resizer {
@@ -44,14 +41,40 @@ body {
   background-color: #14182d;
 }
 
+.plot-container {
+  height: 100%;
+}
+
+.layout {
+  margin-top: 56px;
+}
+
+.react-grid-item  {
+  width: 100% !important;
+}
+
+.fit-to-screen {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 100vh;
+}
+
+.flex-yt {
+  height: calc(100% - 38px);
+}
+
+.flex-xy {
+  height: calc(100% - 76px);
+}
+
 .plot-options {
   background-color: #fff;
   width: 40px;
 }
+
 .plot-yt,
 .plot-xy {
   width: calc(100% - 30px);
-  height: 100%;
 }
 
 .resizable {
@@ -59,6 +82,7 @@ body {
   resize: vertical;
   overflow: auto;
 }
+
 
 /* custom scrollbar */
 /* width */

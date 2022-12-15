@@ -1,4 +1,4 @@
-import TopBar from "./TopBar";
+import ToolBar from "./ToolBar";
 import EntityConfig from "./EntityConfig";
 
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,7 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import "../css/settings.css";
+import "../static/css/settings.css";
 
 function Settings() {
   const [current_entities, setCurrentEntities] = useState([]);
@@ -23,7 +23,7 @@ function Settings() {
     getCurrentSettings();
     getCurrentEntities();
     return () => {
-      window.location.reload();
+      // window.location.reload();
     };
   }, []);
 
@@ -169,7 +169,7 @@ function Settings() {
 
   return (
     <>
-      <TopBar page="settings" />
+      <ToolBar page="settings" />
       <Container className={"loading " + showLoading}>
         <Spinner variant="primary" />
       </Container>

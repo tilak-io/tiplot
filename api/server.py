@@ -58,20 +58,6 @@ def connected():
         thread.daemon = True
         thread.start()
 
-@socketio.on('get_log_files')
-def get_logs():
-    files = [(path.basename(x), path.getsize(x), strftime(
-        '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
-    data = {'path': logs_dir, 'files': files}
-    emit('log_files', data)
-
-
-@socketio.on('select_log_file')
-def select_log_file(file):
-    ok = choose_parser(file[0], logs_dir)
-    emit('log_selected', ok)
-
-
 @socketio.on('get_entities_props')
 def get_entities():
     global currentTime
@@ -80,28 +66,6 @@ def get_entities():
     if err is not None:
         emit('error', err)
     emit('entities_props', props)
-
-@socketio.on('get_table_keys')
-def get_table_keys(index):
-    keys = store.Store.get().getNestedKeys()
-    response = {"index": index, "keys":keys}
-    emit('table_keys', response)
-
-@socketio.on('get_table_values')
-def get_table_values(data):
-    index = data['index']
-    table = data['table']
-    keys = data['keys']
-    keys.append('timestamp_tiplot')
-    datadict = store.Store.get().datadict
-    try:
-        values = datadict[table][keys].fillna(0).to_dict('records')
-        print("-> Served x: " + keys[1] + ", y:" + keys[0])
-    except:
-        values = []
-        print("~> Could not find: " + keys[0])
-    response = {"index": index,"y": keys[0], "x": keys[1],"table": table, "values": values}
-    emit('table_values', response)
 
 @socketio.on('get_table_columns')
 def get_table_columns(data):
@@ -169,6 +133,55 @@ def write_config():
     with open(configs_dir + current_parser.name + ".json", "w") as outfile:
         outfile.write(json.dumps(config, indent=2))
     return {'ok': True}
+
+@app.route('/tables')
+def get_table_keys():
+    tables = store.Store.get().getNestedKeys()
+    response = {"tables": tables}
+    return response
+
+@app.route('/values_yt', methods=['POST'])
+def get_yt_values():
+    field = request.get_json()
+    table = field['table']
+    column = field['column']
+    datadict = store.Store.get().datadict
+    try:
+        values = datadict[table][[column, "timestamp_tiplot"]].fillna(0).to_dict('records')
+    except:
+        values = []
+    response = {"table": table, "column": column , "values": values}
+    return response
+
+@app.route('/values_xy', methods=['POST'])
+def get_xy_values():
+    field = request.get_json()
+    table = field['table']
+    columns = field['columns']
+    columns.append("timestamp_tiplot")
+    datadict = store.Store.get().datadict
+    try:
+        values = datadict[table][columns].fillna(0).to_dict('records')
+    except:
+        values = []
+    response = {"table": table, "x": columns[0], "y": columns[1] , "values": values}
+    return response
+
+@app.route('/log_files')
+def get_logs():
+    files = [(path.basename(x), path.getsize(x), strftime(
+        '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
+    data = {'path': logs_dir, 'files': files}
+    return data
+
+
+@app.route('/select_log', methods=['POST'])
+def select_log():
+    file = request.get_json()
+    ok = choose_parser(file[0], logs_dir)
+    return {"ok": ok}
+
+
 
 @socketio.on("disconnect")
 def disconnected():

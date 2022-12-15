@@ -5,9 +5,10 @@ import { HiOutlineTicket } from "react-icons/hi";
 import { AiOutlineDotChart, AiOutlineLineChart } from "react-icons/ai";
 import { BiMoveHorizontal } from "react-icons/bi";
 import { TbChartDots } from "react-icons/tb";
+import { RiDragMove2Line } from "react-icons/ri";
 import Plotly from "plotly.js/dist/plotly";
 
-function GraphOptions({ plotId, graphIndex, removeGraph }) {
+function GraphOptions({ plotId, id, removeGraph }) {
   const [showLegend, setShowLegend] = useState(true);
   const [plotType, setPlotType] = useState(1);
   const [legendAnchor, setLegendAnchor] = useState(1);
@@ -123,7 +124,7 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
 
   return (
     <div className="plot-options">
-      <span onClick={() => removeGraph(graphIndex)}>
+      <span onClick={() => removeGraph(id)}>
         <BsTrash style={{ width: "100%", color: "red" }} />
       </span>
 
@@ -140,6 +141,10 @@ function GraphOptions({ plotId, graphIndex, removeGraph }) {
 
       <span onClick={autoscale}>
         <MdZoomOutMap style={{ width: "100%" }} />
+      </span>
+
+      <span className="drag-button">
+        <RiDragMove2Line style={{ width: "100%" }} />
       </span>
 
       {/* <span onClick={toggleRangeslider}> */}
