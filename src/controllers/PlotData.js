@@ -223,26 +223,27 @@ export default class PlotData {
     for (let i = 0; i < plots.length; i++) {
       Plotly.relayout(plots[i], update);
     }
-    this.filterPointInTimeRange(event);
+    // this.filterPointInTimeRange(event);
   };
 
-  filterPointInTimeRange = (event) => {
-    if (!event["xaxis.range[0]"]) return;
-    const start = event["xaxis.range[0]"];
-    const stop = event["xaxis.range[1]"];
-    const plots = document.getElementsByClassName("plot-xy");
-    for (let i = 0; i < plots.length; i++) {
-      const xs = plots[i].data[0].x;
-      const ys = plots[i].data[0].y;
-      const ts = plots[i].data[0].t;
-      const range = ts.filter((t) => t >= start && t <= stop);
-      const startIndex = ts.indexOf(range[0]);
-      const stopIndex = ts.indexOf(range[range.length - 1]);
-      const newXs = xs.slice(startIndex, stopIndex);
-      const newYs = ys.slice(startIndex, stopIndex);
-      Plotly.update(plots[i], [{ x: newXs, y: newYs, name: "hehe" }]);
-    }
-  };
+  // TODO: FINISH THIS
+  // filterPointInTimeRange = (event) => {
+  //   window.Plotly = Plotly;
+  //   if (!event["xaxis.range[0]"]) return;
+  //   const start = event["xaxis.range[0]"];
+  //   const stop = event["xaxis.range[1]"];
+  //   const plots = document.getElementsByClassName("plot-xy");
+  //   for (let i = 0; i < plots.length; i++) {
+  //     const xs = plots[i].data[0].x;
+  //     const ys = plots[i].data[0].y;
+  //     const ts = plots[i].data[0].t;
+  //     const range = ts.filter((t) => t >= start && t <= stop);
+  //     const startIndex = ts.indexOf(range[0]);
+  //     const stopIndex = ts.indexOf(range[range.length - 1]);
+  //     const newXs = xs.slice(startIndex, stopIndex);
+  //     const newYs = ys.slice(startIndex, stopIndex);
+  //   }
+  // };
 
   getScaledYAxis = (xrange) => {
     const plot = document.getElementById(`plot-${this.id}`);
