@@ -23,7 +23,7 @@ function Settings() {
     getCurrentSettings();
     getCurrentEntities();
     return () => {
-      window.location.reload();
+      // window.location.reload();
     };
   }, []);
 
