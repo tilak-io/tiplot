@@ -7,6 +7,7 @@ from ulgparser import ULGParser
 from csvparser import CSVParser
 from djiparser import DJIParser
 from arduparser import ArduParser
+from tlogparser import TLOGParser
 from time import localtime, strftime
 from os import makedirs, path, getcwd
 from glob import glob
@@ -34,7 +35,7 @@ current_parser = None
 
 def choose_parser(file, logs_dir):
     global current_parser
-    parsers = [ULGParser(), CSVParser(), DJIParser(), ArduParser()]
+    parsers = [ULGParser(), CSVParser(), DJIParser(), ArduParser(), TLOGParser()]
     full_path = logs_dir + file
     for p in parsers:
         try:
