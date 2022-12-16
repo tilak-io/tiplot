@@ -30,14 +30,10 @@ function View3D({ socket }) {
     // Helpers setup
     setupHelpers();
     // Getting the entities
-    socket.emit("get_entities_props");
+    getEntitiesProps();
     // Errors
     socket.on("error", (error) => {
       alert(error);
-    });
-
-    socket.on("entities_props", (raw_entities) => {
-      raw_entities.forEach(initEntity);
     });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -52,6 +48,14 @@ function View3D({ socket }) {
     };
     // eslint-disable-next-line
   }, []);
+
+  const getEntitiesProps = async () => {
+    const raw_entities = await fetch(
+      "http://localhost:5000/entities_props"
+    ).then((res) => res.json());
+    if (raw_entities.error) alert(raw_entities.error);
+    else raw_entities.forEach(initEntity);
+  };
 
   const initEntity = (e, index) => {
     entities.push(new Entity(e));

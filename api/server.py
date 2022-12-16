@@ -59,15 +59,6 @@ def connected():
         thread.daemon = True
         thread.start()
 
-@socketio.on('get_entities_props')
-def get_entities():
-    global currentTime
-    currentTime = datetime.now()
-    props,err = store.Store.get().getEntitiesProps()
-    if err is not None:
-        emit('error', err)
-    emit('entities_props', props)
-
 @socketio.on('get_table_columns')
 def get_table_columns(data):
     index = data['index']
@@ -182,6 +173,15 @@ def select_log():
     ok = choose_parser(file[0], logs_dir)
     return {"ok": ok}
 
+
+@app.route('/entities_props')
+def get_entities_props():
+    global currentTime
+    currentTime = datetime.now()
+    props,err = store.Store.get().getEntitiesProps()
+    if err is not None:
+        return {"error": err}
+    return props
 
 
 @socketio.on("disconnect")
