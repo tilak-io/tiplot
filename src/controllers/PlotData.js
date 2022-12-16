@@ -121,6 +121,7 @@ export default class PlotData {
     };
 
     for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data.length === 0) continue;
       Plotly.relayout(plots[i], update);
     }
   };
@@ -184,6 +185,7 @@ export default class PlotData {
     for (let i = 0; i < plots.length; i++) {
       if (plots[i].data === undefined) continue;
       if (plots[i].data.length === 0) continue;
+      if (plots[i].data[0].visible === "legendonly") continue;
 
       // TODO: investigate
       try {
