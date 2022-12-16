@@ -1,6 +1,6 @@
 import ToolBar from "./ToolBar";
 import EntityConfig from "./EntityConfig";
-
+import { v4 as uuid } from "uuid";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -40,7 +40,8 @@ function Settings() {
     fetch("http://localhost:5000/default_entity")
       .then((res) => res.json())
       .then((res) => {
-        res.id = parseInt(Math.random() * 10000);
+        // res.id = parseInt(Math.random() * 10000);
+        res.id = uuid();
         setCurrentEntities([...current_entities, res]);
       });
   };
