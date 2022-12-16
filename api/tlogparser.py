@@ -40,7 +40,7 @@ class TLOGParser(Parser):
     def initDefaultEntity(self):
         self.default_entity = CesiumEntity(name='tlog default entity',
                               useRPY=True,
-                              useXYZ=False,
+                              useXYZ=True,
                               color="#ffffff",
                               pathColor="#0000ff",
                               position={
