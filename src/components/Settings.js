@@ -217,7 +217,7 @@ function Settings() {
               />
             </InputGroup>
           </fieldset>
-          {current_entities.map((e, i) => (
+          {current_entities.map((e) => (
             <EntityConfig
               key={e.id}
               eId={e.id}

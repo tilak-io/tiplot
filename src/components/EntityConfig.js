@@ -22,6 +22,9 @@ function EntityConfig({
     hideUnusedFields();
   }, []);
 
+  position = position ?? { table: "" };
+  attitude = attitude ?? { table: "" };
+
   const handlePositionTypeChanged = () => {
     const xyzContainer = document.getElementById(`XYZ-${eId}`);
     const coordinatesContainer = document.getElementById(`Coordinates-${eId}`);

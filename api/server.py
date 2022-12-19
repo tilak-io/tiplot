@@ -112,18 +112,18 @@ def default_entity():
     if current_parser is not None:
         default = current_parser.default_entity.toJson()
     else:
-        #setting ulg entity as default
-        default = ULGParser().default_entity.toJson()
+        default = {}
     return default
 
 @app.route('/write_config', methods=['POST'])
 def write_config():
     config = request.get_json()
     if (current_parser is None):
-        print("-> unable to write config, please choose a parser first")
-        return {'ok': False, 'error': 'unable to write config, please choose a parser first'}
+        name = "custom_parser"
+    else:
+        name = current_parser.name
     store.Store.get().setEntities(config)
-    with open(configs_dir + current_parser.name + ".json", "w") as outfile:
+    with open(configs_dir + name + ".json", "w") as outfile:
         outfile.write(json.dumps(config, indent=2))
     return {'ok': True}
 

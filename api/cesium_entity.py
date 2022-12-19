@@ -23,7 +23,6 @@ class CesiumEntity:
         self.useRPY = useRPY
         self.useXYZ = useXYZ
         self.tracked = tracked
-        #self.takeoffKey = takeoff_key
         self.viewModel = viewModel
         self.id = CesiumEntity.next_id
         CesiumEntity.next_id += 1

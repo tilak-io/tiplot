@@ -7,11 +7,10 @@ class Parser:
         self.name = "generic_parser"
         self.entities = []
         self.datadict = {}
-        self.layout = None
 
 
     def parse(self,filename):
-        print("Parsing file")
+        print("Parsing file:" + filename)
 
     def addEntity(self,entity):
         self.entities.append(entity)
@@ -19,8 +18,7 @@ class Parser:
     def setLayout(self, layout):
         self.layout = layout
 
-    def setDefaultEntities(self):
-        pass
+    def setDefaultEntities(self): pass
 
     def initEntities(self):
         config_folder = path.expanduser("~/Documents/tiplot/config/")
