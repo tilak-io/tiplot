@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from cesium_entity import CesiumEntity
-from parser import Parser
+from .parser import Parser
 
 class CSVParser(Parser):
     def __init__(self):

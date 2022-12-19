@@ -1,7 +1,7 @@
 import pyulog
 import pandas as pd
 from cesium_entity import CesiumEntity
-from parser import Parser
+from .parser import Parser
 
 class ULGParser(Parser):
     def __init__(self):

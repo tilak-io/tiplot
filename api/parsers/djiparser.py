@@ -1,7 +1,7 @@
 import math
 import pandas as pd
 import struct
-from parser import Parser
+from .parser import Parser
 from cesium_entity import CesiumEntity
 
 class DJIParser(Parser):

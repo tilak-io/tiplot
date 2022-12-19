@@ -3,11 +3,6 @@ from flask import Flask, request, send_file
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from threading import Thread
-from ulgparser import ULGParser
-from csvparser import CSVParser
-from djiparser import DJIParser
-from arduparser import ArduParser
-from tlogparser import TLOGParser
 from time import localtime, strftime
 from os import makedirs, path, getcwd
 from glob import glob
@@ -16,6 +11,12 @@ from datetime import datetime
 from sys import argv
 import store
 import json
+
+from parsers.ulgparser import ULGParser 
+from parsers.csvparser import CSVParser 
+from parsers.djiparser import DJIParser 
+from parsers.arduparser import ArduParser 
+from parsers.tlogparser import TLOGParser 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'

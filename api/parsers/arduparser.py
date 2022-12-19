@@ -1,12 +1,12 @@
 import pandas as pd
 from cesium_entity import CesiumEntity
-from parser import Parser
+from .parser import Parser
 from pymavlink import mavutil
 
-class TLOGParser(Parser):
+class ArduParser(Parser):
     def __init__(self):
         super().__init__()
-        self.name = "tlog_parser"
+        self.name = "ardu_parser"
         self.initDefaultEntity()
         self.initEntities()
 
@@ -14,13 +14,13 @@ class TLOGParser(Parser):
         mlog = mavutil.mavlink_connection(filename)
         buf = {}
         
-        while True:
+        while mlog.remaining:
             m = mlog.recv_match()
             if (m is None): break
             name = m.get_type()
             data = m.to_dict()
-            if 'time_boot_ms' in list(data.keys()):
-                data['timestamp_tiplot'] = data['time_boot_ms'] / 1e3
+            if 'TimeUS' in list(data.keys()):
+                data['timestamp_tiplot'] = data['TimeUS'] / 1e6
             else:
                 #ignore tables with no timestamp
                 continue
@@ -38,22 +38,23 @@ class TLOGParser(Parser):
 
 
     def initDefaultEntity(self):
-        self.default_entity = CesiumEntity(name='tlog default entity',
-                              useRPY=True,
-                              useXYZ=True,
+        self.default_entity = CesiumEntity(name='ardu pilot default entity',
+                              useRPY=False,
+                              useXYZ=False,
                               color="#ffffff",
                               pathColor="#0000ff",
                               position={
-                                  'table':'LOCAL_POSITION_NED',
-                                  'x': 'x',
-                                  'y': 'y',
-                                  'z': 'z',
+                                  'table':'AHR2',
+                                  'longitude': 'Lng',
+                                  'lattitude': 'Lat',
+                                  'altitude': 'Alt',
                               },
                               attitude={
-                                  'table':'ATTITUDE',
-                                  'roll':'roll',
-                                  'pitch':'pitch',
-                                  'yaw':'yaw',
+                                  'table':'AHR2',
+                                  'q0':'Q1',
+                                  'q1':'Q2',
+                                  'q2':'Q3',
+                                  'q3':'Q4',
                               })
 
     def setDefaultEntities(self):
