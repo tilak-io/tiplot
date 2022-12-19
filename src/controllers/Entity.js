@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { Vector2 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 export default class Entity {

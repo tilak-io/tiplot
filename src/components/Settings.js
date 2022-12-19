@@ -135,7 +135,6 @@ function Settings() {
       .then((res) => res.json())
       .then((res) => {
         if (res.ok) navigate("/home");
-        else alert(res.error);
       });
   };
 

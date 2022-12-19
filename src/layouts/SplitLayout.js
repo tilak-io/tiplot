@@ -25,9 +25,14 @@ function SplitLayout({ socket }) {
   }, []);
 
   useEffect(() => {
+    fitToScreen();
+    window.addEventListener("resize", fitToScreen);
+  }, [graphs]);
+
+  const fitToScreen = () => {
     var usedHeight = 56; // ToolBar height
     setRowHeight((window.innerHeight - usedHeight) / graphs.length);
-  }, [graphs]);
+  };
 
   const toggle3dView = () => {
     setShowView(!showView);
