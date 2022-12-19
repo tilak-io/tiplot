@@ -95,7 +95,7 @@ function View3D({ socket }) {
     if (!view) return;
 
     const width = view.clientWidth;
-    const height = view.clientHeight;
+    const height = window.innerHeight;
 
     if (canvas.width !== width || canvas.height !== height) {
       renderer.setSize(width, height, false);
