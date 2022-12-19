@@ -4,6 +4,7 @@
 /node_modules
 /api/venv
 /api/__pycache__/
+/api/parsers/__pycache__/
 /.pnp
 .pnp.js
 
