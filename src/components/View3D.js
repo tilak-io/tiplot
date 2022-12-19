@@ -29,6 +29,9 @@ function View3D({ socket }) {
   useEffect(() => {
     // Helpers setup
     setupHelpers();
+    // KeyControls
+    setupKeyControls();
+
     // Getting the entities
     getEntitiesProps();
     // Errors
@@ -141,6 +144,21 @@ function View3D({ socket }) {
     camera.position.x = orbit.target.x - 15;
     camera.position.y = orbit.target.y - 5;
     camera.position.z = orbit.target.z - 10;
+  };
+
+  const setupKeyControls = () => {
+    document.onkeydown = function (e) {
+      const target = getTrackedEntity();
+      switch (e.code) {
+        case "ArrowRight":
+          target.moveForward();
+          break;
+
+        case "ArrowLeft":
+          target.moveBackward();
+          break;
+      }
+    };
   };
   return (
     <div id="view-3d">

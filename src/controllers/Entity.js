@@ -1,12 +1,13 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import Plotly from "plotly.js/dist/plotly";
 
 export default class Entity {
   positions = [];
   rotations = [];
   timestamp = [];
   currentIndex = 0;
-  isMoving = true;
+  isMoving = false;
   pathPoints = null;
   path = new THREE.Line();
   mesh = null;
@@ -185,14 +186,56 @@ export default class Entity {
     if (this.useRPY)
       this.mesh.setRotationFromEuler(this.rotations[this.currentIndex]);
     else this.mesh.setRotationFromQuaternion(this.rotations[this.currentIndex]);
-
-    if (this.isMoving) {
-      this.currentIndex++;
-      this.currentIndex++;
-      if (this.currentIndex >= this.positions.length)
-        this.currentIndex = this.startIndex;
-    }
   }
+
+  //////////////////// Moving By Frame
+  // Moving forward exactly one frame
+  //
+  moveForward() {
+    if (!window.currentX) window.currentX = this.timestamp[0];
+    if (this.currentIndex === this.timestamp.length - 1)
+      window.currentX = this.timestamp[0];
+    else window.currentX = this.timestamp[this.currentIndex + 1];
+    console.log(window.currentX);
+    this.drawTimelineIndicator(window.currentX);
+  }
+
+  // Moving backward exactly one frame
+  //
+  moveBackward() {
+    if (!window.currentX) window.currentX = this.timestamp[0];
+    if (this.currentIndex === 0)
+      window.currentX = this.timestamp[this.timestamp.length - 1];
+    else window.currentX = this.timestamp[this.currentIndex - 1];
+    this.drawTimelineIndicator(window.currentX);
+  }
+
+  // updating timeline indicators
+  drawTimelineIndicator = (x) => {
+    const plots = document.getElementsByClassName("plot-yt");
+    const update = {
+      custom: true,
+      shapes: [
+        {
+          type: "line",
+          x0: x,
+          y0: 0,
+          x1: x,
+          yref: "paper",
+          y1: 1,
+          line: {
+            color: "red",
+            width: 1.5,
+          },
+        },
+      ],
+    };
+
+    for (let i = 0; i < plots.length; i++) {
+      if (plots[i].data.length === 0) continue;
+      Plotly.relayout(plots[i], update);
+    }
+  };
 }
 
 // Extra
