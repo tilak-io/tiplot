@@ -34,7 +34,6 @@ class DJIParser(Parser):
 
     def parse(self,filename):
         f = open(filename,'rb')
-        print(filename)
         buffer = f.read()
         packets = []
         for index in range(128,len(buffer)):

@@ -46,7 +46,7 @@ def choose_parser(file, logs_dir):
             current_parser = p
             break
         except:
-            print("~> wrong format")
+            # print("~> wrong format")
             ok = False
     return ok
 
