@@ -12,6 +12,7 @@ function EntityConfig({
   useXYZ,
   useRPY,
   tracked,
+  scale,
   position,
   attitude,
 }) {
@@ -97,6 +98,19 @@ function EntityConfig({
               step={0.1}
               id={`alpha-${eId}`}
               defaultValue={alpha}
+            />
+          </InputGroup>
+        </Col>
+        <Col>
+          <InputGroup>
+            <InputGroup.Text>Scale</InputGroup.Text>
+            <Form.Control
+              type="number"
+              placeholder="Scale"
+              min={0.1}
+              step={0.1}
+              id={`scale-${eId}`}
+              defaultValue={scale}
             />
           </InputGroup>
         </Col>

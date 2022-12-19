@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Vector2 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 export default class Entity {
@@ -20,6 +21,7 @@ export default class Entity {
     this.alpha = e.alpha;
     this.wireframe = e.wireframe;
     this.tracked = e.tracked;
+    this.scale = e.scale;
     this.setReference(e);
     // using a single loop to do all the mapping
     for (let i = 0; i < size; i++) {
@@ -123,6 +125,9 @@ export default class Entity {
         );
         instance.mesh.children[0].children[0].material.wireframe =
           instance.wireframe;
+        instance.mesh.scale.x = instance.scale;
+        instance.mesh.scale.y = instance.scale;
+        instance.mesh.scale.z = instance.scale;
         scene.add(instance.mesh);
       },
       undefined,

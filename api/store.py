@@ -68,6 +68,7 @@ class Store:
                 data.append({"id": e.id,
                              "entity_name": e.name,
                              "alpha": e.alpha,
+                             "scale": e.scale,
                              "useRPY": e.useRPY,
                              "useXYZ": e.useXYZ,
                              "props": renamed,

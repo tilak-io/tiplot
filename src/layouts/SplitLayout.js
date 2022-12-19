@@ -1,5 +1,6 @@
 import "../../node_modules/react-grid-layout/css/styles.css";
 import "../static/css/layout.css";
+import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 import RGL, { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuid } from "uuid";
@@ -21,14 +22,6 @@ function SplitLayout({ socket }) {
 
   useEffect(() => {
     initializeLayout();
-    socket.on("entities_loaded", () => {
-      console.log("SplitLayout recieved the signal");
-      window.location.reload();
-    });
-
-    return () => {
-      socket.off("entities_loaded");
-    };
   }, []);
 
   useEffect(() => {

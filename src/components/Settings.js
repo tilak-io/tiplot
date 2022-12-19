@@ -90,13 +90,14 @@ function Settings() {
         };
     const config = {
       name: getValue(`name-${eId}`),
-      alpha: getValue(`alpha-${eId}`),
+      alpha: parseFloat(getValue(`alpha-${eId}`)),
       useRPY: _useRPY,
       useXYZ: _useXYZ,
       pathColor: getValue(`pathColor-${eId}`),
       wireframe: wireframe,
       color: getValue(`color-${eId}`),
       tracked: tracked,
+      scale: parseFloat(getValue(`scale-${eId}`)),
       position: position,
       attitude: attitude,
     };
@@ -229,6 +230,7 @@ function Settings() {
               useRPY={e.useRPY}
               useXYZ={e.useXYZ}
               tracked={e.tracked}
+              scale={e.scale}
               position={e.position}
               attitude={e.attitude}
               removeEntity={removeEntity}
