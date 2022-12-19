@@ -1,4 +1,4 @@
-from engineio.async_drivers import gevent
+#from engineio.async_drivers import gevent
 from flask import Flask, request, send_file
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS

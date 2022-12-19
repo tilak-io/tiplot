@@ -21,6 +21,14 @@ function SplitLayout({ socket }) {
 
   useEffect(() => {
     initializeLayout();
+    socket.on("entities_loaded", () => {
+      console.log("SplitLayout recieved the signal");
+      window.location.reload();
+    });
+
+    return () => {
+      socket.off("entities_loaded");
+    };
   }, []);
 
   useEffect(() => {

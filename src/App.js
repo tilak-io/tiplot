@@ -24,13 +24,23 @@ function App() {
       // console.log("Connected");
     });
 
+    socket.on("entities_loaded", () => {
+      console.log("app recieved the signal");
+      // navigate("/home");
+    });
+
     socket.on("disconnect", () => {
       // console.log("Disconnected");
     });
-
-    return function cleanup() {
-      socket.disconnect();
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("entities_loaded");
     };
+    // return function cleanup() {
+
+    //   socket.disconnect();
+    // };
   }, []);
 
   // return <Test />;

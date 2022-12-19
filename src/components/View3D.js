@@ -46,6 +46,9 @@ function View3D({ socket }) {
     return () => {
       // window.location.reload();
     };
+    return () => {
+      socket.off("error");
+    };
     // eslint-disable-next-line
   }, []);
 

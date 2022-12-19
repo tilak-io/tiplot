@@ -27,6 +27,9 @@ function Loader({ socket }) {
     });
 
     // eslint-disable-next-line
+    return () => {
+      socket.off("entities_loaded");
+    };
   }, []);
 
   const parse = (file) => {
