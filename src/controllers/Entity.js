@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import Plotly from "plotly.js/dist/plotly";
+import PlotData from "./PlotData";
+
+const mockPlot = new PlotData(0, null);
 
 export default class Entity {
   positions = [];
@@ -116,7 +118,7 @@ export default class Entity {
     const loader = new GLTFLoader();
     loader.load(
       "http://localhost:5000/model",
-      function (gltf) {
+      function(gltf) {
         instance.mesh = gltf.scene;
         instance.mesh.children[0].children[0].material.transparent = true;
         instance.mesh.children[0].children[0].material.opacity = instance.alpha;
@@ -131,7 +133,7 @@ export default class Entity {
         scene.add(instance.mesh);
       },
       undefined,
-      function (error) {
+      function(error) {
         console.log(error);
         console.log("failed to load drone, setting up default cube");
         const geometry = new THREE.BoxGeometry(2, 0.5, 0.3);
@@ -196,8 +198,6 @@ export default class Entity {
     if (this.currentIndex === this.timestamp.length - 1)
       window.currentX = this.timestamp[0];
     else window.currentX = this.timestamp[this.currentIndex + 1];
-    console.log(window.currentX);
-    this.drawTimelineIndicator(window.currentX);
   }
 
   // Moving backward exactly one frame
@@ -207,35 +207,14 @@ export default class Entity {
     if (this.currentIndex === 0)
       window.currentX = this.timestamp[this.timestamp.length - 1];
     else window.currentX = this.timestamp[this.currentIndex - 1];
-    this.drawTimelineIndicator(window.currentX);
   }
 
-  // updating timeline indicators
-  drawTimelineIndicator = (x) => {
-    const plots = document.getElementsByClassName("plot-yt");
-    const update = {
-      custom: true,
-      shapes: [
-        {
-          type: "line",
-          x0: x,
-          y0: 0,
-          x1: x,
-          yref: "paper",
-          y1: 1,
-          line: {
-            color: "red",
-            width: 1.5,
-          },
-        },
-      ],
-    };
+  // Updating timeline/crosshair indicators
+  //
+  updateTimelineIndicator() {
+    mockPlot.updateTimelineIndicator(window.currentX);
+  }
 
-    for (let i = 0; i < plots.length; i++) {
-      if (plots[i].data.length === 0) continue;
-      Plotly.relayout(plots[i], update);
-    }
-  };
 }
 
 // Extra

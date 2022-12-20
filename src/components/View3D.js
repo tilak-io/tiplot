@@ -47,9 +47,6 @@ function View3D({ socket }) {
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
     return () => {
-      // window.location.reload();
-    };
-    return () => {
       socket.off("error");
     };
     // eslint-disable-next-line
@@ -147,7 +144,7 @@ function View3D({ socket }) {
   };
 
   const setupKeyControls = () => {
-    document.onkeydown = function (e) {
+    document.onkeydown = function(e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":
@@ -156,6 +153,16 @@ function View3D({ socket }) {
 
         case "ArrowLeft":
           target.moveBackward();
+          break;
+      }
+    };
+
+    document.onkeyup = function(e) {
+      const target = getTrackedEntity();
+      switch (e.code) {
+        case "ArrowRight":
+        case "ArrowLeft":
+          target.updateTimelineIndicator();
           break;
       }
     };
