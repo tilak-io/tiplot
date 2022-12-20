@@ -14,7 +14,7 @@ import logo from "../static/img/logo.png";
 function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
-  const [currentFile, setCurrentFile] = useState("");
+  const [currentFile, setCurrentFile] = useState("wowowwo");
   const [showInfoBox, setShowInfo] = useState(false);
 
   const handleClose = () => setShowSaveMsg(false);
@@ -28,7 +28,10 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
 
   const getCurrentFile = async () => {
     var response = await fetch("http://localhost:5000/current_file").then((res) => res.json());
-    setCurrentFile(response.file[0]);
+    if (response.msg)
+      setCurrentFile(response.msg);
+    else
+    setCurrentFile("Current File: " + response.file[0]);
   };
 
   const parseLocalStorage = (key) => {
@@ -174,17 +177,12 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
       <Modal show={showInfoBox} onHide={() => setShowInfo(false)} animation={false} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-              <FaInfoCircle />
+            <FaInfoCircle />
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Current File: {currentFile}
+          {currentFile}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowInfo(false)}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
 
       {/* Actual Navbar */}
