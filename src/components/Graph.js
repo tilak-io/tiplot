@@ -15,6 +15,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     getOptions();
     const plot = document.getElementById(`plot-${id}`);
     new ResizeObserver(stretchHeight).observe(plot);
+    // plotData.autoRange();
   }, []);
 
   useEffect(() => {
@@ -79,6 +80,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   };
 
   const relayoutHandler = (event) => {
+    console.log(event);
     // Auto Scale
     if (
       event["xaxis.autorange"] !== undefined &&

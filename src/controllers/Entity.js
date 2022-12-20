@@ -209,6 +209,18 @@ export default class Entity {
     else window.currentX = this.timestamp[this.currentIndex - 1];
   }
 
+  // Moving to the first point in the timeline
+  //
+  goFirstPoint() {
+    window.currentX = this.timestamp[0];
+  }
+
+  // Moving to the last point in the timeline
+  //
+  goLastPoint() {
+    window.currentX = this.timestamp[this.timestamp.length - 1];
+  }
+
   // Updating timeline/crosshair indicators
   //
   updateTimelineIndicator() {

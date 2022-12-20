@@ -2,6 +2,7 @@ import Plotly from "plotly.js/dist/plotly";
 
 export default class PlotData {
   constructor(id, initialKeys) {
+    window.Plotly = Plotly; // DEBUG purposes
     this.id = id;
     this.initialKeys = initialKeys;
   }
@@ -30,7 +31,6 @@ export default class PlotData {
 
   // get data for yt graphs
   getData = async (field) => {
-    this.autoRange();
     const response = await fetch("http://localhost:5000/values_yt", {
       headers: {
         "Content-Type": "application/json",
@@ -95,6 +95,10 @@ export default class PlotData {
   };
 
   updateTimelineIndicator = (timestamp) => {
+    if (!timestamp) {
+      console.log("undefined timestamp");
+      return;
+    }
     window.currentX = timestamp;
     this.drawTimelineIndicator(timestamp);
     this.drawCrosshair(timestamp);
@@ -214,6 +218,7 @@ export default class PlotData {
   };
 
   syncHorizontalAxis = (event) => {
+    if (!event["xaxis.range"] && !event["xaxis.range[0]"]) return; // ignore {autoresize: true}
     const plots = document.getElementsByClassName("plot-yt");
     const update = {
       "xaxis.range": event["xaxis.range"],

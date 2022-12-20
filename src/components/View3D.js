@@ -150,9 +150,14 @@ function View3D({ socket }) {
         case "ArrowRight":
           target.moveForward();
           break;
-
         case "ArrowLeft":
           target.moveBackward();
+          break;
+        case "ArrowUp":
+          target.goLastPoint();
+          break;
+        case "ArrowDown":
+          target.goFirstPoint();
           break;
       }
     };
@@ -162,6 +167,8 @@ function View3D({ socket }) {
       switch (e.code) {
         case "ArrowRight":
         case "ArrowLeft":
+        case "ArrowUp":
+        case "ArrowDown":
           target.updateTimelineIndicator();
           break;
       }
