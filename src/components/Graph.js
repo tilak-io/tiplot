@@ -13,10 +13,13 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   useEffect(() => {
     getInitialData();
     getOptions();
-
     const plot = document.getElementById(`plot-${id}`);
     new ResizeObserver(stretchHeight).observe(plot);
   }, []);
+
+  useEffect(() => {
+    plotData.autoRange();
+  }, [data]);
 
   const getInitialData = async () => {
     if (initialKeys == null) return;
