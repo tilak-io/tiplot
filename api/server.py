@@ -33,6 +33,7 @@ if not path.exists(logs_dir):
 
 thread = Thread()
 current_parser = None
+current_file = None
 
 def choose_parser(file, logs_dir):
     global current_parser
@@ -170,19 +171,26 @@ def get_logs():
 
 @app.route('/select_log', methods=['POST'])
 def select_log():
+    global current_file
     file = request.get_json()
+    current_file = file
     ok = choose_parser(file[0], logs_dir)
     return {"ok": ok}
 
 
 @app.route('/entities_props')
 def get_entities_props():
-    global currentTime
-    currentTime = datetime.now()
     props,err = store.Store.get().getEntitiesProps()
     if err is not None:
         return {"error": err}
     return props
+
+@app.route('/current_file')
+def get_current_file():
+    global current_file
+    if current_file is None:
+        return {"msg": "no file selected"}
+    return {"file": current_file}
 
 
 @socketio.on("disconnect")
