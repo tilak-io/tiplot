@@ -180,9 +180,8 @@ def select_log():
 
 @app.route('/entities_props')
 def get_entities_props():
-    props,err = store.Store.get().getEntitiesProps()
-    if err is not None:
-        return {"error": err}
+    props, err = store.Store.get().getEntitiesProps()
+    if err is not None: print(err)
     return props
 
 @app.route('/current_file')
