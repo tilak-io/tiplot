@@ -153,10 +153,10 @@ function View3D({ socket }) {
         case "ArrowLeft":
           target.moveBackward();
           break;
-        case "ArrowUp":
+        case "PageDown":
           target.goLastPoint();
           break;
-        case "ArrowDown":
+        case "PageUp":
           target.goFirstPoint();
           break;
       }
@@ -167,8 +167,8 @@ function View3D({ socket }) {
       switch (e.code) {
         case "ArrowRight":
         case "ArrowLeft":
-        case "ArrowUp":
-        case "ArrowDown":
+        case "PageUp":
+        case "PageDown":
           target.updateTimelineIndicator();
           break;
       }
