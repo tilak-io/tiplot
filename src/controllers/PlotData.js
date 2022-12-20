@@ -52,7 +52,7 @@ export default class PlotData {
       x: x_values,
       y: y_values,
       name: `${table}/${y_name}`,
-      hovertemplate: `${table}: %{y:.2f}<extra></extra>`,
+      hovertemplate: `${table}: %{y:f}<extra></extra>`,
     };
   };
 
