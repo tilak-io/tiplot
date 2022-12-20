@@ -11,6 +11,7 @@ class CesiumEntity:
                  alpha=1,
                  useRPY=False,
                  useXYZ=True,
+                 scale=1,
                  viewModel=None):
 
         self.name = name
@@ -23,7 +24,7 @@ class CesiumEntity:
         self.useRPY = useRPY
         self.useXYZ = useXYZ
         self.tracked = tracked
-        #self.takeoffKey = takeoff_key
+        self.scale = scale
         self.viewModel = viewModel
         self.id = CesiumEntity.next_id
         CesiumEntity.next_id += 1
@@ -75,6 +76,11 @@ class CesiumEntity:
         else:
             tracked = True
 
+        if "scale" in json:
+            scale = json['scale']
+        else:
+            scale = 1
+
         return cls(
                    name=name,
                    color=color,
@@ -86,6 +92,7 @@ class CesiumEntity:
                    useRPY=useRPY,
                    useXYZ=useXYZ,
                    tracked=tracked,
+                   scale=scale,
                    viewModel=viewModel)
 
     def toJson(self):
@@ -98,6 +105,7 @@ class CesiumEntity:
                 "useXYZ": self.useXYZ,
                 "useRPY": self.useRPY,
                 "tracked": self.tracked,
+                "scale": self.scale,
                 "position": self.position,
                 "attitude": self.attitude
                 })

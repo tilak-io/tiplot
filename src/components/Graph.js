@@ -8,15 +8,20 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   const plotData = new PlotData(id, initialKeys);
   const [options, setOptions] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const [data, setData] = useState([]);
 
   useEffect(() => {
     getInitialData();
     getOptions();
-
     const plot = document.getElementById(`plot-${id}`);
     new ResizeObserver(stretchHeight).observe(plot);
+    // plotData.autoRange();
   }, []);
+
+  useEffect(() => {
+    plotData.autoRange();
+  }, [data]);
 
   const getInitialData = async () => {
     if (initialKeys == null) return;
@@ -104,6 +109,11 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     }
   };
 
+  const handleInput = (value, event) => {
+    setInputValue(value);
+    if (event.action == "set-value") setInputValue(event.prevInputValue);
+  }
+
   return (
     <div className="plot-container">
       <Select
@@ -114,6 +124,8 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         onChange={handleSelectChange}
         value={selectedOptions}
         closeMenuOnSelect={false}
+        inputValue={inputValue}
+        onInputChange={handleInput}
       />
       <div className="d-flex flex-yt">
         <Plot

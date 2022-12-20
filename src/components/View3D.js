@@ -29,15 +29,14 @@ function View3D({ socket }) {
   useEffect(() => {
     // Helpers setup
     setupHelpers();
+    // KeyControls
+    setupKeyControls();
+
     // Getting the entities
-    socket.emit("get_entities_props");
+    getEntitiesProps();
     // Errors
     socket.on("error", (error) => {
       alert(error);
-    });
-
-    socket.on("entities_props", (raw_entities) => {
-      raw_entities.forEach(initEntity);
     });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -48,10 +47,18 @@ function View3D({ socket }) {
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
     return () => {
-      // window.location.reload();
+      socket.off("error");
     };
     // eslint-disable-next-line
   }, []);
+
+  const getEntitiesProps = async () => {
+    const raw_entities = await fetch(
+      "http://localhost:5000/entities_props"
+    ).then((res) => res.json());
+    if (raw_entities.error) alert(raw_entities.error);
+    else raw_entities.forEach(initEntity);
+  };
 
   const initEntity = (e, index) => {
     entities.push(new Entity(e));
@@ -91,7 +98,7 @@ function View3D({ socket }) {
     if (!view) return;
 
     const width = view.clientWidth;
-    const height = view.clientHeight;
+    const height = window.innerHeight;
 
     if (canvas.width !== width || canvas.height !== height) {
       renderer.setSize(width, height, false);
@@ -134,6 +141,38 @@ function View3D({ socket }) {
     camera.position.x = orbit.target.x - 15;
     camera.position.y = orbit.target.y - 5;
     camera.position.z = orbit.target.z - 10;
+  };
+
+  const setupKeyControls = () => {
+    document.onkeydown = function(e) {
+      const target = getTrackedEntity();
+      switch (e.code) {
+        case "ArrowRight":
+          target.moveForward();
+          break;
+        case "ArrowLeft":
+          target.moveBackward();
+          break;
+        case "PageDown":
+          target.goLastPoint();
+          break;
+        case "PageUp":
+          target.goFirstPoint();
+          break;
+      }
+    };
+
+    document.onkeyup = function(e) {
+      const target = getTrackedEntity();
+      switch (e.code) {
+        case "ArrowRight":
+        case "ArrowLeft":
+        case "PageUp":
+        case "PageDown":
+          target.updateTimelineIndicator();
+          break;
+      }
+    };
   };
   return (
     <div id="view-3d">

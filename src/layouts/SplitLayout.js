@@ -1,5 +1,6 @@
 import "../../node_modules/react-grid-layout/css/styles.css";
 import "../static/css/layout.css";
+import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 import RGL, { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuid } from "uuid";
@@ -24,9 +25,14 @@ function SplitLayout({ socket }) {
   }, []);
 
   useEffect(() => {
+    fitToScreen();
+    window.addEventListener("resize", fitToScreen);
+  }, [graphs]);
+
+  const fitToScreen = () => {
     var usedHeight = 56; // ToolBar height
     setRowHeight((window.innerHeight - usedHeight) / graphs.length);
-  }, [graphs]);
+  };
 
   const toggle3dView = () => {
     setShowView(!showView);

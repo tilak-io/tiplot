@@ -1,7 +1,7 @@
 import math
 import pandas as pd
 import struct
-from parser import Parser
+from .parser import Parser
 from cesium_entity import CesiumEntity
 
 class DJIParser(Parser):
@@ -34,7 +34,6 @@ class DJIParser(Parser):
 
     def parse(self,filename):
         f = open(filename,'rb')
-        print(filename)
         buffer = f.read()
         packets = []
         for index in range(128,len(buffer)):

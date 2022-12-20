@@ -41,7 +41,7 @@ class Comm(Thread):
                 [datadict, json_entities] = self.recv_zipped_pickle(zmq.NOBLOCK)
                 entities = self.map_entities(json_entities)
                 print('-> data recieved...')
-                self.io.emit('entities_loaded', json_entities)
+                self.io.emit('entities_loaded')
                 store.Store.get().setStore(datadict, entities)
                 self.send_zipped_pickle('hi')
             except zmq.Again as e:

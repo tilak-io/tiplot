@@ -1,6 +1,6 @@
 import ToolBar from "./ToolBar";
 import EntityConfig from "./EntityConfig";
-
+import { v4 as uuid } from "uuid";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -40,7 +40,8 @@ function Settings() {
     fetch("http://localhost:5000/default_entity")
       .then((res) => res.json())
       .then((res) => {
-        res.id = parseInt(Math.random() * 10000);
+        // res.id = parseInt(Math.random() * 10000);
+        res.id = uuid();
         setCurrentEntities([...current_entities, res]);
       });
   };
@@ -89,13 +90,14 @@ function Settings() {
         };
     const config = {
       name: getValue(`name-${eId}`),
-      alpha: getValue(`alpha-${eId}`),
+      alpha: parseFloat(getValue(`alpha-${eId}`)),
       useRPY: _useRPY,
       useXYZ: _useXYZ,
       pathColor: getValue(`pathColor-${eId}`),
       wireframe: wireframe,
       color: getValue(`color-${eId}`),
       tracked: tracked,
+      scale: parseFloat(getValue(`scale-${eId}`)),
       position: position,
       attitude: attitude,
     };
@@ -133,7 +135,6 @@ function Settings() {
       .then((res) => res.json())
       .then((res) => {
         if (res.ok) navigate("/home");
-        else alert(res.error);
       });
   };
 
@@ -216,7 +217,7 @@ function Settings() {
               />
             </InputGroup>
           </fieldset>
-          {current_entities.map((e, i) => (
+          {current_entities.map((e) => (
             <EntityConfig
               key={e.id}
               eId={e.id}
@@ -228,6 +229,7 @@ function Settings() {
               useRPY={e.useRPY}
               useXYZ={e.useXYZ}
               tracked={e.tracked}
+              scale={e.scale}
               position={e.position}
               attitude={e.attitude}
               removeEntity={removeEntity}

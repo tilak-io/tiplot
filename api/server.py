@@ -3,10 +3,6 @@ from flask import Flask, request, send_file
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from threading import Thread
-from ulgparser import ULGParser
-from csvparser import CSVParser
-from djiparser import DJIParser
-from arduparser import ArduParser
 from time import localtime, strftime
 from os import makedirs, path, getcwd
 from glob import glob
@@ -15,6 +11,12 @@ from datetime import datetime
 from sys import argv
 import store
 import json
+
+from parsers.ulgparser import ULGParser 
+from parsers.csvparser import CSVParser 
+from parsers.djiparser import DJIParser 
+from parsers.arduparser import ArduParser 
+from parsers.tlogparser import TLOGParser 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -31,10 +33,11 @@ if not path.exists(logs_dir):
 
 thread = Thread()
 current_parser = None
+current_file = None
 
 def choose_parser(file, logs_dir):
     global current_parser
-    parsers = [ULGParser(), CSVParser(), DJIParser(), ArduParser()]
+    parsers = [ULGParser(), CSVParser(), DJIParser(), ArduParser(), TLOGParser()]
     full_path = logs_dir + file
     for p in parsers:
         try:
@@ -44,7 +47,7 @@ def choose_parser(file, logs_dir):
             current_parser = p
             break
         except:
-            print("~> wrong format")
+            # print("~> wrong format")
             ok = False
     return ok
 
@@ -57,15 +60,6 @@ def connected():
         thread = Comm(socketio)
         thread.daemon = True
         thread.start()
-
-@socketio.on('get_entities_props')
-def get_entities():
-    global currentTime
-    currentTime = datetime.now()
-    props,err = store.Store.get().getEntitiesProps()
-    if err is not None:
-        emit('error', err)
-    emit('entities_props', props)
 
 @socketio.on('get_table_columns')
 def get_table_columns(data):
@@ -119,18 +113,18 @@ def default_entity():
     if current_parser is not None:
         default = current_parser.default_entity.toJson()
     else:
-        #setting ulg entity as default
-        default = ULGParser().default_entity.toJson()
+        default = {}
     return default
 
 @app.route('/write_config', methods=['POST'])
 def write_config():
     config = request.get_json()
     if (current_parser is None):
-        print("-> unable to write config, please choose a parser first")
-        return {'ok': False, 'error': 'unable to write config, please choose a parser first'}
+        name = "custom_parser"
+    else:
+        name = current_parser.name
     store.Store.get().setEntities(config)
-    with open(configs_dir + current_parser.name + ".json", "w") as outfile:
+    with open(configs_dir + name + ".json", "w") as outfile:
         outfile.write(json.dumps(config, indent=2))
     return {'ok': True}
 
@@ -177,10 +171,25 @@ def get_logs():
 
 @app.route('/select_log', methods=['POST'])
 def select_log():
+    global current_file
     file = request.get_json()
+    current_file = file
     ok = choose_parser(file[0], logs_dir)
     return {"ok": ok}
 
+
+@app.route('/entities_props')
+def get_entities_props():
+    props, err = store.Store.get().getEntitiesProps()
+    if err is not None: print(err)
+    return props
+
+@app.route('/current_file')
+def get_current_file():
+    global current_file
+    if current_file is None:
+        return {"msg": "no file selected"}
+    return {"file": current_file}
 
 
 @socketio.on("disconnect")

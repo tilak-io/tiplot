@@ -1,12 +1,15 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import PlotData from "./PlotData";
+
+const mockPlot = new PlotData(0, null);
 
 export default class Entity {
   positions = [];
   rotations = [];
   timestamp = [];
   currentIndex = 0;
-  isMoving = true;
+  isMoving = false;
   pathPoints = null;
   path = new THREE.Line();
   mesh = null;
@@ -20,6 +23,7 @@ export default class Entity {
     this.alpha = e.alpha;
     this.wireframe = e.wireframe;
     this.tracked = e.tracked;
+    this.scale = e.scale;
     this.setReference(e);
     // using a single loop to do all the mapping
     for (let i = 0; i < size; i++) {
@@ -114,7 +118,7 @@ export default class Entity {
     const loader = new GLTFLoader();
     loader.load(
       "http://localhost:5000/model",
-      function (gltf) {
+      function(gltf) {
         instance.mesh = gltf.scene;
         instance.mesh.children[0].children[0].material.transparent = true;
         instance.mesh.children[0].children[0].material.opacity = instance.alpha;
@@ -123,10 +127,13 @@ export default class Entity {
         );
         instance.mesh.children[0].children[0].material.wireframe =
           instance.wireframe;
+        instance.mesh.scale.x = instance.scale;
+        instance.mesh.scale.y = instance.scale;
+        instance.mesh.scale.z = instance.scale;
         scene.add(instance.mesh);
       },
       undefined,
-      function (error) {
+      function(error) {
         console.log(error);
         console.log("failed to load drone, setting up default cube");
         const geometry = new THREE.BoxGeometry(2, 0.5, 0.3);
@@ -181,14 +188,45 @@ export default class Entity {
     if (this.useRPY)
       this.mesh.setRotationFromEuler(this.rotations[this.currentIndex]);
     else this.mesh.setRotationFromQuaternion(this.rotations[this.currentIndex]);
-
-    if (this.isMoving) {
-      this.currentIndex++;
-      this.currentIndex++;
-      if (this.currentIndex >= this.positions.length)
-        this.currentIndex = this.startIndex;
-    }
   }
+
+  //////////////////// Moving By Frame
+  // Moving forward exactly one frame
+  //
+  moveForward() {
+    if (!window.currentX) window.currentX = this.timestamp[0];
+    if (this.currentIndex === this.timestamp.length - 1)
+      window.currentX = this.timestamp[0];
+    else window.currentX = this.timestamp[this.currentIndex + 1];
+  }
+
+  // Moving backward exactly one frame
+  //
+  moveBackward() {
+    if (!window.currentX) window.currentX = this.timestamp[0];
+    if (this.currentIndex === 0)
+      window.currentX = this.timestamp[this.timestamp.length - 1];
+    else window.currentX = this.timestamp[this.currentIndex - 1];
+  }
+
+  // Moving to the first point in the timeline
+  //
+  goFirstPoint() {
+    window.currentX = this.timestamp[0];
+  }
+
+  // Moving to the last point in the timeline
+  //
+  goLastPoint() {
+    window.currentX = this.timestamp[this.timestamp.length - 1];
+  }
+
+  // Updating timeline/crosshair indicators
+  //
+  updateTimelineIndicator() {
+    mockPlot.updateTimelineIndicator(window.currentX);
+  }
+
 }
 
 // Extra

@@ -7,42 +7,31 @@ import {
   Modal,
   Button,
 } from "react-bootstrap";
-import { FaToggleOn, FaToggleOff, FaExpand } from "react-icons/fa";
+import { FaToggleOn, FaToggleOff, FaInfoCircle } from "react-icons/fa";
 import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
 import logo from "../static/img/logo.png";
 
 function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
-  const [isFit, setFit] = useState(true);
+  const [currentFile, setCurrentFile] = useState("wowowwo");
+  const [showInfoBox, setShowInfo] = useState(false);
 
   const handleClose = () => setShowSaveMsg(false);
   const saveCurrentLayoutNamed = () => setShowSaveMsg(true);
 
   useEffect(() => {
-    window.fitGraphsToScreen = true;
+    getCurrentFile();
     mapLayouts();
     // eslint-disable-next-line
   }, []);
 
-  const toggleFit = () => {
-    setFit(!isFit);
-    window.fitGraphsToScreen = !isFit;
-    fitGraphsToScreen();
-  };
-
-  const fitGraphsToScreen = () => {
-    const defaultHeight = 450;
-    const containers = document.getElementsByClassName("resizable");
-    const multiselects = document.getElementsByClassName("multiselect");
-    var additionalHeight = 130; // buttons + navbar height
-    for (var i = 0; i < multiselects.length; i++)
-      additionalHeight += multiselects[i].clientHeight;
-    const plotHeight = window.fitGraphsToScreen
-      ? (window.innerHeight - additionalHeight) / containers.length
-      : defaultHeight;
-    for (var j = 0; j < containers.length; j++)
-      containers[j].style.height = plotHeight + "px";
+  const getCurrentFile = async () => {
+    var response = await fetch("http://localhost:5000/current_file").then((res) => res.json());
+    if (response.msg)
+      setCurrentFile(response.msg);
+    else
+    setCurrentFile("Current File: " + response.file[0]);
   };
 
   const parseLocalStorage = (key) => {
@@ -141,16 +130,6 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
       );
   }
 
-  function FitButton() {
-    if (isFit)
-      return (
-        <FaExpand style={{ color: "#0af" }} title="Fit graphs to screen" />
-      );
-    else
-      return (
-        <FaExpand style={{ color: "#888" }} title="Fit graphs to screen" />
-      );
-  }
 
   function Controls() {
     if (!showControls) return;
@@ -161,9 +140,6 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
         </Nav.Link>
         <Nav.Link onClick={addXY}>
           <FcRadarPlot />
-          {/* </Nav.Link> */}
-          {/* <Nav.Link onClick={toggleFit}> */}
-          {/*   <FitButton /> */}
         </Nav.Link>
         <Nav.Link onClick={toggle3dView}>
           <ViewButton />
@@ -195,6 +171,18 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
             Save
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      {/* Pop up for info box*/}
+      <Modal show={showInfoBox} onHide={() => setShowInfo(false)} animation={false} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <FaInfoCircle />
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {currentFile}
+        </Modal.Body>
       </Modal>
 
       {/* Actual Navbar */}
@@ -245,6 +233,9 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
                 Clear layouts
               </NavDropdown.Item>
             </NavDropdown>
+            <Nav.Link href="#" onClick={() => setShowInfo(true)}>
+              <FaInfoCircle />
+            </Nav.Link>
           </Nav>
           <Controls />
         </Container>
