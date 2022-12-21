@@ -108,6 +108,7 @@ function View3D({ socket }) {
 
   const parseLocalStorage = (key) => {
     var value = localStorage.getItem(key);
+    // Default Values
     if (value === "" || value === null)
       value = {
         backgroundColor: "#3b3b3b",
@@ -117,6 +118,7 @@ function View3D({ socket }) {
         zGrid: false,
         maxDistance: 1500,
         dampingFactor: .8,
+        fov: 75,
       };
     else value = JSON.parse(value);
     return value;
@@ -139,6 +141,8 @@ function View3D({ socket }) {
     orbit.enableDamping = true;
     orbit.maxDistance = general_settings.maxDistance;
     orbit.dampingFactor = general_settings.dampingFactor;
+
+    camera.fov = general_settings.fov;
   };
 
   const focusEntity = () => {

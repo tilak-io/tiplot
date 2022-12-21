@@ -115,6 +115,7 @@ function Settings() {
         zGrid: false,
         maxDistance: 1500,
         dampingFactor: .8,
+        fov: 75,
       };
     else value = JSON.parse(value);
     return value;
@@ -148,6 +149,7 @@ function Settings() {
     const backgroundColor = document.getElementById("backgroundColor");
     const maxDistance = document.getElementById("maxDistance");
     const dampingFactor = document.getElementById("dampingFactor");
+    const fov = document.getElementById("fov");
     const general_settings = parseLocalStorage("general_settings");
     xGrid.checked = general_settings.xGrid;
     yGrid.checked = general_settings.yGrid;
@@ -156,6 +158,7 @@ function Settings() {
     backgroundColor.value = general_settings.backgroundColor;
     maxDistance.value = general_settings.maxDistance;
     dampingFactor.value = general_settings.dampingFactor;
+    fov.value = general_settings.fov;
   };
 
   const toggleGrid = (e) => {
@@ -255,9 +258,22 @@ function Settings() {
                     id="dampingFactor"
                     type="number"
                     max={1}
-                    step={.1}
-                    min={0}
-                    aria-label="dampingFactor"
+                    step={.01}
+                    min={0.01}
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <InputGroup>
+                  <InputGroup.Text>
+                    FOV
+                  </InputGroup.Text>
+                  <Form.Control
+                    onChange={handleChange}
+                    id="fov"
+                    type="number"
                   />
                 </InputGroup>
               </Col>
