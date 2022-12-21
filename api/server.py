@@ -191,6 +191,12 @@ def get_current_file():
         return {"msg": "no file selected"}
     return {"file": current_file}
 
+@app.route('/keys')
+def get_keys():
+    keys = store.Store.get().getKeys()
+    response = {"keys": keys}
+    return response
+
 
 @socketio.on("disconnect")
 def disconnected():
