@@ -16,9 +16,6 @@ function View3D({ socket }) {
   camera.position.set(-15, -5, -10);
 
   const orbit = new OrbitControls(camera, renderer.domElement);
-  orbit.enableDamping = true;
-  orbit.dampingFactor = 0.8;
-  orbit.maxDistance = 1500;
 
   const stalker = new THREE.Vector3();
   const entities = [];
@@ -113,10 +110,13 @@ function View3D({ socket }) {
     var value = localStorage.getItem(key);
     if (value === "" || value === null)
       value = {
+        backgroundColor: "#3b3b3b",
         originHelper: false,
         xGrid: false,
         yGrid: false,
         zGrid: false,
+        maxDistance: 1500,
+        dampingFactor: .8,
       };
     else value = JSON.parse(value);
     return value;
@@ -135,6 +135,10 @@ function View3D({ socket }) {
     if (general_settings.zGrid) scene.add(zGrid);
     if (general_settings.originHelper) scene.add(originHelper);
     scene.background = new THREE.Color(general_settings.backgroundColor);
+
+    orbit.enableDamping = true;
+    orbit.maxDistance = general_settings.maxDistance;
+    orbit.dampingFactor = general_settings.dampingFactor;
   };
 
   const focusEntity = () => {

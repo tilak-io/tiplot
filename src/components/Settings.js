@@ -63,31 +63,31 @@ function Settings() {
 
     const position = _useXYZ
       ? {
-          table: getValue(`positionTable-${eId}`),
-          x: getValue(`x-${eId}`),
-          y: getValue(`y-${eId}`),
-          z: getValue(`z-${eId}`),
-        }
+        table: getValue(`positionTable-${eId}`),
+        x: getValue(`x-${eId}`),
+        y: getValue(`y-${eId}`),
+        z: getValue(`z-${eId}`),
+      }
       : {
-          table: getValue(`positionTable-${eId}`),
-          longitude: getValue(`lon-${eId}`),
-          lattitude: getValue(`lat-${eId}`),
-          altitude: getValue(`alt-${eId}`),
-        };
+        table: getValue(`positionTable-${eId}`),
+        longitude: getValue(`lon-${eId}`),
+        lattitude: getValue(`lat-${eId}`),
+        altitude: getValue(`alt-${eId}`),
+      };
     const attitude = _useRPY
       ? {
-          table: getValue(`attitudeTable-${eId}`),
-          roll: getValue(`roll-${eId}`),
-          pitch: getValue(`pitch-${eId}`),
-          yaw: getValue(`yaw-${eId}`),
-        }
+        table: getValue(`attitudeTable-${eId}`),
+        roll: getValue(`roll-${eId}`),
+        pitch: getValue(`pitch-${eId}`),
+        yaw: getValue(`yaw-${eId}`),
+      }
       : {
-          table: getValue(`attitudeTable-${eId}`),
-          q0: getValue(`qw-${eId}`),
-          q1: getValue(`qx-${eId}`),
-          q2: getValue(`qy-${eId}`),
-          q3: getValue(`qz-${eId}`),
-        };
+        table: getValue(`attitudeTable-${eId}`),
+        q0: getValue(`qw-${eId}`),
+        q1: getValue(`qx-${eId}`),
+        q2: getValue(`qy-${eId}`),
+        q3: getValue(`qz-${eId}`),
+      };
     const config = {
       name: getValue(`name-${eId}`),
       alpha: parseFloat(getValue(`alpha-${eId}`)),
@@ -108,11 +108,13 @@ function Settings() {
     var value = localStorage.getItem(key);
     if (value === "" || value === null)
       value = {
-        backgroundColor: "#f0f0f0",
+        backgroundColor: "#3b3b3b",
         originHelper: false,
         xGrid: false,
         yGrid: false,
         zGrid: false,
+        maxDistance: 1500,
+        dampingFactor: .8,
       };
     else value = JSON.parse(value);
     return value;
@@ -144,12 +146,16 @@ function Settings() {
     const zGrid = document.getElementById("zGrid");
     const originHelper = document.getElementById("originHelper");
     const backgroundColor = document.getElementById("backgroundColor");
+    const maxDistance = document.getElementById("maxDistance");
+    const dampingFactor = document.getElementById("dampingFactor");
     const general_settings = parseLocalStorage("general_settings");
     xGrid.checked = general_settings.xGrid;
     yGrid.checked = general_settings.yGrid;
     zGrid.checked = general_settings.zGrid;
     originHelper.checked = general_settings.originHelper;
     backgroundColor.value = general_settings.backgroundColor;
+    maxDistance.value = general_settings.maxDistance;
+    dampingFactor.value = general_settings.dampingFactor;
   };
 
   const toggleGrid = (e) => {
@@ -164,6 +170,12 @@ function Settings() {
     general_settings.backgroundColor = e.target.value;
     localStorage.setItem("general_settings", JSON.stringify(general_settings));
   };
+
+  const handleChange = (e) => {
+    const general_settings = parseLocalStorage("general_settings");
+    general_settings[e.target.id] = parseFloat(e.target.value);
+    localStorage.setItem("general_settings", JSON.stringify(general_settings));
+  }
 
   const showSettings = loading ? "hide" : "show";
   const showLoading = loading ? "show" : "hide";
@@ -207,7 +219,6 @@ function Settings() {
               <InputGroup.Text id="backgroundColorLabel">
                 Background Color
               </InputGroup.Text>
-
               <Form.Control
                 onChange={handleBackgroundChange}
                 id="backgroundColor"
@@ -216,6 +227,41 @@ function Settings() {
                 aria-describedby="backgroundColorLabel"
               />
             </InputGroup>
+          </fieldset>
+          <fieldset>
+            <legend>• Camera 📸</legend>
+            <Row>
+              <Col>
+                <InputGroup>
+                  <InputGroup.Text>
+                    Max Distance
+                  </InputGroup.Text>
+                  <Form.Control
+                    onChange={handleChange}
+                    id="maxDistance"
+                    type="number"
+                    min={1}
+                    aria-label="MaxDistance"
+                  />
+                </InputGroup>
+              </Col>
+              <Col>
+                <InputGroup>
+                  <InputGroup.Text>
+                    Damping Factor
+                  </InputGroup.Text>
+                  <Form.Control
+                    onChange={handleChange}
+                    id="dampingFactor"
+                    type="number"
+                    max={1}
+                    step={.1}
+                    min={0}
+                    aria-label="dampingFactor"
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
           </fieldset>
           {current_entities.map((e) => (
             <EntityConfig
