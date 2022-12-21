@@ -108,6 +108,7 @@ export default class Entity {
     });
 
     const line = new THREE.Line(geometry, material);
+    window.line = line
     scene.add(line);
   }
 

@@ -19,6 +19,17 @@ function Settings() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const defaultSettings = {
+    backgroundColor: "#3b3b3b",
+    originHelper: false,
+    xGrid: false,
+    yGrid: false,
+    zGrid: false,
+    maxDistance: 1500,
+    dampingFactor: .8,
+    fov: 75,
+  };
+
   useEffect(() => {
     getCurrentSettings();
     getCurrentEntities();
@@ -107,16 +118,7 @@ function Settings() {
   const parseLocalStorage = (key) => {
     var value = localStorage.getItem(key);
     if (value === "" || value === null)
-      value = {
-        backgroundColor: "#3b3b3b",
-        originHelper: false,
-        xGrid: false,
-        yGrid: false,
-        zGrid: false,
-        maxDistance: 1500,
-        dampingFactor: .8,
-        fov: 75,
-      };
+      value = defaultSettings
     else value = JSON.parse(value);
     return value;
   };
@@ -142,41 +144,23 @@ function Settings() {
   };
 
   const getCurrentSettings = () => {
-    const xGrid = document.getElementById("xGrid");
-    const yGrid = document.getElementById("yGrid");
-    const zGrid = document.getElementById("zGrid");
-    const originHelper = document.getElementById("originHelper");
-    const backgroundColor = document.getElementById("backgroundColor");
-    const maxDistance = document.getElementById("maxDistance");
-    const dampingFactor = document.getElementById("dampingFactor");
-    const fov = document.getElementById("fov");
     const general_settings = parseLocalStorage("general_settings");
-    xGrid.checked = general_settings.xGrid;
-    yGrid.checked = general_settings.yGrid;
-    zGrid.checked = general_settings.zGrid;
-    originHelper.checked = general_settings.originHelper;
-    backgroundColor.value = general_settings.backgroundColor;
-    maxDistance.value = general_settings.maxDistance;
-    dampingFactor.value = general_settings.dampingFactor;
-    fov.value = general_settings.fov;
-  };
-
-  const toggleGrid = (e) => {
-    const target = e.target;
-    const general_settings = parseLocalStorage("general_settings");
-    general_settings[target.id] = target.checked;
-    localStorage.setItem("general_settings", JSON.stringify(general_settings));
-  };
-
-  const handleBackgroundChange = (e) => {
-    const general_settings = parseLocalStorage("general_settings");
-    general_settings.backgroundColor = e.target.value;
-    localStorage.setItem("general_settings", JSON.stringify(general_settings));
+    const keys = Object.keys(defaultSettings);
+    keys.forEach((key) => {
+      const input = document.getElementById(key);
+      if (input.type == "checkbox")
+        input.checked = general_settings[key] ?? defaultSettings[key];
+      else
+        input.value = general_settings[key] ?? defaultSettings[key];
+    });
   };
 
   const handleChange = (e) => {
     const general_settings = parseLocalStorage("general_settings");
-    general_settings[e.target.id] = parseFloat(e.target.value);
+    if (e.target.type == "checkbox")
+      general_settings[e.target.id] = e.target.checked;
+    else
+      general_settings[e.target.id] = e.target.value;
     localStorage.setItem("general_settings", JSON.stringify(general_settings));
   }
 
@@ -197,25 +181,25 @@ function Settings() {
               id="originHelper"
               type="checkbox"
               label="Origin Helper"
-              onChange={toggleGrid}
+              onChange={handleChange}
             />
             <Form.Check
               id="xGrid"
               type="checkbox"
               label="X Axis Grid"
-              onChange={toggleGrid}
+              onChange={handleChange}
             />
             <Form.Check
               id="yGrid"
               type="checkbox"
               label="Y Axis Grid"
-              onChange={toggleGrid}
+              onChange={handleChange}
             />
             <Form.Check
               id="zGrid"
               type="checkbox"
               label="Z Axis Grid"
-              onChange={toggleGrid}
+              onChange={handleChange}
             />
             <br />
             <InputGroup>
@@ -223,7 +207,7 @@ function Settings() {
                 Background Color
               </InputGroup.Text>
               <Form.Control
-                onChange={handleBackgroundChange}
+                onChange={handleChange}
                 id="backgroundColor"
                 type="color"
                 aria-label="Background Color"
