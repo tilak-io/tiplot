@@ -66,6 +66,11 @@ function Settings() {
     return document.getElementById(id).value;
   };
 
+  const getDropdownValue = (id) => {
+    return document.getElementById(id).textContent;
+  };
+
+
   const getEntityConfig = (eId) => {
     const _useXYZ = document.getElementById(`useXYZ-${eId}`).checked;
     const _useRPY = document.getElementById(`useRPY-${eId}`).checked;
@@ -74,31 +79,32 @@ function Settings() {
 
     const position = _useXYZ
       ? {
-        table: getValue(`positionTable-${eId}`),
-        x: getValue(`x-${eId}`),
-        y: getValue(`y-${eId}`),
-        z: getValue(`z-${eId}`),
+        table: getDropdownValue(`positionTable-${eId}`),
+        x: getDropdownValue(`x-${eId}`),
+        y: getDropdownValue(`y-${eId}`),
+        z: getDropdownValue(`z-${eId}`),
       }
       : {
-        table: getValue(`positionTable-${eId}`),
-        longitude: getValue(`lon-${eId}`),
-        lattitude: getValue(`lat-${eId}`),
-        altitude: getValue(`alt-${eId}`),
+        table: getDropdownValue(`positionTable-${eId}`),
+        longitude: getDropdownValue(`lon-${eId}`),
+        lattitude: getDropdownValue(`lat-${eId}`),
+        altitude: getDropdownValue(`alt-${eId}`),
       };
     const attitude = _useRPY
       ? {
-        table: getValue(`attitudeTable-${eId}`),
-        roll: getValue(`roll-${eId}`),
-        pitch: getValue(`pitch-${eId}`),
-        yaw: getValue(`yaw-${eId}`),
+        table: getDropdownValue(`attitudeTable-${eId}`),
+        roll: getDropdownValue(`roll-${eId}`),
+        pitch: getDropdownValue(`pitch-${eId}`),
+        yaw: getDropdownValue(`yaw-${eId}`),
       }
       : {
-        table: getValue(`attitudeTable-${eId}`),
-        q0: getValue(`qw-${eId}`),
-        q1: getValue(`qx-${eId}`),
-        q2: getValue(`qy-${eId}`),
-        q3: getValue(`qz-${eId}`),
+        table: getDropdownValue(`attitudeTable-${eId}`),
+        q0: getDropdownValue(`qw-${eId}`),
+        q1: getDropdownValue(`qx-${eId}`),
+        q2: getDropdownValue(`qy-${eId}`),
+        q3: getDropdownValue(`qz-${eId}`),
       };
+
     const config = {
       name: getValue(`name-${eId}`),
       alpha: parseFloat(getValue(`alpha-${eId}`)),
@@ -139,7 +145,7 @@ function Settings() {
     })
       .then((res) => res.json())
       .then((res) => {
-        if (res.ok) navigate("/home");
+        navigate("/home");
       });
   };
 
