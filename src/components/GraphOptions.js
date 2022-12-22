@@ -10,9 +10,9 @@ import { RxDropdownMenu } from "react-icons/rx";
 import Plotly from "plotly.js/dist/plotly";
 
 function GraphOptions({ plotId, id, removeGraph }) {
-  const [showLegend, setShowLegend] = useState(true);
+  const [showLegend, setShowLegend] = useState(false);
   const [plotType, setPlotType] = useState(1);
-  const [legendAnchor, setLegendAnchor] = useState(1);
+  const [legendAnchor, setLegendAnchor] = useState(0);
   const [rslider, setRSlider] = useState(true);
   const [select, setSelect] = useState(false);
 
@@ -34,7 +34,7 @@ function GraphOptions({ plotId, id, removeGraph }) {
         setSelect(true);
         break;
       default:
-        console.log(e);
+        // console.log(e);
         break;
     }
   };
