@@ -44,6 +44,7 @@ function Settings() {
       .then((res) => {
         setCurrentEntities(res);
         setLoading(false);
+        validateCurrentConfig(res);
       });
   };
 
@@ -151,6 +152,22 @@ function Settings() {
       setErrorMsg(response.msg);
       setShowError(false);
       navigate("/home");
+    }
+  };
+
+  const validateCurrentConfig = async (entities) => {
+    const response = await fetch("http://localhost:5000/validate_config", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(entities),
+    }).then((res) => res.json());
+
+    if (!response.ok) {
+      setErrorMsg(response.msg);
+      setShowError(true);
+      window.scrollTo(0, 0);
     }
   };
 

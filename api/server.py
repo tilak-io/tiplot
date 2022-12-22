@@ -123,17 +123,19 @@ def write_config():
         name = "custom_parser"
     else:
         name = current_parser.name
-
     ok, msg = store.Store.get().validateEntities(configs)
-
     if not ok:
         return {"ok": ok, "msg": msg}
-
     store.Store.get().setEntities(configs)
     with open(configs_dir + name + ".json", "w") as outfile:
         outfile.write(json.dumps(configs, indent=2))
-
     return {'ok': ok, "msg": msg}
+
+@app.route('/validate_config', methods=['POST'])
+def validate_config():
+    configs = request.get_json()
+    ok, msg = store.Store.get().validateEntities(configs)
+    return {"ok": ok, "msg": msg}
 
 @app.route('/tables')
 def get_table_keys():
