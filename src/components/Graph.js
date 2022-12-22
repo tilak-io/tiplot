@@ -33,6 +33,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
       initialData.push(d);
     }
     setData(initialData);
+    squeezeSelect();
   };
 
   const stretchHeight = () => {
@@ -114,6 +115,26 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     if (event.action == "set-value") setInputValue(event.prevInputValue);
   };
 
+  const squeezeSelect = () => {
+    const select = document.querySelector(
+      `#select-${id} > div > div.css-3w2yfm-ValueContainer`
+    );
+    if (select == null) {
+      return;
+    }
+    select.style.maxHeight = "36px";
+  };
+
+  const stretchSelect = () => {
+    const select = document.querySelector(
+      `#select-${id} > div > div.css-3w2yfm-ValueContainer`
+    );
+    if (select == null) {
+      return;
+    }
+    select.style.maxHeight = "500px";
+  };
+
   return (
     <div className="plot-container">
       <Select
@@ -126,6 +147,8 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         closeMenuOnSelect={false}
         inputValue={inputValue}
         onInputChange={handleInput}
+        onMenuOpen={stretchSelect}
+        onBlur={squeezeSelect}
       />
       <div className="placeholder" id={`whiteout-${id}`} />
       <div className="d-flex flex-yt">
