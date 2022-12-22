@@ -33,6 +33,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
       initialData.push(d);
     }
     setData(initialData);
+    squeezeSelect();
   };
 
   const stretchHeight = () => {
@@ -112,7 +113,27 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   const handleInput = (value, event) => {
     setInputValue(value);
     if (event.action == "set-value") setInputValue(event.prevInputValue);
-  }
+  };
+
+  const squeezeSelect = () => {
+    const select = document.querySelector(
+      `#select-${id} > div > div:first-child`
+    );
+    if (select == null) {
+      return;
+    }
+    select.style.maxHeight = "36px";
+  };
+
+  const stretchSelect = () => {
+    const select = document.querySelector(
+      `#select-${id} > div > div:first-child`
+    );
+    if (select == null) {
+      return;
+    }
+    select.style.maxHeight = "500px";
+  };
 
   return (
     <div className="plot-container">
@@ -126,7 +147,10 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         closeMenuOnSelect={false}
         inputValue={inputValue}
         onInputChange={handleInput}
+        onMenuOpen={stretchSelect}
+        onBlur={squeezeSelect}
       />
+      <div className="placeholder" id={`whiteout-${id}`} />
       <div className="d-flex flex-yt">
         <Plot
           className="plot-yt"
@@ -138,7 +162,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
           useResizeHandler
           layout={{
             autoresize: true,
-            showlegend: true,
+            showlegend: false,
             legend: {
               x: 1,
               xanchor: "right",
@@ -150,7 +174,13 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
               l: 50,
               r: 25,
             },
-            hovermode: "x unified",
+            xaxis: {
+              showspikes: true,
+              spikecolor: "#000",
+              spikemode: "across+marker",
+            },
+            // hovermode: "x unified",
+            hovermode: "x",
           }}
           config={{
             displayModeBar: false,

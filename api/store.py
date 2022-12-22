@@ -93,6 +93,36 @@ class Store:
             mapped.append(CesiumEntity.fromJson(entity))
         self.entities = mapped
 
+    def validateEntities(self, entities):
+        for e in entities:
+            position = e['position']
+            attitude = e['attitude']
+            if (position['table'] not in self.datadict):
+                msg = "No table \'" + position['table'] + "\' in the datadict."
+                return False, msg
+            if (attitude['table'] not in self.datadict):
+                msg = "No table \'" + position['table'] + "\' in the datadict."
+                return False, msg
+
+            if e['useXYZ']: p_columns = ['x', 'y', 'z']
+            else: p_columns = ['longitude', 'lattitude', 'altitude']
+
+            for column in p_columns:
+                if (position[column] not in self.datadict[position['table']]):
+                    msg = "No column \'" + position[column] + "\' in " + position['table']
+                    return False, msg
+
+            if e['useRPY']: a_columns = ['roll', 'pitch', 'yaw']
+            else: a_columns = ['q0', 'q1', 'q2', 'q3']
+
+            for column in a_columns:
+                if (attitude[column] not in self.datadict[attitude['table']]):
+                    msg = "No column \'" + attitude[column] + "\' in " + attitude['table']
+                    return False, msg
+
+        msg = "config is valid"
+        return True,msg
+
     def getTableColumns(self,key):
         nested = list(self.datadict[key].keys())
         return nested

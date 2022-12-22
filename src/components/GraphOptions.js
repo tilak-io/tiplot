@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdZoomOutMap } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
 import { HiOutlineTicket } from "react-icons/hi";
@@ -6,13 +6,38 @@ import { AiOutlineDotChart, AiOutlineLineChart } from "react-icons/ai";
 import { BiMoveHorizontal } from "react-icons/bi";
 import { TbChartDots } from "react-icons/tb";
 import { RiDragMove2Line } from "react-icons/ri";
+import { RxDropdownMenu } from "react-icons/rx";
 import Plotly from "plotly.js/dist/plotly";
 
 function GraphOptions({ plotId, id, removeGraph }) {
-  const [showLegend, setShowLegend] = useState(true);
+  const [showLegend, setShowLegend] = useState(false);
   const [plotType, setPlotType] = useState(1);
-  const [legendAnchor, setLegendAnchor] = useState(1);
+  const [legendAnchor, setLegendAnchor] = useState(0);
   const [rslider, setRSlider] = useState(true);
+  const [select, setSelect] = useState(false);
+
+  useEffect(() => {
+    document.addEventListener("keydown", setupKeyControls);
+  }, []);
+
+  const setupKeyControls = (e) => {
+    if (!e.ctrlKey) return;
+    switch (e.code) {
+      case "KeyD":
+        document.getElementById(`select-${id}`).style.display = "block";
+        document.getElementById(`whiteout-${id}`).style.display = "none";
+        setSelect(false);
+        break;
+      case "KeyS":
+        document.getElementById(`select-${id}`).style.display = "none";
+        document.getElementById(`whiteout-${id}`).style.display = "block";
+        setSelect(true);
+        break;
+      default:
+        // console.log(e);
+        break;
+    }
+  };
 
   const toggleLegend = () => {
     var update;
@@ -111,6 +136,14 @@ function GraphOptions({ plotId, id, removeGraph }) {
     return icon;
   }
 
+  function ToggleSelectIcon() {
+    return (
+      <RxDropdownMenu
+        style={{ width: "100%", color: select ? "#777" : "#000" }}
+      />
+    );
+  }
+
   const toggleRangeslider = () => {
     setRSlider(!rslider);
     const rs = rslider ? {} : false;
@@ -120,6 +153,14 @@ function GraphOptions({ plotId, id, removeGraph }) {
     const plot = document.getElementById(plotId);
 
     Plotly.relayout(plot, update);
+  };
+
+  const toggleSelect = () => {
+    const s = document.getElementById(`select-${id}`);
+    const w = document.getElementById(`whiteout-${id}`);
+    s.style.display = select ? "block" : "none";
+    w.style.display = !select ? "block" : "none";
+    setSelect(!select);
   };
 
   return (
@@ -141,6 +182,10 @@ function GraphOptions({ plotId, id, removeGraph }) {
 
       <span onClick={autoscale}>
         <MdZoomOutMap style={{ width: "100%" }} />
+      </span>
+
+      <span onClick={toggleSelect}>
+        <ToggleSelectIcon />
       </span>
 
       <span className="drag-button">

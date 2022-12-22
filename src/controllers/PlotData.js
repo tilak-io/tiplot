@@ -29,6 +29,21 @@ export default class PlotData {
     return options;
   };
 
+  getTables = async () => {
+    const response = await fetch("http://localhost:5000/keys").then((res) =>
+      res.json()
+    );
+    const tables = response.keys.map((table) => {
+      return {
+        value: {
+          table: table,
+        },
+        label: table,
+      };
+    });
+    return tables;
+  };
+
   // get data for yt graphs
   getData = async (field) => {
     const response = await fetch("http://localhost:5000/values_yt", {
@@ -52,7 +67,7 @@ export default class PlotData {
       x: x_values,
       y: y_values,
       name: `${table}/${y_name}`,
-      hovertemplate: `${table}: %{y:f}<extra></extra>`,
+      hovertemplate: `${table}/${y_name}: %{y:f}<extra></extra>`,
     };
   };
 

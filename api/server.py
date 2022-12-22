@@ -118,15 +118,24 @@ def default_entity():
 
 @app.route('/write_config', methods=['POST'])
 def write_config():
-    config = request.get_json()
+    configs = request.get_json()
     if (current_parser is None):
         name = "custom_parser"
     else:
         name = current_parser.name
-    store.Store.get().setEntities(config)
+    ok, msg = store.Store.get().validateEntities(configs)
+    if not ok:
+        return {"ok": ok, "msg": msg}
+    store.Store.get().setEntities(configs)
     with open(configs_dir + name + ".json", "w") as outfile:
-        outfile.write(json.dumps(config, indent=2))
-    return {'ok': True}
+        outfile.write(json.dumps(configs, indent=2))
+    return {'ok': ok, "msg": msg}
+
+@app.route('/validate_config', methods=['POST'])
+def validate_config():
+    configs = request.get_json()
+    ok, msg = store.Store.get().validateEntities(configs)
+    return {"ok": ok, "msg": msg}
 
 @app.route('/tables')
 def get_table_keys():
@@ -190,6 +199,12 @@ def get_current_file():
     if current_file is None:
         return {"msg": "no file selected"}
     return {"file": current_file}
+
+@app.route('/keys')
+def get_keys():
+    keys = store.Store.get().getKeys()
+    response = {"keys": keys}
+    return response
 
 
 @socketio.on("disconnect")

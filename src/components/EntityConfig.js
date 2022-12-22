@@ -1,5 +1,7 @@
 import { Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import { useState, useEffect } from "react";
+import PlotData from "../controllers/PlotData";
+import Select from "react-select";
 
 function EntityConfig({
   removeEntity,
@@ -18,13 +20,59 @@ function EntityConfig({
 }) {
   const [_useXYZ, setXYZ] = useState(useXYZ);
   const [_useRPY, setRPY] = useState(useRPY);
+  const [tables, setTables] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [positionOptions, setPositionOptions] = useState([]);
+  const [attitudeOptions, setAttitudeOptions] = useState([]);
+  const mockPlot = new PlotData(0, null);
 
   useEffect(() => {
+    getOptions();
+    getTables();
     hideUnusedFields();
   }, []);
 
   position = position ?? { table: "" };
   attitude = attitude ?? { table: "" };
+
+  const getTables = async () => {
+    const tbl = await mockPlot.getTables();
+    setTables(tbl);
+  };
+
+  const getOptions = async () => {
+    const opt = await mockPlot.getOptions();
+    setOptions(opt);
+
+    // setting default options
+    const p_opt = opt.filter((o) => o.value.table == position["table"]);
+    const p_mapped = p_opt.map((o) => {
+      return { value: o.value, label: o.value.column };
+    });
+    setPositionOptions(p_mapped);
+
+    const a_opt = opt.filter((o) => o.value.table == attitude["table"]);
+    const a_mapped = a_opt.map((o) => {
+      return { value: o.value, label: o.value.column };
+    });
+    setAttitudeOptions(a_mapped);
+  };
+
+  const handlePositionTableSelect = (e) => {
+    const opt = options.filter((o) => o.value.table == e.value.table);
+    const mapped = opt.map((o) => {
+      return { value: o.value, label: o.value.column };
+    });
+    setPositionOptions(mapped);
+  };
+
+  const handleAttitudeTableSelect = (e) => {
+    const opt = options.filter((o) => o.value.table == e.value.table);
+    const mapped = opt.map((o) => {
+      return { value: o.value, label: o.value.column };
+    });
+    setAttitudeOptions(mapped);
+  };
 
   const handlePositionTypeChanged = () => {
     const xyzContainer = document.getElementById(`XYZ-${eId}`);
@@ -151,52 +199,44 @@ function EntityConfig({
       <div className="break" />
 
       <legend>• Position</legend>
-
-      <InputGroup>
-        <InputGroup.Text>Table</InputGroup.Text>
-        <Form.Control
-          type="text"
-          placeholder="Table"
-          id={`positionTable-${eId}`}
-          defaultValue={position["table"] ?? ""}
-          required
-        />
-        <div className="break" />
-        <Form.Check
-          id={`useXYZ-${eId}`}
-          type="switch"
-          label="use X/Y/Z"
-          defaultChecked={useXYZ}
-          onChange={handlePositionTypeChanged}
-        />
-      </InputGroup>
+      <Select
+        options={tables}
+        id={`positionTable-${eId}`}
+        placeholder="Position table"
+        onChange={handlePositionTableSelect}
+        defaultValue={{ label: position["table"] }}
+      />
+      <Form.Check
+        id={`useXYZ-${eId}`}
+        type="switch"
+        label="use X/Y/Z"
+        defaultChecked={useXYZ}
+        onChange={handlePositionTypeChanged}
+      />
       <Form.Group id={`XYZ-${eId}`}>
         <Row>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={positionOptions}
               placeholder="X"
               id={`x-${eId}`}
-              required={_useXYZ}
-              defaultValue={position["x"]}
+              defaultValue={{ label: position["x"] ?? "Select X" }}
             />
           </Col>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={positionOptions}
               placeholder="Y"
               id={`y-${eId}`}
-              required={_useXYZ}
-              defaultValue={position["y"]}
+              defaultValue={{ label: position["y"] ?? "Select Y" }}
             />
           </Col>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={positionOptions}
               placeholder="Z"
               id={`z-${eId}`}
-              required={_useXYZ}
-              defaultValue={position["z"]}
+              defaultValue={{ label: position["z"] ?? "Select Z" }}
             />
           </Col>
         </Row>
@@ -205,30 +245,33 @@ function EntityConfig({
       <Form.Group id={`Coordinates-${eId}`}>
         <Row>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={positionOptions}
               placeholder="Longitude"
               id={`lon-${eId}`}
-              required={!_useXYZ}
-              defaultValue={position["longitude"]}
+              defaultValue={{
+                label: position["longitude"] ?? "Select Longitude",
+              }}
             />
           </Col>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={positionOptions}
               placeholder="Latitude"
               id={`lat-${eId}`}
-              required={!_useXYZ}
-              defaultValue={position["lattitude"]}
+              defaultValue={{
+                label: position["lattitude"] ?? "Select Latitude",
+              }}
             />
           </Col>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={positionOptions}
               placeholder="Altitude"
               id={`alt-${eId}`}
-              required={!_useXYZ}
-              defaultValue={position["altitude"]}
+              defaultValue={{
+                label: position["altitude"] ?? "Select Altitude",
+              }}
             />
           </Col>
         </Row>
@@ -236,52 +279,45 @@ function EntityConfig({
       <div className="break" />
 
       <legend>• Attitude</legend>
+      <Select
+        options={tables}
+        id={`attitudeTable-${eId}`}
+        placeholder="Position table"
+        onChange={handleAttitudeTableSelect}
+        defaultValue={{ label: attitude["table"] }}
+      />
 
-      <InputGroup>
-        <InputGroup.Text>Table</InputGroup.Text>
-        <Form.Control
-          type="text"
-          placeholder="Table"
-          id={`attitudeTable-${eId}`}
-          required
-          defaultValue={attitude["table"] ?? ""}
-        />
-        <div className="break" />
-        <Form.Check
-          type="switch"
-          id={`useRPY-${eId}`}
-          label="use roll/pitch/yaw"
-          defaultChecked={useRPY}
-          onChange={handleAttitudeTypeChanged}
-        />
-      </InputGroup>
+      <Form.Check
+        type="switch"
+        id={`useRPY-${eId}`}
+        label="use roll/pitch/yaw"
+        defaultChecked={useRPY}
+        onChange={handleAttitudeTypeChanged}
+      />
       <Form.Group id={`RPY-${eId}`}>
         <Row>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={attitudeOptions}
               placeholder="Roll"
               id={`roll-${eId}`}
-              required={_useRPY}
-              defaultValue={attitude["roll"]}
+              defaultValue={{ label: attitude["roll"] ?? "Select Roll" }}
             />
           </Col>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={attitudeOptions}
               placeholder="Pitch"
               id={`pitch-${eId}`}
-              required={_useRPY}
-              defaultValue={attitude["pitch"]}
+              defaultValue={{ label: attitude["pitch"] ?? "Select Pitch" }}
             />
           </Col>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={attitudeOptions}
               placeholder="Yaw"
               id={`yaw-${eId}`}
-              required={_useRPY}
-              defaultValue={attitude["yaw"]}
+              defaultValue={{ label: attitude["yaw"] ?? "Select Yaw" }}
             />
           </Col>
         </Row>
@@ -289,39 +325,35 @@ function EntityConfig({
       <Form.Group id={`Quaternions-${eId}`}>
         <Row>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={attitudeOptions}
               placeholder="Qx"
               id={`qx-${eId}`}
-              required={!_useRPY}
-              defaultValue={attitude["q1"]}
+              defaultValue={{ label: attitude["q1"] ?? "Select Qx" }}
             />
           </Col>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={attitudeOptions}
               placeholder="Qy"
               id={`qy-${eId}`}
-              required={!_useRPY}
-              defaultValue={attitude["q2"]}
+              defaultValue={{ label: attitude["q2"] ?? "Select Qy" }}
             />
           </Col>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={attitudeOptions}
               placeholder="Qz"
               id={`qz-${eId}`}
-              required={!_useRPY}
-              defaultValue={attitude["q3"]}
+              defaultValue={{ label: attitude["q3"] ?? "Select Qz" }}
             />
           </Col>
           <Col>
-            <Form.Control
-              type="text"
+            <Select
+              options={attitudeOptions}
               placeholder="Qw"
               id={`qw-${eId}`}
-              required={!_useRPY}
-              defaultValue={attitude["q0"]}
+              defaultValue={{ label: attitude["q0"] ?? "Select Qw" }}
             />
           </Col>
         </Row>

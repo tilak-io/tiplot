@@ -10,21 +10,32 @@ import {
   Col,
   Spinner,
   InputGroup,
+  Alert,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import "../static/css/settings.css";
 
+export const defaultSettings = {
+  backgroundColor: "#3b3b3b",
+  originHelper: false,
+  xGrid: false,
+  yGrid: false,
+  zGrid: false,
+  maxDistance: 1500,
+  dampingFactor: 0.8,
+  fov: 75,
+};
+
 function Settings() {
   const [current_entities, setCurrentEntities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     getCurrentSettings();
     getCurrentEntities();
-    return () => {
-      // window.location.reload();
-    };
   }, []);
 
   const getCurrentEntities = () => {
@@ -33,6 +44,7 @@ function Settings() {
       .then((res) => {
         setCurrentEntities(res);
         setLoading(false);
+        validateCurrentConfig(res);
       });
   };
 
@@ -55,6 +67,10 @@ function Settings() {
     return document.getElementById(id).value;
   };
 
+  const getDropdownValue = (id) => {
+    return document.getElementById(id).textContent;
+  };
+
   const getEntityConfig = (eId) => {
     const _useXYZ = document.getElementById(`useXYZ-${eId}`).checked;
     const _useRPY = document.getElementById(`useRPY-${eId}`).checked;
@@ -63,31 +79,32 @@ function Settings() {
 
     const position = _useXYZ
       ? {
-          table: getValue(`positionTable-${eId}`),
-          x: getValue(`x-${eId}`),
-          y: getValue(`y-${eId}`),
-          z: getValue(`z-${eId}`),
+          table: getDropdownValue(`positionTable-${eId}`),
+          x: getDropdownValue(`x-${eId}`),
+          y: getDropdownValue(`y-${eId}`),
+          z: getDropdownValue(`z-${eId}`),
         }
       : {
-          table: getValue(`positionTable-${eId}`),
-          longitude: getValue(`lon-${eId}`),
-          lattitude: getValue(`lat-${eId}`),
-          altitude: getValue(`alt-${eId}`),
+          table: getDropdownValue(`positionTable-${eId}`),
+          longitude: getDropdownValue(`lon-${eId}`),
+          lattitude: getDropdownValue(`lat-${eId}`),
+          altitude: getDropdownValue(`alt-${eId}`),
         };
     const attitude = _useRPY
       ? {
-          table: getValue(`attitudeTable-${eId}`),
-          roll: getValue(`roll-${eId}`),
-          pitch: getValue(`pitch-${eId}`),
-          yaw: getValue(`yaw-${eId}`),
+          table: getDropdownValue(`attitudeTable-${eId}`),
+          roll: getDropdownValue(`roll-${eId}`),
+          pitch: getDropdownValue(`pitch-${eId}`),
+          yaw: getDropdownValue(`yaw-${eId}`),
         }
       : {
-          table: getValue(`attitudeTable-${eId}`),
-          q0: getValue(`qw-${eId}`),
-          q1: getValue(`qx-${eId}`),
-          q2: getValue(`qy-${eId}`),
-          q3: getValue(`qz-${eId}`),
+          table: getDropdownValue(`attitudeTable-${eId}`),
+          q0: getDropdownValue(`qw-${eId}`),
+          q1: getDropdownValue(`qx-${eId}`),
+          q2: getDropdownValue(`qy-${eId}`),
+          q3: getDropdownValue(`qz-${eId}`),
         };
+
     const config = {
       name: getValue(`name-${eId}`),
       alpha: parseFloat(getValue(`alpha-${eId}`)),
@@ -106,67 +123,86 @@ function Settings() {
 
   const parseLocalStorage = (key) => {
     var value = localStorage.getItem(key);
-    if (value === "" || value === null)
-      value = {
-        backgroundColor: "#f0f0f0",
-        originHelper: false,
-        xGrid: false,
-        yGrid: false,
-        zGrid: false,
-      };
+    if (value === "" || value === null) value = defaultSettings;
     else value = JSON.parse(value);
     return value;
   };
 
-  const applyConfig = () => {
+  const applyConfig = async () => {
     // Entity Configs
     const configs = [];
     current_entities.forEach((e) => {
       const c = getEntityConfig(e.id);
       configs.push(c);
     });
-    fetch("http://localhost:5000/write_config", {
+
+    const response = await fetch("http://localhost:5000/write_config", {
       headers: {
         "Content-Type": "application/json",
       },
       method: "POST",
       body: JSON.stringify(configs),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.ok) navigate("/home");
-      });
+    }).then((res) => res.json());
+
+    if (!response.ok) {
+      setErrorMsg(response.msg);
+      setShowError(true);
+      window.scrollTo(0, 0);
+    } else {
+      setErrorMsg(response.msg);
+      setShowError(false);
+      navigate("/home");
+    }
+  };
+
+  const validateCurrentConfig = async (entities) => {
+    const response = await fetch("http://localhost:5000/validate_config", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(entities),
+    }).then((res) => res.json());
+
+    if (!response.ok) {
+      setErrorMsg(response.msg);
+      setShowError(true);
+      window.scrollTo(0, 0);
+    }
   };
 
   const getCurrentSettings = () => {
-    const xGrid = document.getElementById("xGrid");
-    const yGrid = document.getElementById("yGrid");
-    const zGrid = document.getElementById("zGrid");
-    const originHelper = document.getElementById("originHelper");
-    const backgroundColor = document.getElementById("backgroundColor");
     const general_settings = parseLocalStorage("general_settings");
-    xGrid.checked = general_settings.xGrid;
-    yGrid.checked = general_settings.yGrid;
-    zGrid.checked = general_settings.zGrid;
-    originHelper.checked = general_settings.originHelper;
-    backgroundColor.value = general_settings.backgroundColor;
+    const keys = Object.keys(defaultSettings);
+    keys.forEach((key) => {
+      const input = document.getElementById(key);
+      if (input.type == "checkbox")
+        input.checked = general_settings[key] ?? defaultSettings[key];
+      else input.value = general_settings[key] ?? defaultSettings[key];
+    });
   };
 
-  const toggleGrid = (e) => {
-    const target = e.target;
+  const handleChange = (e) => {
     const general_settings = parseLocalStorage("general_settings");
-    general_settings[target.id] = target.checked;
-    localStorage.setItem("general_settings", JSON.stringify(general_settings));
-  };
-
-  const handleBackgroundChange = (e) => {
-    const general_settings = parseLocalStorage("general_settings");
-    general_settings.backgroundColor = e.target.value;
+    if (e.target.type == "checkbox")
+      general_settings[e.target.id] = e.target.checked;
+    else general_settings[e.target.id] = e.target.value;
     localStorage.setItem("general_settings", JSON.stringify(general_settings));
   };
 
   const showSettings = loading ? "hide" : "show";
   const showLoading = loading ? "show" : "hide";
+
+  function AlertError() {
+    if (showError) {
+      return (
+        <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+          <Alert.Heading>Invalid Config!</Alert.Heading>
+          <p>{errorMsg}</p>
+        </Alert>
+      );
+    }
+  }
 
   return (
     <>
@@ -174,7 +210,9 @@ function Settings() {
       <Container className={"loading " + showLoading}>
         <Spinner variant="primary" />
       </Container>
+
       <Container className={"settings-page " + showSettings}>
+        <AlertError />
         <Form>
           <fieldset>
             <legend>• View Helpers 🌎</legend>
@@ -182,40 +220,81 @@ function Settings() {
               id="originHelper"
               type="checkbox"
               label="Origin Helper"
-              onChange={toggleGrid}
+              onChange={handleChange}
             />
             <Form.Check
               id="xGrid"
               type="checkbox"
               label="X Axis Grid"
-              onChange={toggleGrid}
+              onChange={handleChange}
             />
             <Form.Check
               id="yGrid"
               type="checkbox"
               label="Y Axis Grid"
-              onChange={toggleGrid}
+              onChange={handleChange}
             />
             <Form.Check
               id="zGrid"
               type="checkbox"
               label="Z Axis Grid"
-              onChange={toggleGrid}
+              onChange={handleChange}
             />
             <br />
             <InputGroup>
               <InputGroup.Text id="backgroundColorLabel">
                 Background Color
               </InputGroup.Text>
-
               <Form.Control
-                onChange={handleBackgroundChange}
+                onChange={handleChange}
                 id="backgroundColor"
                 type="color"
                 aria-label="Background Color"
                 aria-describedby="backgroundColorLabel"
               />
             </InputGroup>
+          </fieldset>
+          <fieldset>
+            <legend>• Camera 📸</legend>
+            <Row>
+              <Col>
+                <InputGroup>
+                  <InputGroup.Text>Max Distance</InputGroup.Text>
+                  <Form.Control
+                    onChange={handleChange}
+                    id="maxDistance"
+                    type="number"
+                    min={1}
+                    aria-label="MaxDistance"
+                  />
+                </InputGroup>
+              </Col>
+              <Col>
+                <InputGroup>
+                  <InputGroup.Text>Damping Factor</InputGroup.Text>
+                  <Form.Control
+                    onChange={handleChange}
+                    id="dampingFactor"
+                    type="number"
+                    max={1}
+                    step={0.01}
+                    min={0.01}
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <InputGroup>
+                  <InputGroup.Text>FOV</InputGroup.Text>
+                  <Form.Control
+                    onChange={handleChange}
+                    id="fov"
+                    type="number"
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
           </fieldset>
           {current_entities.map((e) => (
             <EntityConfig

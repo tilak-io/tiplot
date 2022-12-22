@@ -3,6 +3,7 @@ import "../static/css/cesium.css";
 import Entity from "../controllers/Entity.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { defaultSettings } from "./Settings";
 
 function View3D({ socket }) {
   const mount = useRef(0);
@@ -16,9 +17,6 @@ function View3D({ socket }) {
   camera.position.set(-15, -5, -10);
 
   const orbit = new OrbitControls(camera, renderer.domElement);
-  orbit.enableDamping = true;
-  orbit.dampingFactor = 0.8;
-  orbit.maxDistance = 1500;
 
   const stalker = new THREE.Vector3();
   const entities = [];
@@ -89,6 +87,8 @@ function View3D({ socket }) {
     updateEntities();
     resizeCanvasToDisplaySize();
     renderer.render(scene, camera);
+    // const target = getTrackedEntity();
+    // target.updateTimelineIndicator();
   };
 
   const resizeCanvasToDisplaySize = () => {
@@ -111,13 +111,7 @@ function View3D({ socket }) {
 
   const parseLocalStorage = (key) => {
     var value = localStorage.getItem(key);
-    if (value === "" || value === null)
-      value = {
-        originHelper: false,
-        xGrid: false,
-        yGrid: false,
-        zGrid: false,
-      };
+    if (value === "" || value === null) value = defaultSettings;
     else value = JSON.parse(value);
     return value;
   };
@@ -135,6 +129,12 @@ function View3D({ socket }) {
     if (general_settings.zGrid) scene.add(zGrid);
     if (general_settings.originHelper) scene.add(originHelper);
     scene.background = new THREE.Color(general_settings.backgroundColor);
+    orbit.enableDamping = true;
+    orbit.maxDistance =
+      general_settings.maxDistance ?? defaultSettings["maxDistance"];
+    orbit.dampingFactor =
+      general_settings.dampingFactor ?? defaultSettings["dampingFactor"];
+    camera.fov = general_settings.fov ?? defaultSettings["fov"];
   };
 
   const focusEntity = () => {
@@ -144,7 +144,7 @@ function View3D({ socket }) {
   };
 
   const setupKeyControls = () => {
-    document.onkeydown = function(e) {
+    document.onkeydown = function (e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":
@@ -162,18 +162,19 @@ function View3D({ socket }) {
       }
     };
 
-    document.onkeyup = function(e) {
+    document.onkeyup = function (e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":
         case "ArrowLeft":
-        case "PageUp":
         case "PageDown":
+        case "PageUp":
           target.updateTimelineIndicator();
           break;
       }
     };
   };
+
   return (
     <div id="view-3d">
       <div ref={mount} />
