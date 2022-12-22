@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdZoomOutMap } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
 import { HiOutlineTicket } from "react-icons/hi";
@@ -15,6 +15,29 @@ function GraphOptions({ plotId, id, removeGraph }) {
   const [legendAnchor, setLegendAnchor] = useState(1);
   const [rslider, setRSlider] = useState(true);
   const [select, setSelect] = useState(false);
+
+  useEffect(() => {
+    document.addEventListener("keydown", setupKeyControls);
+  }, []);
+
+  const setupKeyControls = (e) => {
+    if (!e.ctrlKey) return;
+    switch (e.code) {
+      case "KeyD":
+        document.getElementById(`select-${id}`).style.display = "block";
+        document.getElementById(`whiteout-${id}`).style.display = "none";
+        setSelect(false);
+        break;
+      case "KeyS":
+        document.getElementById(`select-${id}`).style.display = "none";
+        document.getElementById(`whiteout-${id}`).style.display = "block";
+        setSelect(true);
+        break;
+      default:
+        console.log(e);
+        break;
+    }
+  };
 
   const toggleLegend = () => {
     var update;
