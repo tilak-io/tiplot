@@ -10,6 +10,7 @@ import {
   Col,
   Spinner,
   InputGroup,
+  Alert,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import "../static/css/settings.css";
@@ -28,14 +29,13 @@ export const defaultSettings = {
 function Settings() {
   const [current_entities, setCurrentEntities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     getCurrentSettings();
     getCurrentEntities();
-    return () => {
-      // window.location.reload();
-    };
   }, []);
 
   const getCurrentEntities = () => {
@@ -127,24 +127,31 @@ function Settings() {
     return value;
   };
 
-  const applyConfig = () => {
+  const applyConfig = async () => {
     // Entity Configs
     const configs = [];
     current_entities.forEach((e) => {
       const c = getEntityConfig(e.id);
       configs.push(c);
     });
-    fetch("http://localhost:5000/write_config", {
+
+    const response = await fetch("http://localhost:5000/write_config", {
       headers: {
         "Content-Type": "application/json",
       },
       method: "POST",
       body: JSON.stringify(configs),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        navigate("/home");
-      });
+    }).then((res) => res.json());
+
+    if (!response.ok) {
+      setErrorMsg(response.msg);
+      setShowError(true);
+      window.scrollTo(0, 0);
+    } else {
+      setErrorMsg(response.msg);
+      setShowError(false);
+      navigate("/home");
+    }
   };
 
   const getCurrentSettings = () => {
@@ -169,13 +176,26 @@ function Settings() {
   const showSettings = loading ? "hide" : "show";
   const showLoading = loading ? "show" : "hide";
 
+  function AlertError() {
+    if (showError) {
+      return (
+        <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+          <Alert.Heading>Invalid Config!</Alert.Heading>
+          <p>{errorMsg}</p>
+        </Alert>
+      );
+    }
+  }
+
   return (
     <>
       <ToolBar page="settings" />
       <Container className={"loading " + showLoading}>
         <Spinner variant="primary" />
       </Container>
+
       <Container className={"settings-page " + showSettings}>
+        <AlertError />
         <Form>
           <fieldset>
             <legend>• View Helpers 🌎</legend>

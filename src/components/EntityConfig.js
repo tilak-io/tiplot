@@ -45,27 +45,34 @@ function EntityConfig({
     setOptions(opt);
 
     // setting default options
-    const p_opt = opt.filter((o) => o.value.table == position['table']);
-    const p_mapped = p_opt.map((o) => { return { value: o.value, label: o.value.column } });
+    const p_opt = opt.filter((o) => o.value.table == position["table"]);
+    const p_mapped = p_opt.map((o) => {
+      return { value: o.value, label: o.value.column };
+    });
     setPositionOptions(p_mapped);
 
-    const a_opt = opt.filter((o) => o.value.table == attitude['table']);
-    const a_mapped = a_opt.map((o) => { return { value: o.value, label: o.value.column } });
+    const a_opt = opt.filter((o) => o.value.table == attitude["table"]);
+    const a_mapped = a_opt.map((o) => {
+      return { value: o.value, label: o.value.column };
+    });
     setAttitudeOptions(a_mapped);
   };
 
   const handlePositionTableSelect = (e) => {
     const opt = options.filter((o) => o.value.table == e.value.table);
-    const mapped = opt.map((o) => { return { value: o.value, label: o.value.column } });
+    const mapped = opt.map((o) => {
+      return { value: o.value, label: o.value.column };
+    });
     setPositionOptions(mapped);
-  }
+  };
 
   const handleAttitudeTableSelect = (e) => {
     const opt = options.filter((o) => o.value.table == e.value.table);
-    const mapped = opt.map((o) => { return { value: o.value, label: o.value.column } });
+    const mapped = opt.map((o) => {
+      return { value: o.value, label: o.value.column };
+    });
     setAttitudeOptions(mapped);
-  }
-
+  };
 
   const handlePositionTypeChanged = () => {
     const xyzContainer = document.getElementById(`XYZ-${eId}`);
@@ -97,7 +104,6 @@ function EntityConfig({
 
   return (
     <fieldset id={`entity-${eId}`}>
-
       <Row>
         <Col className="text-start">
           <legend>• Entity 🛩️</legend>
@@ -193,7 +199,8 @@ function EntityConfig({
       <div className="break" />
 
       <legend>• Position</legend>
-      <Select options={tables}
+      <Select
+        options={tables}
         id={`positionTable-${eId}`}
         placeholder="Position table"
         onChange={handlePositionTableSelect}
@@ -209,21 +216,24 @@ function EntityConfig({
       <Form.Group id={`XYZ-${eId}`}>
         <Row>
           <Col>
-            <Select options={positionOptions}
+            <Select
+              options={positionOptions}
               placeholder="X"
               id={`x-${eId}`}
               defaultValue={{ label: position["x"] ?? "Select X" }}
             />
           </Col>
           <Col>
-            <Select options={positionOptions}
+            <Select
+              options={positionOptions}
               placeholder="Y"
               id={`y-${eId}`}
               defaultValue={{ label: position["y"] ?? "Select Y" }}
             />
           </Col>
           <Col>
-            <Select options={positionOptions}
+            <Select
+              options={positionOptions}
               placeholder="Z"
               id={`z-${eId}`}
               defaultValue={{ label: position["z"] ?? "Select Z" }}
@@ -235,24 +245,33 @@ function EntityConfig({
       <Form.Group id={`Coordinates-${eId}`}>
         <Row>
           <Col>
-            <Select options={positionOptions}
+            <Select
+              options={positionOptions}
               placeholder="Longitude"
               id={`lon-${eId}`}
-              defaultValue={{ label: position["longitude"] ?? "Select Longitude" }}
+              defaultValue={{
+                label: position["longitude"] ?? "Select Longitude",
+              }}
             />
           </Col>
           <Col>
-            <Select options={positionOptions}
+            <Select
+              options={positionOptions}
               placeholder="Latitude"
               id={`lat-${eId}`}
-              defaultValue={{ label: position["lattitude"] ?? "Select Latitude" }}
+              defaultValue={{
+                label: position["lattitude"] ?? "Select Latitude",
+              }}
             />
           </Col>
           <Col>
-            <Select options={positionOptions}
+            <Select
+              options={positionOptions}
               placeholder="Altitude"
               id={`alt-${eId}`}
-              defaultValue={{ label: position["altitude"] ?? "Select Altitude" }}
+              defaultValue={{
+                label: position["altitude"] ?? "Select Altitude",
+              }}
             />
           </Col>
         </Row>
@@ -260,7 +279,8 @@ function EntityConfig({
       <div className="break" />
 
       <legend>• Attitude</legend>
-      <Select options={tables}
+      <Select
+        options={tables}
         id={`attitudeTable-${eId}`}
         placeholder="Position table"
         onChange={handleAttitudeTableSelect}
@@ -277,21 +297,24 @@ function EntityConfig({
       <Form.Group id={`RPY-${eId}`}>
         <Row>
           <Col>
-            <Select options={attitudeOptions}
+            <Select
+              options={attitudeOptions}
               placeholder="Roll"
               id={`roll-${eId}`}
               defaultValue={{ label: attitude["roll"] ?? "Select Roll" }}
             />
           </Col>
           <Col>
-            <Select options={attitudeOptions}
+            <Select
+              options={attitudeOptions}
               placeholder="Pitch"
               id={`pitch-${eId}`}
               defaultValue={{ label: attitude["pitch"] ?? "Select Pitch" }}
             />
           </Col>
           <Col>
-            <Select options={attitudeOptions}
+            <Select
+              options={attitudeOptions}
               placeholder="Yaw"
               id={`yaw-${eId}`}
               defaultValue={{ label: attitude["yaw"] ?? "Select Yaw" }}
@@ -302,28 +325,32 @@ function EntityConfig({
       <Form.Group id={`Quaternions-${eId}`}>
         <Row>
           <Col>
-            <Select options={attitudeOptions}
+            <Select
+              options={attitudeOptions}
               placeholder="Qx"
               id={`qx-${eId}`}
               defaultValue={{ label: attitude["q1"] ?? "Select Qx" }}
             />
           </Col>
           <Col>
-            <Select options={attitudeOptions}
+            <Select
+              options={attitudeOptions}
               placeholder="Qy"
               id={`qy-${eId}`}
               defaultValue={{ label: attitude["q2"] ?? "Select Qy" }}
             />
           </Col>
           <Col>
-            <Select options={attitudeOptions}
+            <Select
+              options={attitudeOptions}
               placeholder="Qz"
               id={`qz-${eId}`}
               defaultValue={{ label: attitude["q3"] ?? "Select Qz" }}
             />
           </Col>
           <Col>
-            <Select options={attitudeOptions}
+            <Select
+              options={attitudeOptions}
               placeholder="Qw"
               id={`qw-${eId}`}
               defaultValue={{ label: attitude["q0"] ?? "Select Qw" }}
