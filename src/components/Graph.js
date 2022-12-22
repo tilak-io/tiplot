@@ -174,7 +174,13 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
               l: 50,
               r: 25,
             },
-            hovermode: "x unified",
+            xaxis: {
+              showspikes: true,
+              spikecolor: "#000",
+              spikemode: "across+marker",
+            },
+            // hovermode: "x unified",
+            hovermode: "x",
           }}
           config={{
             displayModeBar: false,
