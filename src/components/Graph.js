@@ -117,7 +117,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
 
   const squeezeSelect = () => {
     const select = document.querySelector(
-      `#select-${id} > div > div.css-3w2yfm-ValueContainer`
+      `#select-${id} > div > div:first-child`
     );
     if (select == null) {
       return;
@@ -127,7 +127,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
 
   const stretchSelect = () => {
     const select = document.querySelector(
-      `#select-${id} > div > div.css-3w2yfm-ValueContainer`
+      `#select-${id} > div > div:first-child`
     );
     if (select == null) {
       return;
@@ -162,7 +162,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
           useResizeHandler
           layout={{
             autoresize: true,
-            showlegend: true,
+            showlegend: false,
             legend: {
               x: 1,
               xanchor: "right",
