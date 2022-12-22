@@ -14,21 +14,21 @@ import {
 import { useState, useEffect } from "react";
 import "../static/css/settings.css";
 
+export const defaultSettings = {
+  backgroundColor: "#3b3b3b",
+  originHelper: false,
+  xGrid: false,
+  yGrid: false,
+  zGrid: false,
+  maxDistance: 1500,
+  dampingFactor: 0.8,
+  fov: 75,
+};
+
 function Settings() {
   const [current_entities, setCurrentEntities] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  const defaultSettings = {
-    backgroundColor: "#3b3b3b",
-    originHelper: false,
-    xGrid: false,
-    yGrid: false,
-    zGrid: false,
-    maxDistance: 1500,
-    dampingFactor: .8,
-    fov: 75,
-  };
 
   useEffect(() => {
     getCurrentSettings();
@@ -70,7 +70,6 @@ function Settings() {
     return document.getElementById(id).textContent;
   };
 
-
   const getEntityConfig = (eId) => {
     const _useXYZ = document.getElementById(`useXYZ-${eId}`).checked;
     const _useRPY = document.getElementById(`useRPY-${eId}`).checked;
@@ -79,31 +78,31 @@ function Settings() {
 
     const position = _useXYZ
       ? {
-        table: getDropdownValue(`positionTable-${eId}`),
-        x: getDropdownValue(`x-${eId}`),
-        y: getDropdownValue(`y-${eId}`),
-        z: getDropdownValue(`z-${eId}`),
-      }
+          table: getDropdownValue(`positionTable-${eId}`),
+          x: getDropdownValue(`x-${eId}`),
+          y: getDropdownValue(`y-${eId}`),
+          z: getDropdownValue(`z-${eId}`),
+        }
       : {
-        table: getDropdownValue(`positionTable-${eId}`),
-        longitude: getDropdownValue(`lon-${eId}`),
-        lattitude: getDropdownValue(`lat-${eId}`),
-        altitude: getDropdownValue(`alt-${eId}`),
-      };
+          table: getDropdownValue(`positionTable-${eId}`),
+          longitude: getDropdownValue(`lon-${eId}`),
+          lattitude: getDropdownValue(`lat-${eId}`),
+          altitude: getDropdownValue(`alt-${eId}`),
+        };
     const attitude = _useRPY
       ? {
-        table: getDropdownValue(`attitudeTable-${eId}`),
-        roll: getDropdownValue(`roll-${eId}`),
-        pitch: getDropdownValue(`pitch-${eId}`),
-        yaw: getDropdownValue(`yaw-${eId}`),
-      }
+          table: getDropdownValue(`attitudeTable-${eId}`),
+          roll: getDropdownValue(`roll-${eId}`),
+          pitch: getDropdownValue(`pitch-${eId}`),
+          yaw: getDropdownValue(`yaw-${eId}`),
+        }
       : {
-        table: getDropdownValue(`attitudeTable-${eId}`),
-        q0: getDropdownValue(`qw-${eId}`),
-        q1: getDropdownValue(`qx-${eId}`),
-        q2: getDropdownValue(`qy-${eId}`),
-        q3: getDropdownValue(`qz-${eId}`),
-      };
+          table: getDropdownValue(`attitudeTable-${eId}`),
+          q0: getDropdownValue(`qw-${eId}`),
+          q1: getDropdownValue(`qx-${eId}`),
+          q2: getDropdownValue(`qy-${eId}`),
+          q3: getDropdownValue(`qz-${eId}`),
+        };
 
     const config = {
       name: getValue(`name-${eId}`),
@@ -123,8 +122,7 @@ function Settings() {
 
   const parseLocalStorage = (key) => {
     var value = localStorage.getItem(key);
-    if (value === "" || value === null)
-      value = defaultSettings
+    if (value === "" || value === null) value = defaultSettings;
     else value = JSON.parse(value);
     return value;
   };
@@ -156,8 +154,7 @@ function Settings() {
       const input = document.getElementById(key);
       if (input.type == "checkbox")
         input.checked = general_settings[key] ?? defaultSettings[key];
-      else
-        input.value = general_settings[key] ?? defaultSettings[key];
+      else input.value = general_settings[key] ?? defaultSettings[key];
     });
   };
 
@@ -165,10 +162,9 @@ function Settings() {
     const general_settings = parseLocalStorage("general_settings");
     if (e.target.type == "checkbox")
       general_settings[e.target.id] = e.target.checked;
-    else
-      general_settings[e.target.id] = e.target.value;
+    else general_settings[e.target.id] = e.target.value;
     localStorage.setItem("general_settings", JSON.stringify(general_settings));
-  }
+  };
 
   const showSettings = loading ? "hide" : "show";
   const showLoading = loading ? "show" : "hide";
@@ -226,9 +222,7 @@ function Settings() {
             <Row>
               <Col>
                 <InputGroup>
-                  <InputGroup.Text>
-                    Max Distance
-                  </InputGroup.Text>
+                  <InputGroup.Text>Max Distance</InputGroup.Text>
                   <Form.Control
                     onChange={handleChange}
                     id="maxDistance"
@@ -240,15 +234,13 @@ function Settings() {
               </Col>
               <Col>
                 <InputGroup>
-                  <InputGroup.Text>
-                    Damping Factor
-                  </InputGroup.Text>
+                  <InputGroup.Text>Damping Factor</InputGroup.Text>
                   <Form.Control
                     onChange={handleChange}
                     id="dampingFactor"
                     type="number"
                     max={1}
-                    step={.01}
+                    step={0.01}
                     min={0.01}
                   />
                 </InputGroup>
@@ -257,9 +249,7 @@ function Settings() {
             <Row>
               <Col>
                 <InputGroup>
-                  <InputGroup.Text>
-                    FOV
-                  </InputGroup.Text>
+                  <InputGroup.Text>FOV</InputGroup.Text>
                   <Form.Control
                     onChange={handleChange}
                     id="fov"
