@@ -108,7 +108,7 @@ export default class Entity {
     });
 
     const line = new THREE.Line(geometry, material);
-    window.line = line
+    window.line = line;
     scene.add(line);
   }
 
@@ -119,7 +119,7 @@ export default class Entity {
     const loader = new GLTFLoader();
     loader.load(
       "http://localhost:5000/model",
-      function(gltf) {
+      function (gltf) {
         instance.mesh = gltf.scene;
         instance.mesh.children[0].children[0].material.transparent = true;
         instance.mesh.children[0].children[0].material.opacity = instance.alpha;
@@ -134,7 +134,7 @@ export default class Entity {
         scene.add(instance.mesh);
       },
       undefined,
-      function(error) {
+      function (error) {
         console.log(error);
         console.log("failed to load drone, setting up default cube");
         const geometry = new THREE.BoxGeometry(2, 0.5, 0.3);
@@ -225,9 +225,11 @@ export default class Entity {
   // Updating timeline/crosshair indicators
   //
   updateTimelineIndicator() {
-    mockPlot.updateTimelineIndicator(window.currentX);
+    if (this.currentX !== window.currentX) {
+      this.currentX = window.currentX;
+      mockPlot.updateTimelineIndicator(window.currentX);
+    }
   }
-
 }
 
 // Extra

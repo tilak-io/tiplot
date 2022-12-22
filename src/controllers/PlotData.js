@@ -36,10 +36,10 @@ export default class PlotData {
     const tables = response.keys.map((table) => {
       return {
         value: {
-          table: table
+          table: table,
         },
-        label: table
-      }
+        label: table,
+      };
     });
     return tables;
   };
