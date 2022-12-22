@@ -112,7 +112,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   const handleInput = (value, event) => {
     setInputValue(value);
     if (event.action == "set-value") setInputValue(event.prevInputValue);
-  }
+  };
 
   return (
     <div className="plot-container">
@@ -127,6 +127,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         inputValue={inputValue}
         onInputChange={handleInput}
       />
+      <div className="placeholder" id={`whiteout-${id}`} />
       <div className="d-flex flex-yt">
         <Plot
           className="plot-yt"

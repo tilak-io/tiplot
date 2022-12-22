@@ -83,6 +83,13 @@ body {
   overflow: auto;
 }
 
+.placeholder {
+  height: 38px;
+  display: none;
+  background-color: white;
+  opacity: 1;
+}
+
 
 /* custom scrollbar */
 /* width */

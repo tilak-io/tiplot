@@ -6,6 +6,7 @@ import { AiOutlineDotChart, AiOutlineLineChart } from "react-icons/ai";
 import { BiMoveHorizontal } from "react-icons/bi";
 import { TbChartDots } from "react-icons/tb";
 import { RiDragMove2Line } from "react-icons/ri";
+import { RxDropdownMenu } from "react-icons/rx";
 import Plotly from "plotly.js/dist/plotly";
 
 function GraphOptions({ plotId, id, removeGraph }) {
@@ -13,6 +14,7 @@ function GraphOptions({ plotId, id, removeGraph }) {
   const [plotType, setPlotType] = useState(1);
   const [legendAnchor, setLegendAnchor] = useState(1);
   const [rslider, setRSlider] = useState(true);
+  const [select, setSelect] = useState(false);
 
   const toggleLegend = () => {
     var update;
@@ -111,6 +113,14 @@ function GraphOptions({ plotId, id, removeGraph }) {
     return icon;
   }
 
+  function ToggleSelectIcon() {
+    return (
+      <RxDropdownMenu
+        style={{ width: "100%", color: select ? "#777" : "#000" }}
+      />
+    );
+  }
+
   const toggleRangeslider = () => {
     setRSlider(!rslider);
     const rs = rslider ? {} : false;
@@ -120,6 +130,14 @@ function GraphOptions({ plotId, id, removeGraph }) {
     const plot = document.getElementById(plotId);
 
     Plotly.relayout(plot, update);
+  };
+
+  const toggleSelect = () => {
+    const s = document.getElementById(`select-${id}`);
+    const w = document.getElementById(`whiteout-${id}`);
+    s.style.display = select ? "block" : "none";
+    w.style.display = !select ? "block" : "none";
+    setSelect(!select);
   };
 
   return (
@@ -141,6 +159,10 @@ function GraphOptions({ plotId, id, removeGraph }) {
 
       <span onClick={autoscale}>
         <MdZoomOutMap style={{ width: "100%" }} />
+      </span>
+
+      <span onClick={toggleSelect}>
+        <ToggleSelectIcon />
       </span>
 
       <span className="drag-button">
