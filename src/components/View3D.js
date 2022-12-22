@@ -87,8 +87,8 @@ function View3D({ socket }) {
     updateEntities();
     resizeCanvasToDisplaySize();
     renderer.render(scene, camera);
-    const target = getTrackedEntity();
-    target.updateTimelineIndicator();
+    // const target = getTrackedEntity();
+    // target.updateTimelineIndicator();
   };
 
   const resizeCanvasToDisplaySize = () => {
@@ -161,7 +161,20 @@ function View3D({ socket }) {
           break;
       }
     };
+
+    document.onkeyup = function (e) {
+      const target = getTrackedEntity();
+      switch (e.code) {
+        case "ArrowRight":
+        case "ArrowLeft":
+        case "PageDown":
+        case "PageUp":
+          target.updateTimelineIndicator();
+          break;
+      }
+    };
   };
+
   return (
     <div id="view-3d">
       <div ref={mount} />
