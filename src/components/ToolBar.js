@@ -12,6 +12,7 @@ import { FaToggleOn, FaToggleOff, FaInfoCircle } from "react-icons/fa";
 import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
 import "react-bootstrap-submenu/dist/index.css"
 import logo from "../static/img/logo.png";
+import { generateUUID } from "three/src/math/MathUtils";
 
 function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   const [layouts, setLayouts] = useState([]);
@@ -64,6 +65,14 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
         </NavDropdown.Item>
       );
     });
+    if (rows.length == 0) {
+      rows.push(
+        <NavDropdown.Item key={generateUUID()} disabled>
+          No Saved Layouts
+        </NavDropdown.Item>
+      );
+    }
+
     setLayouts(rows);
   };
 
@@ -112,10 +121,6 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
     localStorage.setItem("current_layout", "[]");
     window.location.reload();
   };
-
-  function ShowFirstDivider() {
-    if (layouts.length > 0) return <NavDropdown.Divider />;
-  }
 
   function ViewButton() {
     if (showView)
