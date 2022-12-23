@@ -217,6 +217,7 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
               Loader
             </Nav.Link>
             <NavDropdownMenu title="Tools" id="collasible-nav-dropdown">
+              <NavDropdown.Item href="#/entities">Entities</NavDropdown.Item>
               <NavDropdown.Item href="#/settings">Settings</NavDropdown.Item>
               <DropdownSubmenu href="#" title="Layouts">
                 <DropdownSubmenu href="#" title="Saved Layouts" >
