@@ -1,6 +1,6 @@
 {
   "name": "tiplot",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "homepage": "./",
   "proxy": "http://localhost:5000",
@@ -26,11 +26,11 @@
       }
     ],
     "linux": {
-      "icon": "src/img/logo.png",
+      "icon": "src/static/img/logo.png",
       "category": "Utility"
     },
     "win": {
-      "icon": "src/img/logo.png"
+      "icon": "src/static/img/logo.png"
     }
   },
   "dependencies": {
