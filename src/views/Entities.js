@@ -3,18 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import ToolBar from "../components/ToolBar";
 import EntityConfig from "../components/EntityConfig";
+import { BsPlus } from "react-icons/bs";
 
-import {
-  Container,
-  Button,
-  Row,
-  Col,
-  Spinner,
-  Alert,
-} from "react-bootstrap";
+import { Container, Button, Row, Col, Spinner, Alert } from "react-bootstrap";
 
 function Entities() {
-
   const [current_entities, setCurrentEntities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
@@ -24,7 +17,6 @@ function Entities() {
   useEffect(() => {
     getCurrentEntities();
   }, []);
-
 
   const getCurrentEntities = () => {
     fetch("http://localhost:5000/entities_config")
@@ -52,31 +44,31 @@ function Entities() {
 
     const position = _useXYZ
       ? {
-        table: getDropdownValue(`positionTable-${eId}`),
-        x: getDropdownValue(`x-${eId}`),
-        y: getDropdownValue(`y-${eId}`),
-        z: getDropdownValue(`z-${eId}`),
-      }
+          table: getDropdownValue(`positionTable-${eId}`),
+          x: getDropdownValue(`x-${eId}`),
+          y: getDropdownValue(`y-${eId}`),
+          z: getDropdownValue(`z-${eId}`),
+        }
       : {
-        table: getDropdownValue(`positionTable-${eId}`),
-        longitude: getDropdownValue(`lon-${eId}`),
-        lattitude: getDropdownValue(`lat-${eId}`),
-        altitude: getDropdownValue(`alt-${eId}`),
-      };
+          table: getDropdownValue(`positionTable-${eId}`),
+          longitude: getDropdownValue(`lon-${eId}`),
+          lattitude: getDropdownValue(`lat-${eId}`),
+          altitude: getDropdownValue(`alt-${eId}`),
+        };
     const attitude = _useRPY
       ? {
-        table: getDropdownValue(`attitudeTable-${eId}`),
-        roll: getDropdownValue(`roll-${eId}`),
-        pitch: getDropdownValue(`pitch-${eId}`),
-        yaw: getDropdownValue(`yaw-${eId}`),
-      }
+          table: getDropdownValue(`attitudeTable-${eId}`),
+          roll: getDropdownValue(`roll-${eId}`),
+          pitch: getDropdownValue(`pitch-${eId}`),
+          yaw: getDropdownValue(`yaw-${eId}`),
+        }
       : {
-        table: getDropdownValue(`attitudeTable-${eId}`),
-        q0: getDropdownValue(`qw-${eId}`),
-        q1: getDropdownValue(`qx-${eId}`),
-        q2: getDropdownValue(`qy-${eId}`),
-        q3: getDropdownValue(`qz-${eId}`),
-      };
+          table: getDropdownValue(`attitudeTable-${eId}`),
+          q0: getDropdownValue(`qw-${eId}`),
+          q1: getDropdownValue(`qx-${eId}`),
+          q2: getDropdownValue(`qy-${eId}`),
+          q3: getDropdownValue(`qz-${eId}`),
+        };
 
     const config = {
       name: getValue(`name-${eId}`),
@@ -103,7 +95,6 @@ function Entities() {
         setCurrentEntities([...current_entities, res]);
       });
   };
-
 
   const removeEntity = (id) => {
     const remaining = current_entities.filter((e) => e.id != id);
@@ -166,50 +157,54 @@ function Entities() {
   const showSettings = loading ? "hide" : "show";
   const showLoading = loading ? "show" : "hide";
 
-  return (<>
-    <ToolBar />
-    <Container className={"loading " + showLoading}>
-      <Spinner variant="primary" />
-    </Container>
+  return (
+    <>
+      <ToolBar />
+      <Container className={"loading " + showLoading}>
+        <Spinner variant="primary" />
+      </Container>
 
-    <Container className={"settings-page " + showSettings}>
-      <AlertError />
-      {current_entities.map((e) => (
-        <EntityConfig
-          key={e.id}
-          eId={e.id}
-          name={e.name}
-          pathColor={e.pathColor}
-          color={e.color}
-          wireframe={e.wireframe}
-          alpha={e.alpha}
-          useRPY={e.useRPY}
-          useXYZ={e.useXYZ}
-          tracked={e.tracked}
-          scale={e.scale}
-          position={e.position}
-          attitude={e.attitude}
-          removeEntity={removeEntity}
-        />
-      ))}
-      <Row>
-        <Col className="text-start"></Col>
+      <Container className={"settings-page " + showSettings}>
+        <AlertError />
+        {current_entities.map((e) => (
+          <EntityConfig
+            key={e.id}
+            eId={e.id}
+            name={e.name}
+            pathColor={e.pathColor}
+            color={e.color}
+            wireframe={e.wireframe}
+            alpha={e.alpha}
+            useRPY={e.useRPY}
+            useXYZ={e.useXYZ}
+            tracked={e.tracked}
+            scale={e.scale}
+            position={e.position}
+            attitude={e.attitude}
+            removeEntity={removeEntity}
+          />
+        ))}
+        <Row>
+          <Col className="text-start"></Col>
 
+          <Col className="text-center">
+            <Button variant="primary" onClick={applyConfig} type="submit">
+              Apply
+            </Button>
+          </Col>
 
-        <Col className="text-start">
-          <Button variant="primary" onClick={applyConfig} type="submit">
-            Apply
-          </Button>
-        </Col>
-
-        <Col className="text-end">
-          <Button variant="success" onClick={addEntity}>
-            +
-          </Button>
-        </Col>
-      </Row>
-    </Container>
-
-  </>);
+          <Col className="text-end">
+            <Button
+              variant="secondary"
+              style={{ backgroundColor: "transparent" }}
+              onClick={addEntity}
+            >
+              <BsPlus style={{ color: "#000" }} />
+            </Button>
+          </Col>
+        </Row>
+      </Container>
+    </>
+  );
 }
 export default Entities;
