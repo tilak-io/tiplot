@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import SplitLayout from "./views/layouts/SplitLayout";
+import DetachedLayout from "./views/layouts/DetachedLayout";
 import Entities from "./views/Entities";
 
 function App() {
@@ -60,6 +61,10 @@ function App() {
             <Route
               path="/home"
               element={<SplitLayout socket={socketInstance} />}
+            />
+            <Route
+              path="/detached"
+              element={<DetachedLayout socket={socketInstance} />}
             />
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/entities" element={<Entities />} />

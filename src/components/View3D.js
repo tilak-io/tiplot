@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { defaultSettings } from "../views/Settings";
 
-function View3D({ socket }) {
+function View3D({ socket, detached }) {
   const mount = useRef(0);
   var renderer = new THREE.WebGLRenderer({ antialias: true });
   var scene = new THREE.Scene();
@@ -97,15 +97,27 @@ function View3D({ socket }) {
 
     if (!view) return;
 
-    const width = view.clientWidth;
-    const height = window.innerHeight;
+    if (detached) {
 
-    if (canvas.width !== width || canvas.height !== height) {
-      renderer.setSize(width, height, false);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      if (canvas.width !== width || canvas.height !== height) {
+        renderer.setSize(width, height, false);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      }
+    } else {
+      const width = view.clientWidth;
+      const height = window.innerHeight;
+      if (canvas.width !== width || canvas.height !== height) {
+        renderer.setSize(width, height, false);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      }
     }
   };
 
