@@ -181,6 +181,11 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
             },
             // hovermode: "x unified",
             hovermode: "x",
+            hoverlabel: {
+              font: {
+                size: 10
+              }
+            }
           }}
           config={{
             displayModeBar: false,

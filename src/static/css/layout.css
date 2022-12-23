@@ -90,6 +90,24 @@ body {
   opacity: 1;
 }
 
+/* Graphs */
+.multiselect > div > div > div {
+  margin:1px;
+}
+
+.multiselect > div > div {
+  margin:0;
+  padding: 0;
+  font-size: 65%;
+
+}
+
+.multiselect > div {
+  margin:0px;
+  padding: 0px;
+  border-spacing: 0px;
+  word-spacing:0px;
+}
 
 /* custom scrollbar */
 /* width */
