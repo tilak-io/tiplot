@@ -178,6 +178,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
               showspikes: true,
               spikecolor: "#000",
               spikemode: "across+marker",
+              spikethickness: 1,
             },
             // hovermode: "x unified",
             hovermode: "x",
