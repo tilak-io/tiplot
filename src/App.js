@@ -1,11 +1,11 @@
 import "./static/css/overlay.css";
-import Loader from "./components/Loader";
-import Settings from "./components/Settings";
-import Test from "./components/Test";
+import Loader from "./views/Loader";
+import Settings from "./views/Settings";
+import Test from "./views/Test";
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
-import SplitLayout from "./layouts/SplitLayout";
+import SplitLayout from "./views/layouts/SplitLayout";
 
 function App() {
   const [socketInstance, setSocketInstance] = useState("");

@@ -1,5 +1,5 @@
-import ToolBar from "./ToolBar";
-import EntityConfig from "./EntityConfig";
+import ToolBar from "../components/ToolBar";
+import EntityConfig from "../components/EntityConfig";
 import { v4 as uuid } from "uuid";
 import { useNavigate } from "react-router-dom";
 import {
@@ -79,31 +79,31 @@ function Settings() {
 
     const position = _useXYZ
       ? {
-          table: getDropdownValue(`positionTable-${eId}`),
-          x: getDropdownValue(`x-${eId}`),
-          y: getDropdownValue(`y-${eId}`),
-          z: getDropdownValue(`z-${eId}`),
-        }
+        table: getDropdownValue(`positionTable-${eId}`),
+        x: getDropdownValue(`x-${eId}`),
+        y: getDropdownValue(`y-${eId}`),
+        z: getDropdownValue(`z-${eId}`),
+      }
       : {
-          table: getDropdownValue(`positionTable-${eId}`),
-          longitude: getDropdownValue(`lon-${eId}`),
-          lattitude: getDropdownValue(`lat-${eId}`),
-          altitude: getDropdownValue(`alt-${eId}`),
-        };
+        table: getDropdownValue(`positionTable-${eId}`),
+        longitude: getDropdownValue(`lon-${eId}`),
+        lattitude: getDropdownValue(`lat-${eId}`),
+        altitude: getDropdownValue(`alt-${eId}`),
+      };
     const attitude = _useRPY
       ? {
-          table: getDropdownValue(`attitudeTable-${eId}`),
-          roll: getDropdownValue(`roll-${eId}`),
-          pitch: getDropdownValue(`pitch-${eId}`),
-          yaw: getDropdownValue(`yaw-${eId}`),
-        }
+        table: getDropdownValue(`attitudeTable-${eId}`),
+        roll: getDropdownValue(`roll-${eId}`),
+        pitch: getDropdownValue(`pitch-${eId}`),
+        yaw: getDropdownValue(`yaw-${eId}`),
+      }
       : {
-          table: getDropdownValue(`attitudeTable-${eId}`),
-          q0: getDropdownValue(`qw-${eId}`),
-          q1: getDropdownValue(`qx-${eId}`),
-          q2: getDropdownValue(`qy-${eId}`),
-          q3: getDropdownValue(`qz-${eId}`),
-        };
+        table: getDropdownValue(`attitudeTable-${eId}`),
+        q0: getDropdownValue(`qw-${eId}`),
+        q1: getDropdownValue(`qx-${eId}`),
+        q2: getDropdownValue(`qy-${eId}`),
+        q3: getDropdownValue(`qz-${eId}`),
+      };
 
     const config = {
       name: getValue(`name-${eId}`),

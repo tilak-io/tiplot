@@ -3,7 +3,7 @@ import "../static/css/cesium.css";
 import Entity from "../controllers/Entity.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { defaultSettings } from "./Settings";
+import { defaultSettings } from "../views/Settings";
 
 function View3D({ socket }) {
   const mount = useRef(0);
@@ -144,7 +144,7 @@ function View3D({ socket }) {
   };
 
   const setupKeyControls = () => {
-    document.onkeydown = function (e) {
+    document.onkeydown = function(e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":
@@ -162,7 +162,7 @@ function View3D({ socket }) {
       }
     };
 
-    document.onkeyup = function (e) {
+    document.onkeyup = function(e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":

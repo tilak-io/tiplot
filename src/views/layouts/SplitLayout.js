@@ -1,13 +1,13 @@
-import "../../node_modules/react-grid-layout/css/styles.css";
-import "../static/css/layout.css";
+import "../../../node_modules/react-grid-layout/css/styles.css";
+import "../../static/css/layout.css";
 import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
 import RGL, { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuid } from "uuid";
-import ToolBar from "../components/ToolBar.js";
-import Graph from "../components/Graph";
-import GraphXY from "../components/GraphXY";
-import View3D from "../components/View3D";
+import ToolBar from "../../components/ToolBar";
+import Graph from "../../components/Graph";
+import GraphXY from "../../components/GraphXY";
+import View3D from "../../components/View3D";
 import SplitPane from "react-split-pane";
 
 const ReactGridLayout = WidthProvider(RGL);

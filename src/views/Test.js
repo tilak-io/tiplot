@@ -1,9 +1,9 @@
 import "../../node_modules/react-grid-layout/css/styles.css";
 import { useState, useEffect } from "react";
-import ToolBar from "./ToolBar";
+import ToolBar from "../components/ToolBar";
 import RGL, { Responsive, WidthProvider } from "react-grid-layout";
-import Graph from "./Graph";
-import GraphXY from "./GraphXY";
+import Graph from "../components/Graph";
+import GraphXY from "../components/GraphXY";
 import { v4 as uuid } from "uuid";
 
 const ReactGridLayout = WidthProvider(Responsive);
