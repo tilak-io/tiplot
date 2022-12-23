@@ -47,6 +47,9 @@ function GraphOptions({ plotId, id, removeGraph }) {
         update = {
           showlegend: true,
           legend: {
+            font: {
+              size: 10,
+            },
             xanchor: "right",
             x: 1,
           },
@@ -56,6 +59,9 @@ function GraphOptions({ plotId, id, removeGraph }) {
         update = {
           showlegend: true,
           legend: {
+            font: {
+              size: 10,
+            },
             xanchor: "left",
             x: 0,
           },

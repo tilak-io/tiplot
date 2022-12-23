@@ -103,10 +103,12 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
             xaxis: {
               spikecolor: "black",
               spikemode: "across",
+              spikethickness: 1,
             },
             yaxis: {
               spikecolor: "black",
               spikemode: "across",
+              spikethickness: 1,
             },
           }}
           config={{

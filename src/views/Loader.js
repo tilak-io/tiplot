@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FcOpenedFolder, FcFile } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
-import ToolBar from "./ToolBar";
+import ToolBar from "../components/ToolBar";
 import "../static/css/loader.css";
 import "../static/css/overlay.css";
 

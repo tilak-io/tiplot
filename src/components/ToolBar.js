@@ -7,9 +7,12 @@ import {
   Modal,
   Button,
 } from "react-bootstrap";
+import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { FaToggleOn, FaToggleOff, FaInfoCircle } from "react-icons/fa";
 import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
+import "react-bootstrap-submenu/dist/index.css"
 import logo from "../static/img/logo.png";
+import { generateUUID } from "three/src/math/MathUtils";
 
 function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   const [layouts, setLayouts] = useState([]);
@@ -31,7 +34,7 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
     if (response.msg)
       setCurrentFile(response.msg);
     else
-    setCurrentFile("Current File: " + response.file[0]);
+      setCurrentFile("Current File: " + response.file[0]);
   };
 
   const parseLocalStorage = (key) => {
@@ -62,6 +65,14 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
         </NavDropdown.Item>
       );
     });
+    if (rows.length == 0) {
+      rows.push(
+        <NavDropdown.Item key={generateUUID()} disabled>
+          No Saved Layouts
+        </NavDropdown.Item>
+      );
+    }
+
     setLayouts(rows);
   };
 
@@ -110,10 +121,6 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
     localStorage.setItem("current_layout", "[]");
     window.location.reload();
   };
-
-  function ShowFirstDivider() {
-    if (layouts.length > 0) return <NavDropdown.Divider />;
-  }
 
   function ViewButton() {
     if (showView)
@@ -209,33 +216,34 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
             <Nav.Link href="#/" className={page === "loader" ? "active" : ""}>
               Loader
             </Nav.Link>
-            <Nav.Link
-              href="#/settings"
-              className={page === "settings" ? "active" : ""}
-            >
-              Settings
-            </Nav.Link>
-            <NavDropdown title="Layouts" id="navbarScrollingDropdown">
-              {layouts}
-              <ShowFirstDivider />
-              <NavDropdown.Item onClick={saveCurrentLayoutNamed}>
-                Save current layout
-              </NavDropdown.Item>
+            <NavDropdownMenu title="Tools" id="collasible-nav-dropdown">
+              <NavDropdown.Item href="#/entities">Entities</NavDropdown.Item>
+              <NavDropdown.Item href="#/settings">Settings</NavDropdown.Item>
+              <DropdownSubmenu href="#" title="Layouts">
+                <DropdownSubmenu href="#" title="Saved Layouts" >
+                  {layouts}
+                </DropdownSubmenu>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={saveCurrentLayoutNamed}>
+                  Save current
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={importLayout}>
+                  Import layout
+                </NavDropdown.Item>
+                <NavDropdown.Item onClick={exportLayout}>
+                  Export layout
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={clearLayouts}>
+                  Clear layouts
+                </NavDropdown.Item>
+              </DropdownSubmenu>
               <NavDropdown.Divider />
-              <NavDropdown.Item onClick={importLayout}>
-                Import layout
+              <NavDropdown.Item onClick={() => setShowInfo(true)}>
+                Info <FaInfoCircle />
               </NavDropdown.Item>
-              <NavDropdown.Item onClick={exportLayout}>
-                Export layout
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={clearLayouts}>
-                Clear layouts
-              </NavDropdown.Item>
-            </NavDropdown>
-            <Nav.Link href="#" onClick={() => setShowInfo(true)}>
-              <FaInfoCircle />
-            </Nav.Link>
+            </NavDropdownMenu>
           </Nav>
           <Controls />
         </Container>
