@@ -24,6 +24,7 @@ function Settings() {
 
   useEffect(() => {
     getCurrentSettings();
+    getCurrentLayout();
   }, []);
 
 
@@ -53,51 +54,44 @@ function Settings() {
     localStorage.setItem("general_settings", JSON.stringify(general_settings));
   };
 
+  const handleLayoutChange = (e) => {
+    var view_layout = localStorage.getItem("view_layout", "split-fit");
+    view_layout = e.target.id;
+    localStorage.setItem("view_layout", JSON.stringify(view_layout));
+  }
+
+  const getCurrentLayout = () => {
+    var view_layout = JSON.parse(localStorage.getItem("view_layout")) ?? "split-fit";
+    const layouts = ['split-fit', 'detached-fit'];
+
+    layouts.forEach((layout) => {
+      const input = document.getElementById(layout);
+      input.checked = view_layout == input.id;
+    });
+
+  };
+
   return (
     <>
       <ToolBar page="settings" />
-
       <Container className="settings-page">
         <Form>
           <fieldset>
-            <legend>• View Helpers 🌎</legend>
+            <legend>• View Layouts 🪟</legend>
             <Form.Check
-              id="originHelper"
-              type="checkbox"
-              label="Origin Helper"
-              onChange={handleChange}
+              name="view-layout"
+              id="split-fit"
+              type="radio"
+              label="Split Layout"
+              onChange={handleLayoutChange}
             />
             <Form.Check
-              id="xGrid"
-              type="checkbox"
-              label="X Axis Grid"
-              onChange={handleChange}
+              name="view-layout"
+              id="detached-fit"
+              type="radio"
+              label="Detached Layout"
+              onChange={handleLayoutChange}
             />
-            <Form.Check
-              id="yGrid"
-              type="checkbox"
-              label="Y Axis Grid"
-              onChange={handleChange}
-            />
-            <Form.Check
-              id="zGrid"
-              type="checkbox"
-              label="Z Axis Grid"
-              onChange={handleChange}
-            />
-            <br />
-            <InputGroup>
-              <InputGroup.Text id="backgroundColorLabel">
-                Background Color
-              </InputGroup.Text>
-              <Form.Control
-                onChange={handleChange}
-                id="backgroundColor"
-                type="color"
-                aria-label="Background Color"
-                aria-describedby="backgroundColorLabel"
-              />
-            </InputGroup>
           </fieldset>
           <fieldset>
             <legend>• Camera 📸</legend>
@@ -140,6 +134,47 @@ function Settings() {
                 </InputGroup>
               </Col>
             </Row>
+          </fieldset>
+
+          <fieldset>
+            <legend>• View Helpers 🌎</legend>
+            <Form.Check
+              id="originHelper"
+              type="checkbox"
+              label="Origin Helper"
+              onChange={handleChange}
+            />
+            <Form.Check
+              id="xGrid"
+              type="checkbox"
+              label="X Axis Grid"
+              onChange={handleChange}
+            />
+            <Form.Check
+              id="yGrid"
+              type="checkbox"
+              label="Y Axis Grid"
+              onChange={handleChange}
+            />
+            <Form.Check
+              id="zGrid"
+              type="checkbox"
+              label="Z Axis Grid"
+              onChange={handleChange}
+            />
+            <br />
+            <InputGroup>
+              <InputGroup.Text id="backgroundColorLabel">
+                Background Color
+              </InputGroup.Text>
+              <Form.Control
+                onChange={handleChange}
+                id="backgroundColor"
+                type="color"
+                aria-label="Background Color"
+                aria-describedby="backgroundColorLabel"
+              />
+            </InputGroup>
           </fieldset>
         </Form>
       </Container>
