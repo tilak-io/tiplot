@@ -1,20 +1,21 @@
-import { useEffect, useState } from "react";
-import NewWindow from "react-new-window";
+import "../../../node_modules/react-grid-layout/css/styles.css";
+import "../../static/css/layout.css";
+import { useState, useEffect } from "react";
+import RGL, { WidthProvider } from "react-grid-layout";
+import { v4 as uuid } from "uuid";
 import ToolBar from "../../components/ToolBar";
 import Graph from "../../components/Graph";
 import GraphXY from "../../components/GraphXY";
 import View3D from "../../components/View3D";
-import { v4 as uuid } from "uuid";
-import RGL, { WidthProvider } from "react-grid-layout";
+import NewWindow from "react-new-window";
 
+const ReactGridLayout = WidthProvider(RGL);
 
 function DetachedLayout({ socket }) {
-
-  const ReactGridLayout = WidthProvider(RGL);
   const [graphs, setGraphs] = useState([]);
   const [rowHeight, setRowHeight] = useState(null);
   const [positions, setPositions] = useState([]);
-  const [showView, setShowView] = useState(true);
+  const [showView, setShowView] = useState(false);
 
   useEffect(() => {
     initializeLayout();
@@ -22,7 +23,7 @@ function DetachedLayout({ socket }) {
 
   useEffect(() => {
     fitToScreen();
-    window.addEventListener("resize", fitToScreen);
+    // window.addEventListener("resize", fitToScreen);
   }, [graphs]);
 
   const fitToScreen = () => {
@@ -31,6 +32,7 @@ function DetachedLayout({ socket }) {
   };
 
   const toggle3dView = () => {
+    setShowView(!showView);
   };
 
   const addGraphYT = () => {
@@ -136,40 +138,51 @@ function DetachedLayout({ socket }) {
     localStorage.setItem("current_positions", JSON.stringify(layout));
   };
 
-  const Detached3D = () => (
-    <NewWindow>
-
-      <View3D socket={socket} detached />
-    </NewWindow>
-  )
 
 
-  return <>
+  return (
+    <>
+      <ToolBar
+        page="home"
+        addYT={addGraphYT}
+        addXY={addGraphXY}
+        toggle3dView={toggle3dView}
+        showView={showView}
+        showControls={true}
+      />
+      <div className="fit-to-screen">
+        <ReactGridLayout
+          layout={positions}
+          onLayoutChange={handleLayoutChange}
+          isResizable={false}
+          margin={[0, 0]}
+          rowHeight={rowHeight}
+          className="layout"
+          cols={1}
+          draggableHandle=".drag-button"
+        >
+          {graphs}
+        </ReactGridLayout>
+      </div>
+      <Detached3D show={showView} toggle={setShowView} />
 
-    <Detached3D />
-    <ToolBar
-      page="home"
-      addYT={addGraphYT}
-      addXY={addGraphXY}
-      toggle3dView={toggle3dView}
-      showView={showView}
-      showControls={true}
-    />
-    <div className="fit-to-screen">
-      <ReactGridLayout
-        layout={positions}
-        onLayoutChange={handleLayoutChange}
-        isResizable={false}
-        margin={[0, 0]}
-        rowHeight={rowHeight}
-        className="layout"
-        cols={1}
-        draggableHandle=".drag-button"
-      >
-        {graphs}
-      </ReactGridLayout>
-    </div>
-  </>
+    </>
+  );
 }
-export default DetachedLayout;
 
+function Detached3D({ show, toggle }) {
+  return show ? (
+
+    <NewWindow
+      title="Tiplot 3D View"
+      name="Tiplot 3D View"
+      center="screen"
+      onOpen={() => toggle(true)}
+      onUnload={() => toggle(false)}
+    >
+      <View3D detached />
+    </NewWindow>
+  ) : (<div></div>);
+}
+
+export default DetachedLayout;

@@ -109,6 +109,12 @@ body {
   word-spacing:0px;
 }
 
+/* 3D view */
+#view-3d {
+  height: 100vh;
+
+}
+
 /* custom scrollbar */
 /* width */
 ::-webkit-scrollbar {

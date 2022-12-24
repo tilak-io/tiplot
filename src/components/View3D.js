@@ -33,9 +33,9 @@ function View3D({ socket, detached }) {
     // Getting the entities
     getEntitiesProps();
     // Errors
-    socket.on("error", (error) => {
-      alert(error);
-    });
+    // socket.on("error", (error) => {
+    //   alert(error);
+    // });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     if (mount.current.childElementCount === 0) {
@@ -45,7 +45,7 @@ function View3D({ socket, detached }) {
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
     return () => {
-      socket.off("error");
+      // socket.off("error");
     };
     // eslint-disable-next-line
   }, []);
@@ -92,32 +92,23 @@ function View3D({ socket, detached }) {
   };
 
   const resizeCanvasToDisplaySize = () => {
-    const view = document.getElementById("view-3d");
+    // const view = document.getElementById("view-3d");
     const canvas = renderer.domElement;
+    if (!canvas) return;
+    // #view-3d: we need to reference it this way because `document` can't read detached windows
+    const view = canvas.parentElement.parentElement;
 
     if (!view) return;
 
-    if (detached) {
+    const width = view.clientWidth;
+    const height = view.clientHeight;
 
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      if (canvas.width !== width || canvas.height !== height) {
-        renderer.setSize(width, height, false);
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-      }
-    } else {
-      const width = view.clientWidth;
-      const height = window.innerHeight;
-      if (canvas.width !== width || canvas.height !== height) {
-        renderer.setSize(width, height, false);
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-      }
+    if (canvas.width !== width || canvas.height !== height) {
+      renderer.setSize(width, height, false);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
     }
   };
 
