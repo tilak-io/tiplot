@@ -1,24 +1,21 @@
 import "../../../node_modules/react-grid-layout/css/styles.css";
 import "../../static/css/layout.css";
-import Plotly from "plotly.js/dist/plotly";
 import { useState, useEffect } from "react";
-import RGL, { Responsive, WidthProvider } from "react-grid-layout";
+import RGL, { WidthProvider } from "react-grid-layout";
 import { v4 as uuid } from "uuid";
 import ToolBar from "../../components/ToolBar";
 import Graph from "../../components/Graph";
 import GraphXY from "../../components/GraphXY";
 import View3D from "../../components/View3D";
-import SplitPane from "react-split-pane";
+import NewWindow from "react-new-window";
 
 const ReactGridLayout = WidthProvider(RGL);
 
-function SplitLayout({ socket }) {
-  const defaultSize = 0.55 * window.innerWidth; // percentage of screen width
+function DetachedLayout({ socket }) {
   const [graphs, setGraphs] = useState([]);
   const [rowHeight, setRowHeight] = useState(null);
   const [positions, setPositions] = useState([]);
-  const [showView, setShowView] = useState(true);
-  const [size, setSize] = useState(defaultSize);
+  const [showView, setShowView] = useState(false);
 
   useEffect(() => {
     initializeLayout();
@@ -26,7 +23,7 @@ function SplitLayout({ socket }) {
 
   useEffect(() => {
     fitToScreen();
-    window.addEventListener("resize", fitToScreen);
+    // window.addEventListener("resize", fitToScreen);
   }, [graphs]);
 
   const fitToScreen = () => {
@@ -36,8 +33,6 @@ function SplitLayout({ socket }) {
 
   const toggle3dView = () => {
     setShowView(!showView);
-    if (showView) setSize(window.innerWidth);
-    else setSize(defaultSize);
   };
 
   const addGraphYT = () => {
@@ -143,6 +138,8 @@ function SplitLayout({ socket }) {
     localStorage.setItem("current_positions", JSON.stringify(layout));
   };
 
+
+
   return (
     <>
       <ToolBar
@@ -153,25 +150,39 @@ function SplitLayout({ socket }) {
         showView={showView}
         showControls={true}
       />
-      <SplitPane split="vertical" size={size}>
-        <div className="fit-to-screen">
-          <ReactGridLayout
-            layout={positions}
-            onLayoutChange={handleLayoutChange}
-            isResizable={false}
-            margin={[0, 0]}
-            rowHeight={rowHeight}
-            className="layout"
-            cols={1}
-            draggableHandle=".drag-button"
-          >
-            {graphs}
-          </ReactGridLayout>
-        </div>
-        <View3D />
-      </SplitPane>
+      <div className="fit-to-screen">
+        <ReactGridLayout
+          layout={positions}
+          onLayoutChange={handleLayoutChange}
+          isResizable={false}
+          margin={[0, 0]}
+          rowHeight={rowHeight}
+          className="layout"
+          cols={1}
+          draggableHandle=".drag-button"
+        >
+          {graphs}
+        </ReactGridLayout>
+      </div>
+      <Detached3D show={showView} toggle={setShowView} />
+
     </>
   );
 }
 
-export default SplitLayout;
+function Detached3D({ show, toggle }) {
+  return show ? (
+
+    <NewWindow
+      title="Tiplot 3D View"
+      name="Tiplot 3D View"
+      center="screen"
+      onOpen={() => toggle(true)}
+      onUnload={() => toggle(false)}
+    >
+      <View3D detached />
+    </NewWindow>
+  ) : (<div></div>);
+}
+
+export default DetachedLayout;

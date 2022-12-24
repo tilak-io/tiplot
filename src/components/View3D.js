@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { defaultSettings } from "../views/Settings";
 
-function View3D({ socket }) {
+function View3D({ socket, detached }) {
   const mount = useRef(0);
   var renderer = new THREE.WebGLRenderer({ antialias: true });
   var scene = new THREE.Scene();
@@ -32,10 +32,6 @@ function View3D({ socket }) {
 
     // Getting the entities
     getEntitiesProps();
-    // Errors
-    socket.on("error", (error) => {
-      alert(error);
-    });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     if (mount.current.childElementCount === 0) {
@@ -44,9 +40,6 @@ function View3D({ socket }) {
     renderer.setAnimationLoop(animation);
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
-    return () => {
-      socket.off("error");
-    };
     // eslint-disable-next-line
   }, []);
 
@@ -92,13 +85,16 @@ function View3D({ socket }) {
   };
 
   const resizeCanvasToDisplaySize = () => {
-    const view = document.getElementById("view-3d");
+    // const view = document.getElementById("view-3d");
     const canvas = renderer.domElement;
+    if (!canvas) return;
+    // #view-3d: we need to reference it this way because `document` can't read detached windows
+    const view = canvas.parentElement.parentElement;
 
     if (!view) return;
 
     const width = view.clientWidth;
-    const height = window.innerHeight;
+    const height = view.clientHeight;
 
     if (canvas.width !== width || canvas.height !== height) {
       renderer.setSize(width, height, false);

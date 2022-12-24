@@ -5,7 +5,7 @@ import Test from "./views/Test";
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
-import SplitLayout from "./views/layouts/SplitLayout";
+import MainLayout from "./views/layouts/MainLayout";
 import Entities from "./views/Entities";
 
 function App() {
@@ -59,7 +59,7 @@ function App() {
             />
             <Route
               path="/home"
-              element={<SplitLayout socket={socketInstance} />}
+              element={<MainLayout socket={socketInstance} />}
             />
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/entities" element={<Entities />} />
