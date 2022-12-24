@@ -32,10 +32,6 @@ function View3D({ socket, detached }) {
 
     // Getting the entities
     getEntitiesProps();
-    // Errors
-    // socket.on("error", (error) => {
-    //   alert(error);
-    // });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     if (mount.current.childElementCount === 0) {
@@ -44,9 +40,6 @@ function View3D({ socket, detached }) {
     renderer.setAnimationLoop(animation);
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
-    return () => {
-      // socket.off("error");
-    };
     // eslint-disable-next-line
   }, []);
 

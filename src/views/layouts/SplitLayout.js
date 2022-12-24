@@ -168,7 +168,7 @@ function SplitLayout({ socket }) {
             {graphs}
           </ReactGridLayout>
         </div>
-        <View3D socket={socket} />{" "}
+        <View3D />
       </SplitPane>
     </>
   );
