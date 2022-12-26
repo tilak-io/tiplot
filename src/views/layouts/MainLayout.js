@@ -22,7 +22,6 @@ function MainLayout({ socket }) {
   const getShowView = () => {
     var show_view = JSON.parse(localStorage.getItem("show_view")) ?? false;
     setShowView(show_view);
-    console.log(show_view);
   };
 
   function Layout() {

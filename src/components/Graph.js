@@ -135,6 +135,11 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     select.style.maxHeight = "500px";
   };
 
+  const isOptionSelected = (option) => {
+    const labels = selectedOptions.map((e) => e.label);
+    return labels.includes(option.label);
+  };
+
   return (
     <div className="plot-container">
       <Select
@@ -142,6 +147,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         className="multiselect"
         isMulti
         options={options}
+        isOptionSelected={isOptionSelected}
         onChange={handleSelectChange}
         value={selectedOptions}
         closeMenuOnSelect={false}
@@ -184,9 +190,9 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
             hovermode: "x",
             hoverlabel: {
               font: {
-                size: 10
-              }
-            }
+                size: 10,
+              },
+            },
           }}
           config={{
             displayModeBar: false,
