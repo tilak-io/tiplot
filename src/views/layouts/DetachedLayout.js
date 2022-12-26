@@ -23,7 +23,7 @@ function DetachedLayout({ socket, defaultShowView }) {
 
   useEffect(() => {
     fitToScreen();
-    // window.addEventListener("resize", fitToScreen);
+    window.addEventListener("resize", fitToScreen);
   }, [graphs]);
 
   const fitToScreen = () => {
