@@ -138,6 +138,11 @@ function DetachedLayout({ socket, defaultShowView }) {
     localStorage.setItem("current_positions", JSON.stringify(layout));
   };
 
+  const handleToggle = (value) => {
+    setShowView(value);
+    localStorage.setItem("show_view", JSON.stringify(value));
+  };
+
   return (
     <>
       <ToolBar
@@ -162,7 +167,7 @@ function DetachedLayout({ socket, defaultShowView }) {
           {graphs}
         </ReactGridLayout>
       </div>
-      <Detached3D show={showView} toggle={setShowView} />
+      <Detached3D show={showView} toggle={handleToggle} />
     </>
   );
 }
