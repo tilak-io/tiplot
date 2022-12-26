@@ -217,11 +217,11 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
             TiPlot
           </Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="#/home" className={page === "home" ? "active" : ""}>
-              Home
-            </Nav.Link>
             <Nav.Link href="#/" className={page === "loader" ? "active" : ""}>
               Loader
+            </Nav.Link>
+            <Nav.Link href="#/home" className={page === "home" ? "active" : ""}>
+              Home
             </Nav.Link>
             <NavDropdownMenu title="Tools" id="collasible-nav-dropdown">
               <NavDropdown.Item href="#/entities">Entities</NavDropdown.Item>
