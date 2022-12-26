@@ -10,7 +10,7 @@ import {
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { FaToggleOn, FaToggleOff, FaInfoCircle } from "react-icons/fa";
 import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
-import "react-bootstrap-submenu/dist/index.css"
+import "react-bootstrap-submenu/dist/index.css";
 import logo from "../static/img/logo.png";
 import { generateUUID } from "three/src/math/MathUtils";
 
@@ -30,11 +30,11 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   }, []);
 
   const getCurrentFile = async () => {
-    var response = await fetch("http://localhost:5000/current_file").then((res) => res.json());
-    if (response.msg)
-      setCurrentFile(response.msg);
-    else
-      setCurrentFile("Current File: " + response.file[0]);
+    var response = await fetch("http://localhost:5000/current_file").then(
+      (res) => res.json()
+    );
+    if (response.msg) setCurrentFile(response.msg);
+    else setCurrentFile("Current File: " + response.file[0]);
   };
 
   const parseLocalStorage = (key) => {
@@ -122,6 +122,11 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
     window.location.reload();
   };
 
+  const handle3DViewClicked = () => {
+    toggle3dView();
+    localStorage.setItem("show_view", JSON.stringify(!showView));
+  };
+
   function ViewButton() {
     if (showView)
       return (
@@ -137,7 +142,6 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
       );
   }
 
-
   function Controls() {
     if (!showControls) return;
     return (
@@ -148,7 +152,7 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
         <Nav.Link onClick={addXY}>
           <FcRadarPlot />
         </Nav.Link>
-        <Nav.Link onClick={toggle3dView}>
+        <Nav.Link onClick={handle3DViewClicked}>
           <ViewButton />
         </Nav.Link>
       </Nav>
@@ -181,15 +185,18 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
       </Modal>
 
       {/* Pop up for info box*/}
-      <Modal show={showInfoBox} onHide={() => setShowInfo(false)} animation={false} centered>
+      <Modal
+        show={showInfoBox}
+        onHide={() => setShowInfo(false)}
+        animation={false}
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>
             <FaInfoCircle />
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {currentFile}
-        </Modal.Body>
+        <Modal.Body>{currentFile}</Modal.Body>
       </Modal>
 
       {/* Actual Navbar */}
@@ -220,7 +227,7 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
               <NavDropdown.Item href="#/entities">Entities</NavDropdown.Item>
               <NavDropdown.Item href="#/settings">Settings</NavDropdown.Item>
               <DropdownSubmenu href="#" title="Layouts">
-                <DropdownSubmenu href="#" title="Saved Layouts" >
+                <DropdownSubmenu href="#" title="Saved Layouts">
                   {layouts}
                 </DropdownSubmenu>
                 <NavDropdown.Divider />

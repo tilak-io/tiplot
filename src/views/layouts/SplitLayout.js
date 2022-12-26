@@ -12,13 +12,15 @@ import SplitPane from "react-split-pane";
 
 const ReactGridLayout = WidthProvider(RGL);
 
-function SplitLayout({ socket }) {
+function SplitLayout({ socket, defaultShowView }) {
+  const fullSize = window.innerWidth;
   const defaultSize = 0.55 * window.innerWidth; // percentage of screen width
+
   const [graphs, setGraphs] = useState([]);
   const [rowHeight, setRowHeight] = useState(null);
   const [positions, setPositions] = useState([]);
-  const [showView, setShowView] = useState(true);
-  const [size, setSize] = useState(defaultSize);
+  const [showView, setShowView] = useState(defaultShowView);
+  const [size, setSize] = useState(defaultShowView ? defaultSize : fullSize);
 
   useEffect(() => {
     initializeLayout();
@@ -36,7 +38,7 @@ function SplitLayout({ socket }) {
 
   const toggle3dView = () => {
     setShowView(!showView);
-    if (showView) setSize(window.innerWidth);
+    if (showView) setSize(fullSize);
     else setSize(defaultSize);
   };
 
