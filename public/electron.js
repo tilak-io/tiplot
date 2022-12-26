@@ -34,6 +34,14 @@ function createWindow() {
   // win.loadURL(`http://localhost:3000`);
   // Open the DevTools.
   // win.webContents.openDevTools({ mode: "detach" });
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    return {
+      action: "allow",
+      overrideBrowserWindowOptions: {
+        autoHideMenuBar: true,
+      },
+    };
+  });
 }
 
 // This method will be called when Electron has finished

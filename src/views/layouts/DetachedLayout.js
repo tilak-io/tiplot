@@ -11,11 +11,11 @@ import NewWindow from "react-new-window";
 
 const ReactGridLayout = WidthProvider(RGL);
 
-function DetachedLayout({ socket }) {
+function DetachedLayout({ socket, defaultShowView }) {
   const [graphs, setGraphs] = useState([]);
   const [rowHeight, setRowHeight] = useState(null);
   const [positions, setPositions] = useState([]);
-  const [showView, setShowView] = useState(false);
+  const [showView, setShowView] = useState(defaultShowView);
 
   useEffect(() => {
     initializeLayout();
@@ -23,7 +23,7 @@ function DetachedLayout({ socket }) {
 
   useEffect(() => {
     fitToScreen();
-    // window.addEventListener("resize", fitToScreen);
+    window.addEventListener("resize", fitToScreen);
   }, [graphs]);
 
   const fitToScreen = () => {
@@ -138,7 +138,10 @@ function DetachedLayout({ socket }) {
     localStorage.setItem("current_positions", JSON.stringify(layout));
   };
 
-
+  const handleToggle = (value) => {
+    setShowView(value);
+    localStorage.setItem("show_view", JSON.stringify(value));
+  };
 
   return (
     <>
@@ -164,15 +167,13 @@ function DetachedLayout({ socket }) {
           {graphs}
         </ReactGridLayout>
       </div>
-      <Detached3D show={showView} toggle={setShowView} />
-
+      <Detached3D show={showView} toggle={handleToggle} />
     </>
   );
 }
 
 function Detached3D({ show, toggle }) {
   return show ? (
-
     <NewWindow
       title="Tiplot 3D View"
       name="Tiplot 3D View"
@@ -182,7 +183,9 @@ function Detached3D({ show, toggle }) {
     >
       <View3D detached />
     </NewWindow>
-  ) : (<div></div>);
+  ) : (
+    <div></div>
+  );
 }
 
 export default DetachedLayout;
