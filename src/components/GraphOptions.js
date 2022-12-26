@@ -142,14 +142,6 @@ function GraphOptions({ plotId, id, removeGraph }) {
     return icon;
   }
 
-  function ToggleSelectIcon() {
-    return (
-      <RxDropdownMenu
-        style={{ width: "100%", color: select ? "#777" : "#000" }}
-      />
-    );
-  }
-
   const toggleRangeslider = () => {
     setRSlider(!rslider);
     const rs = rslider ? {} : false;
@@ -188,10 +180,6 @@ function GraphOptions({ plotId, id, removeGraph }) {
 
       <span onClick={autoscale}>
         <MdZoomOutMap style={{ width: "100%" }} />
-      </span>
-
-      <span onClick={toggleSelect}>
-        <ToggleSelectIcon />
       </span>
 
       <span className="drag-button">
