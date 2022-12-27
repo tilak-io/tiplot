@@ -11,6 +11,7 @@ from datetime import datetime
 from sys import argv
 import store
 import json
+#import traceback
 
 from parsers.ulgparser import ULGParser 
 from parsers.csvparser import CSVParser 
@@ -48,6 +49,7 @@ def choose_parser(file, logs_dir):
             break
         except:
             # print("~> wrong format")
+            #print(traceback.format_exc())
             ok = False
     return ok
 
