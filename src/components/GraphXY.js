@@ -77,12 +77,16 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
         options={options_x}
         onChange={handleChangeX}
         value={selected_x}
+        menuPortalTarget={document.body}
+        styles={{ menuPortal: base => ({ ...base, zIndex: 9999, fontSize: "75%" }) }}
       />
       <Select
         className="multiselect"
         options={options_y}
         onChange={handleChangeY}
         value={selected_y}
+        menuPortalTarget={document.body}
+        styles={{ menuPortal: base => ({ ...base, zIndex: 9999, fontSize: "75%" }) }}
       />
       <div className="d-flex flex-xy">
         <Plot

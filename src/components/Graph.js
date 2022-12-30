@@ -155,6 +155,8 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         onInputChange={handleInput}
         onMenuOpen={stretchSelect}
         onBlur={squeezeSelect}
+        menuPortalTarget={document.body}
+        styles={{ menuPortal: base => ({ ...base, zIndex: 9999, fontSize: "75%" }) }}
       />
       <div className="placeholder" id={`whiteout-${id}`} />
       <div className="d-flex flex-yt">
