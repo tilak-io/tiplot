@@ -77,12 +77,14 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
         options={options_x}
         onChange={handleChangeX}
         value={selected_x}
+        menuPortalTarget={document.body}
       />
       <Select
         className="multiselect"
         options={options_y}
         onChange={handleChangeY}
         value={selected_y}
+        menuPortalTarget={document.body}
       />
       <div className="d-flex flex-xy">
         <Plot
