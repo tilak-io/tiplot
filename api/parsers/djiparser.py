@@ -1,5 +1,5 @@
 import math
-import pandas as pd
+from pandas import DataFrame
 import struct
 from .parser import Parser
 from cesium_entity import CesiumEntity
@@ -67,7 +67,7 @@ class DJIParser(Parser):
                     data = self.quaternionToEuler(data)
                     gps_data.append(data)
 
-        out = pd.DataFrame(gps_data).bfill()
+        out = DataFrame(gps_data).bfill()
         out['timestamp_tiplot'] = out['time'] - out['time'][0]
         out = out.fillna(0)
         self.datadict = {"data": out} 

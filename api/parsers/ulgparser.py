@@ -1,5 +1,5 @@
-import pyulog
-import pandas as pd
+from pyulog import ULog
+from pandas import DataFrame
 from cesium_entity import CesiumEntity
 import math
 from .parser import Parser
@@ -45,20 +45,20 @@ class ULGParser(Parser):
                 i['q[2]'],
                 i['q[3]'],))
         
-        r = pd.DataFrame(result)
+        r = DataFrame(result)
         a['pitch'] = r['pitch']
         a['roll'] = r['roll']
         a['yaw'] = r['yaw']
 
     def parse(self,filename):
-        self.ulg = pyulog.ULog(filename)
+        self.ulg = ULog(filename)
         self.datadict = {}
         for data in self.ulg.data_list:
             if data.multi_id > 0:
                 name = f"{data.name}_{data.multi_id}"
             else:
                 name = data.name
-            self.datadict[name] = pd.DataFrame(data.data)
+            self.datadict[name] = DataFrame(data.data)
             self.datadict[name]['timestamp_tiplot'] = self.datadict[name]['timestamp'] / 1e6
         self.add_euler(self.datadict)
         return [self.datadict, self.entities]
