@@ -150,10 +150,12 @@ def get_yt_values():
     field = request.get_json()
     table = field['table']
     column = field['column']
+    columns = list(set([column, "timestamp_tiplot"])) # remove duplicates
     datadict = store.Store.get().datadict
     try:
-        values = datadict[table][[column, "timestamp_tiplot"]].fillna(0).to_dict('records')
+        values = datadict[table][columns].fillna(0).to_dict('records')
     except:
+        # columns not found
         values = []
     response = {"table": table, "column": column , "values": values}
     return response
@@ -164,10 +166,12 @@ def get_xy_values():
     table = field['table']
     columns = field['columns']
     columns.append("timestamp_tiplot")
+    columns = list(set(columns))
     datadict = store.Store.get().datadict
     try:
         values = datadict[table][columns].fillna(0).to_dict('records')
     except:
+        # columns not found
         values = []
     response = {"table": table, "x": columns[0], "y": columns[1] , "values": values}
     return response
