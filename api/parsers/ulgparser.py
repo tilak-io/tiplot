@@ -38,7 +38,7 @@ class ULGParser(Parser):
         a=datadict['vehicle_attitude']
 
         result = []
-        for i in a.to_dict(orient='record'):
+        for i in a.to_dict('records'):
             result.append(self.euler_from_quaternion(
                 i['q[0]'],
                 i['q[1]'],
