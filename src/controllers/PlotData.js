@@ -209,10 +209,17 @@ export default class PlotData {
 
       // TODO: investigate
       try {
-        const x_min = Math.min.apply(Math, plots[i].data[0].x);
-        const x_max = Math.max.apply(Math, plots[i].data[0].x);
-        min_values.push(x_min);
-        max_values.push(x_max);
+        let minMax = plots[i].data[0].x.reduce(
+          (acc, cur) => {
+            return {
+              min: Math.min(acc.min, cur),
+              max: Math.max(acc.max, cur),
+            };
+          },
+          { min: Infinity, max: -Infinity }
+        );
+        min_values.push(minMax.min);
+        max_values.push(minMax.max);
       } catch (e) {
         alert(e);
       }
@@ -270,31 +277,20 @@ export default class PlotData {
 
   getScaledYAxis = (xrange) => {
     const plot = document.getElementById(`plot-${this.id}`);
-    var max_values = [];
-    var min_values = [];
-    if (plot.data.length === 0) return;
-    for (let j = 0; j < plot.data.length; j++) {
-      var e = plot.data[j];
-      if (e.visible === "legendonly") continue;
-      var x0 = this.findClosest(xrange[0], e.x);
-      var x1 = this.findClosest(xrange[1], e.x);
-      const visible_y_data = e.y.slice(e.x.indexOf(x0), e.x.indexOf(x1));
-      max_values.push(Math.max.apply(Math, visible_y_data));
-      min_values.push(Math.min.apply(Math, visible_y_data));
-      const max =
-        Math.max.apply(Math, max_values) !== Infinity
-          ? Math.max.apply(Math, max_values)
-          : 1;
-      const min =
-        Math.min.apply(Math, min_values) !== -Infinity
-          ? Math.min.apply(Math, min_values)
-          : 0;
+    // const yData = plot.data.map((series) => series.y);
+    const yData = plot.data.reduce((acc, series) => {
+      const filteredY = series.y.filter(
+        (y, i) => series.x[i] >= xrange[0] && series.x[i] <= xrange[1]
+      );
+      return acc.concat(filteredY);
+    }, []);
+    const yMin = Math.min(...yData);
+    const yMax = Math.max(...yData);
 
-      var margin = (max - min) / 5;
-      margin = margin === 0 ? 0.5 : margin; // set the margin to 1 in case of max == min
-      var new_y_range = [min - margin, max + margin];
-    }
-    return new_y_range;
+    var margin = (yMax - yMin) / 5;
+    margin = margin === 0 ? 0.5 : margin; // set the margin to 1 in case of max == min
+    var rangeY = [yMin - margin, yMax + margin];
+    return rangeY;
   };
 
   autoScaleVerticalAxis = (event) => {
