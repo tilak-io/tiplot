@@ -156,7 +156,9 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         onMenuOpen={stretchSelect}
         onBlur={squeezeSelect}
         menuPortalTarget={document.body}
-        styles={{ menuPortal: base => ({ ...base, zIndex: 9999, fontSize: "75%" }) }}
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999, fontSize: "75%" }),
+        }}
       />
       <div className="placeholder" id={`whiteout-${id}`} />
       <div className="d-flex flex-yt">
@@ -187,6 +189,10 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
               spikecolor: "#000",
               spikemode: "across+marker",
               spikethickness: 1,
+              exponentformat: "e",
+            },
+            yaxis: {
+              exponentformat: "e",
             },
             // hovermode: "x unified",
             hovermode: "x",
