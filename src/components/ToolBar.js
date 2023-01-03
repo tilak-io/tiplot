@@ -173,24 +173,6 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
 
   const InfoTable = ({ data }) => {
     const headers = Object.keys(data.info[0]);
-
-    //     <thead>
-    //       <tr>
-    //         {headers.map((header) => (
-    //           <th key={header}>{header}</th>
-    //         ))}
-    //       </tr>
-    //     </thead>
-    //     <tbody>
-    //       {data.map((item) => (
-    //         <tr key={item.id}>
-    //           {headers.map((header) => (
-    //             <td key={`${item.id}-${header}`}>{item[header]}</td>
-    //           ))}
-    //         </tr>
-    //       ))}
-    //     </tbody>
-
     return (
       <Table striped bordered hover>
         <thead>

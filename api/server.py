@@ -36,27 +36,39 @@ thread = Thread()
 current_parser = None
 current_file = None
 
+extension_to_parser = {
+    'ulg': ULGParser,
+    'csv': CSVParser,
+    'dat': DJIParser,
+    'bin': ArduParser,
+    'tlog': TLOGParser,
+}
+
 def choose_parser(file, logs_dir):
     global current_parser
-    parsers = [ULGParser(), CSVParser(), DJIParser(), ArduParser(), TLOGParser()]
     full_path = logs_dir + file
-    for p in parsers:
-        try:
-            datadict, entities, additional_info = p.parse(full_path)
-            store.Store.get().setStore(datadict, entities, additional_info)
-            ok = True
-            current_parser = p
-            break
-        except ValueError:
-            datadict, entities = p.parse(full_path)
-            store.Store.get().setStore(datadict, entities)
-            ok = True
-            current_parser = p
-            break
-        except:
-            # print("~> wrong format")
-            #print(traceback.format_exc())
-            ok = False
+
+    _, file_extension = path.splitext(full_path)
+    file_extension = file_extension.lower()[1:]  # remove the leading '.'
+
+    # Look up the parser class in the dictionary using the file extension as the key
+    parser_cls = extension_to_parser.get(file_extension)
+    if parser_cls is None:
+        ok = False
+        raise ValueError(f"Unsupported file extension: {file_extension}")
+
+    # Create an instance of the parser class and use it to parse the file
+    parser = parser_cls()
+    try:
+        datadict, entities, additional_info = parser.parse(full_path)
+        store.Store.get().setStore(datadict, entities, additional_info)
+        ok = True
+        current_parser = parser
+    except ValueError:
+        datadict, entities = parser.parse(full_path)
+        store.Store.get().setStore(datadict, entities)
+        ok = True
+        current_parser = parser
     return ok
 
 @socketio.on("connect")
