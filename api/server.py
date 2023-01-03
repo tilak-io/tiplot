@@ -42,8 +42,8 @@ def choose_parser(file, logs_dir):
     full_path = logs_dir + file
     for p in parsers:
         try:
-            [datadict, entities] = p.parse(full_path)
-            store.Store.get().setStore(datadict, entities)
+            [datadict, entities, additional_info] = p.parse(full_path)
+            store.Store.get().setStore(datadict, entities, additional_info)
             ok = True
             current_parser = p
             break
@@ -212,6 +212,11 @@ def get_keys():
     response = {"keys": keys}
     return response
 
+
+@app.route('/additional_info')
+def get_additional_info():
+    info = store.Store.get().info
+    return info
 
 @socketio.on("disconnect")
 def disconnected():
