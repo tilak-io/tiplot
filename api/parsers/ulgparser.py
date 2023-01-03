@@ -76,8 +76,12 @@ class ULGParser(Parser):
             message_data.append(message_dict)
         self.datadict['logged_messages'] = {}
         messages_df = DataFrame(message_data)
+
+        # exclude 'timestamp_tiplot' from infobox
+        columns_to_include = [col for col in messages_df.columns if col != 'timestamp_tiplot']
+        filtered_df = messages_df[columns_to_include]
         self.datadict['logged_messages'] = messages_df
-        self.additionalInfo.append({"name": "Logged Messages", "info": messages_df.to_dict('records')})
+        self.additionalInfo.append({"name": "Logged Messages", "info": filtered_df.to_dict('records')})
 
 
         parameters_dict = [{"name": name, "value": value} for name, value in self.ulg.initial_parameters.items()]
