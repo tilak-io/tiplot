@@ -1,11 +1,5 @@
 import ToolBar from "../components/ToolBar";
-import {
-  Container,
-  Form,
-  Row,
-  Col,
-  InputGroup,
-} from "react-bootstrap";
+import { Container, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { useEffect } from "react";
 import "../static/css/settings.css";
 
@@ -18,15 +12,14 @@ export const defaultSettings = {
   maxDistance: 1500,
   dampingFactor: 0.8,
   fov: 75,
+  textYValue: 0,
 };
 
 function Settings() {
-
   useEffect(() => {
     getCurrentSettings();
     getCurrentLayout();
   }, []);
-
 
   const parseLocalStorage = (key) => {
     var value = localStorage.getItem(key);
@@ -50,6 +43,8 @@ function Settings() {
     const general_settings = parseLocalStorage("general_settings");
     if (e.target.type == "checkbox")
       general_settings[e.target.id] = e.target.checked;
+    else if (e.target.type == "number")
+      general_settings[e.target.id] = parseFloat(e.target.value) ?? 1;
     else general_settings[e.target.id] = e.target.value;
     localStorage.setItem("general_settings", JSON.stringify(general_settings));
   };
@@ -58,17 +53,17 @@ function Settings() {
     var view_layout = localStorage.getItem("view_layout", "split-fit");
     view_layout = e.target.id;
     localStorage.setItem("view_layout", JSON.stringify(view_layout));
-  }
+  };
 
   const getCurrentLayout = () => {
-    var view_layout = JSON.parse(localStorage.getItem("view_layout")) ?? "split-fit";
-    const layouts = ['split-fit', 'detached-fit'];
+    var view_layout =
+      JSON.parse(localStorage.getItem("view_layout")) ?? "split-fit";
+    const layouts = ["split-fit", "detached-fit"];
 
     layouts.forEach((layout) => {
       const input = document.getElementById(layout);
       input.checked = view_layout == input.id;
     });
-
   };
 
   return (
@@ -130,6 +125,23 @@ function Settings() {
                     onChange={handleChange}
                     id="fov"
                     type="number"
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
+          </fieldset>
+
+          <fieldset>
+            <legend>• Plots 📈</legend>
+            <Row>
+              <Col>
+                <InputGroup>
+                  <InputGroup.Text>Text Y Value</InputGroup.Text>
+                  <Form.Control
+                    onChange={handleChange}
+                    id="textYValue"
+                    type="number"
+                    min={1}
                   />
                 </InputGroup>
               </Col>

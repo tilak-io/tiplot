@@ -63,10 +63,12 @@ export default class PlotData {
       x_values.push(e[x_name]);
       y_values.push(e[y_name]);
     });
-    if (typeof y_values[0] == "string")
+    if (typeof y_values[0] == "string") {
+      const gs = localStorage.getItem("general_settings");
+      const y_text = gs ? JSON.parse(gs)["textYValue"] ?? 0 : 0;
       return {
         x: x_values,
-        y: Array(x_values.length).fill(0),
+        y: Array(x_values.length).fill(y_text),
         name: `${table}/${y_name}`,
         hovertemplate: "%{text}",
         type: "scatter",
@@ -74,7 +76,7 @@ export default class PlotData {
         text: y_values,
         textposition: "top center",
       };
-    else
+    } else
       return {
         x: x_values,
         y: y_values,
