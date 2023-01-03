@@ -34,7 +34,7 @@ class TLOGParser(Parser):
                 buf[name] = [clean_dict]
                 
         self.datadict = {i:DataFrame(buf[i]).bfill() for i in buf}
-        return [self.datadict, self.entities]
+        return self.datadict, self.entities
 
 
     def initDefaultEntity(self):

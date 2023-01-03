@@ -62,7 +62,7 @@ class ULGParser(Parser):
             self.datadict[name]['timestamp_tiplot'] = self.datadict[name]['timestamp'] / 1e6
         self.add_euler(self.datadict)
         self.setAdditionalInfo()
-        return [self.datadict, self.entities, self.additionalInfo]
+        return self.datadict, self.entities, self.additionalInfo
 
     def setAdditionalInfo(self):
         message_data = []
@@ -70,8 +70,8 @@ class ULGParser(Parser):
             message_dict = {}
             message_dict['timestamp'] = message.timestamp
             message_dict['message'] = message.message
-            message_dict['log_level'] = message.message
-            message_dict['log_level_str'] = message.message
+            # message_dict['log_level'] = message.log_level
+            # message_dict['log_level_str'] = message.log_level_str
             message_dict['timestamp_tiplot'] = message_dict['timestamp'] / 1e6
             message_data.append(message_dict)
         self.datadict['logged_messages'] = {}
@@ -81,7 +81,7 @@ class ULGParser(Parser):
 
 
         parameters_dict = [{"name": name, "value": value} for name, value in self.ulg.initial_parameters.items()]
-        self.additionalInfo.append({"name": "initial_parameters", "info": parameters_dict})
+        self.additionalInfo.append({"name": "Initial Parameters", "info": parameters_dict})
 
     def initDefaultEntity(self):
         self.default_entity = CesiumEntity(name='ulg default entity',

@@ -42,8 +42,14 @@ def choose_parser(file, logs_dir):
     full_path = logs_dir + file
     for p in parsers:
         try:
-            [datadict, entities, additional_info] = p.parse(full_path)
+            datadict, entities, additional_info = p.parse(full_path)
             store.Store.get().setStore(datadict, entities, additional_info)
+            ok = True
+            current_parser = p
+            break
+        except ValueError:
+            datadict, entities = p.parse(full_path)
+            store.Store.get().setStore(datadict, entities)
             ok = True
             current_parser = p
             break

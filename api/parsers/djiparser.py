@@ -71,7 +71,7 @@ class DJIParser(Parser):
         out['timestamp_tiplot'] = out['time'] - out['time'][0]
         out = out.fillna(0)
         self.datadict = {"data": out} 
-        return [self.datadict, self.entities]
+        return self.datadict, self.entities
 
     def initDefaultEntitiy(self):
         self.default_entity = CesiumEntity(

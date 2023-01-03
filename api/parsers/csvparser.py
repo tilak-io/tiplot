@@ -19,7 +19,7 @@ class CSVParser(Parser):
         csv['timestamp'] = micro_seconds
         csv['timestamp_tiplot'] = seconds
         self.datadict = {"data": csv} 
-        return [self.datadict, self.entities]
+        return self.datadict, self.entities
 
     def initDefaultEntitiy(self):
         self.default_entity = CesiumEntity(
