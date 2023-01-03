@@ -90,6 +90,10 @@ body {
   opacity: 1;
 }
 
+.modal {
+  --bs-modal-width: 85%;
+}
+
 /* Graphs */
 .multiselect > div > div > div {
   margin:1px;
