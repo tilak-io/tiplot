@@ -6,6 +6,8 @@ import {
   NavDropdown,
   Modal,
   Button,
+  Tab,
+  Tabs,
 } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { FaToggleOn, FaToggleOff, FaInfoCircle } from "react-icons/fa";
@@ -192,11 +194,17 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            <FaInfoCircle />
-          </Modal.Title>
+          <Modal.Title>My Modal</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{currentFile}</Modal.Body>
+        <Modal.Body>
+          <Tabs defaultActiveKey="current_file">
+            <Tab eventKey="current_file" title="Current File">
+              <br className="break" />
+              <Container>{currentFile}</Container>
+            </Tab>
+            <Tab eventKey="logged_messages" title="Logged Messages"></Tab>
+          </Tabs>
+        </Modal.Body>
       </Modal>
 
       {/* Actual Navbar */}
