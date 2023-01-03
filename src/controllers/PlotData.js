@@ -63,13 +63,25 @@ export default class PlotData {
       x_values.push(e[x_name]);
       y_values.push(e[y_name]);
     });
-    return {
-      x: x_values,
-      y: y_values,
-      name: `${table}/${y_name}`,
-      // hovertemplate: `${table}/${y_name}: %{y:f}<extra></extra>`,
-      hovertemplate: `%{y}`,
-    };
+    if (typeof y_values[0] == "string")
+      return {
+        x: x_values,
+        y: Array(x_values.length).fill(0),
+        name: `${table}/${y_name}`,
+        hovertemplate: "%{text}",
+        type: "scatter",
+        mode: "markers",
+        text: y_values,
+        textposition: "top center",
+      };
+    else
+      return {
+        x: x_values,
+        y: y_values,
+        name: `${table}/${y_name}`,
+        // hovertemplate: `${table}/${y_name}: %{y:f}<extra></extra>`,
+        hovertemplate: `%{y}`,
+      };
   };
 
   // get data for xy graphs
