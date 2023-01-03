@@ -1,4 +1,4 @@
-import pandas as pd
+from pandas import DataFrame
 from cesium_entity import CesiumEntity
 from .parser import Parser
 from pymavlink import mavutil
@@ -33,8 +33,8 @@ class TLOGParser(Parser):
                 del clean_dict['mavpackettype']
                 buf[name] = [clean_dict]
                 
-        self.datadict = {i:pd.DataFrame(buf[i]).bfill() for i in buf}
-        return [self.datadict, self.entities]
+        self.datadict = {i:DataFrame(buf[i]).bfill() for i in buf}
+        return self.datadict, self.entities
 
 
     def initDefaultEntity(self):

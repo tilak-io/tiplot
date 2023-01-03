@@ -1,5 +1,5 @@
-import pyulog
-import pandas as pd
+from pyulog import ULog
+from pandas import DataFrame
 from cesium_entity import CesiumEntity
 import math
 from .parser import Parser
@@ -38,30 +38,54 @@ class ULGParser(Parser):
         a=datadict['vehicle_attitude']
 
         result = []
-        for i in a.to_dict(orient='record'):
+        for i in a.to_dict('records'):
             result.append(self.euler_from_quaternion(
                 i['q[0]'],
                 i['q[1]'],
                 i['q[2]'],
                 i['q[3]'],))
         
-        r = pd.DataFrame(result)
+        r = DataFrame(result)
         a['pitch'] = r['pitch']
         a['roll'] = r['roll']
         a['yaw'] = r['yaw']
 
     def parse(self,filename):
-        self.ulg = pyulog.ULog(filename)
+        self.ulg = ULog(filename)
         self.datadict = {}
         for data in self.ulg.data_list:
             if data.multi_id > 0:
                 name = f"{data.name}_{data.multi_id}"
             else:
                 name = data.name
-            self.datadict[name] = pd.DataFrame(data.data)
+            self.datadict[name] = DataFrame(data.data)
             self.datadict[name]['timestamp_tiplot'] = self.datadict[name]['timestamp'] / 1e6
         self.add_euler(self.datadict)
-        return [self.datadict, self.entities]
+        self.setAdditionalInfo()
+        return self.datadict, self.entities, self.additionalInfo
+
+    def setAdditionalInfo(self):
+        message_data = []
+        for message in self.ulg.logged_messages:
+            message_dict = {}
+            message_dict['timestamp'] = message.timestamp
+            message_dict['message'] = message.message
+            # message_dict['log_level'] = message.log_level
+            # message_dict['log_level_str'] = message.log_level_str
+            message_dict['timestamp_tiplot'] = message_dict['timestamp'] / 1e6
+            message_data.append(message_dict)
+        self.datadict['logged_messages'] = {}
+        messages_df = DataFrame(message_data)
+
+        # exclude 'timestamp_tiplot' from infobox
+        columns_to_include = [col for col in messages_df.columns if col != 'timestamp_tiplot']
+        filtered_df = messages_df[columns_to_include]
+        self.datadict['logged_messages'] = messages_df
+        self.additionalInfo.append({"name": "Logged Messages", "info": filtered_df.to_dict('records')})
+
+
+        parameters_dict = [{"name": name, "value": value} for name, value in self.ulg.initial_parameters.items()]
+        self.additionalInfo.append({"name": "Initial Parameters", "info": parameters_dict})
 
     def initDefaultEntity(self):
         self.default_entity = CesiumEntity(name='ulg default entity',

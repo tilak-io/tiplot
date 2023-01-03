@@ -8,7 +8,14 @@ else add_data = "--add-data api:api";
 const spawn = require("child_process").spawn,
   ls = spawn(
     "python3 -m PyInstaller",
-    ["-w", "--onefile", "--distpath backend", add_data, "api/server.py"],
+    [
+      "-w",
+      "--onefile",
+      "--strip",
+      "--distpath backend",
+      add_data,
+      "api/server.py",
+    ],
     {
       shell: true,
     }

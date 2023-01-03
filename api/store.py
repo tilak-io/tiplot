@@ -23,16 +23,18 @@ class Store:
 
             self.datadict = {}
             self.entities = []
+            self.info = []
             self.lock = threading.Lock()
 
     def getStore(self):
         with self.lock:
             return {'entities':self.entities, 'datadict':self.datadict}
 
-    def setStore(self,datadict,entities):
+    def setStore(self,datadict,entities, info=[]):
         with self.lock:
             self.datadict = datadict
             self.entities = entities
+            self.info = info
 
     def getKeys(self):
         keys = list(self.datadict.keys())
@@ -133,4 +135,5 @@ class Store:
             k = list(self.datadict[key].keys())
             nested.append({key: k})
         return nested
+
 

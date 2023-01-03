@@ -81,6 +81,11 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     }
   };
 
+  const handleClick = (event) => {
+    squeezeSelect();
+    handleHover(event);
+  };
+
   const relayoutHandler = (event) => {
     // Auto Scale
     if (
@@ -168,7 +173,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
           data={data}
           onRelayout={relayoutHandler}
           onHover={handleHover}
-          onClick={handleHover}
+          onClick={handleClick}
           useResizeHandler
           layout={{
             autoresize: true,

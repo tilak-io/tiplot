@@ -89,7 +89,7 @@ function View3D({ socket, detached }) {
     const canvas = renderer.domElement;
     if (!canvas) return;
     // #view-3d: we need to reference it this way because `document` can't read detached windows
-    const view = canvas.parentElement.parentElement;
+    const view = canvas.parentElement?.parentElement;
 
     if (!view) return;
 
@@ -140,7 +140,7 @@ function View3D({ socket, detached }) {
   };
 
   const setupKeyControls = () => {
-    document.onkeydown = function(e) {
+    document.onkeydown = function (e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":
@@ -158,7 +158,7 @@ function View3D({ socket, detached }) {
       }
     };
 
-    document.onkeyup = function(e) {
+    document.onkeyup = function (e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":

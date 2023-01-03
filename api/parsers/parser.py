@@ -7,6 +7,7 @@ class Parser:
         self.name = "generic_parser"
         self.entities = []
         self.datadict = {}
+        self.additionalInfo = []
 
 
     def parse(self,filename):

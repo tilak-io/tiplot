@@ -36,21 +36,39 @@ thread = Thread()
 current_parser = None
 current_file = None
 
+extension_to_parser = {
+    'ulg': ULGParser,
+    'csv': CSVParser,
+    'dat': DJIParser,
+    'bin': ArduParser,
+    'tlog': TLOGParser,
+}
+
 def choose_parser(file, logs_dir):
     global current_parser
-    parsers = [ULGParser(), CSVParser(), DJIParser(), ArduParser(), TLOGParser()]
     full_path = logs_dir + file
-    for p in parsers:
-        try:
-            [datadict, entities] = p.parse(full_path)
-            store.Store.get().setStore(datadict, entities)
-            ok = True
-            current_parser = p
-            break
-        except:
-            # print("~> wrong format")
-            #print(traceback.format_exc())
-            ok = False
+
+    _, file_extension = path.splitext(full_path)
+    file_extension = file_extension.lower()[1:]  # remove the leading '.'
+
+    # Look up the parser class in the dictionary using the file extension as the key
+    parser_cls = extension_to_parser.get(file_extension)
+    if parser_cls is None:
+        ok = False
+        raise ValueError(f"Unsupported file extension: {file_extension}")
+
+    # Create an instance of the parser class and use it to parse the file
+    parser = parser_cls()
+    try:
+        datadict, entities, additional_info = parser.parse(full_path)
+        store.Store.get().setStore(datadict, entities, additional_info)
+        ok = True
+        current_parser = parser
+    except ValueError:
+        datadict, entities = parser.parse(full_path)
+        store.Store.get().setStore(datadict, entities)
+        ok = True
+        current_parser = parser
     return ok
 
 @socketio.on("connect")
@@ -150,10 +168,12 @@ def get_yt_values():
     field = request.get_json()
     table = field['table']
     column = field['column']
+    columns = list(set([column, "timestamp_tiplot"])) # remove duplicates
     datadict = store.Store.get().datadict
     try:
-        values = datadict[table][[column, "timestamp_tiplot"]].fillna(0).to_dict('records')
+        values = datadict[table][columns].fillna(0).to_dict('records')
     except:
+        # columns not found
         values = []
     response = {"table": table, "column": column , "values": values}
     return response
@@ -164,10 +184,12 @@ def get_xy_values():
     table = field['table']
     columns = field['columns']
     columns.append("timestamp_tiplot")
+    columns = list(set(columns))
     datadict = store.Store.get().datadict
     try:
         values = datadict[table][columns].fillna(0).to_dict('records')
     except:
+        # columns not found
         values = []
     response = {"table": table, "x": columns[0], "y": columns[1] , "values": values}
     return response
@@ -208,6 +230,11 @@ def get_keys():
     response = {"keys": keys}
     return response
 
+
+@app.route('/additional_info')
+def get_additional_info():
+    info = store.Store.get().info
+    return info
 
 @socketio.on("disconnect")
 def disconnected():

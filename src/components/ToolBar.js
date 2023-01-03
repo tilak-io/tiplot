@@ -6,6 +6,9 @@ import {
   NavDropdown,
   Modal,
   Button,
+  Tab,
+  Tabs,
+  Table,
 } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { FaToggleOn, FaToggleOff, FaInfoCircle } from "react-icons/fa";
@@ -17,17 +20,26 @@ import { generateUUID } from "three/src/math/MathUtils";
 function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
-  const [currentFile, setCurrentFile] = useState("wowowwo");
+  const [currentFile, setCurrentFile] = useState("");
   const [showInfoBox, setShowInfo] = useState(false);
+  const [additionalInfo, setAdditionalInfo] = useState([]);
 
   const handleClose = () => setShowSaveMsg(false);
   const saveCurrentLayoutNamed = () => setShowSaveMsg(true);
 
   useEffect(() => {
     getCurrentFile();
+    getAdditionalInfo();
     mapLayouts();
     // eslint-disable-next-line
   }, []);
+
+  const getAdditionalInfo = async () => {
+    var response = await fetch("http://localhost:5000/additional_info").then(
+      (res) => res.json()
+    );
+    setAdditionalInfo(response);
+  };
 
   const getCurrentFile = async () => {
     var response = await fetch("http://localhost:5000/current_file").then(
@@ -159,6 +171,30 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
     );
   }
 
+  const InfoTable = ({ data }) => {
+    const headers = Object.keys(data.info[0]);
+    return (
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            {headers.map((header) => (
+              <th key={header}>{header}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.info.map((item) => (
+            <tr key={generateUUID()}>
+              {headers.map((header) => (
+                <td key={`${generateUUID()}-${header}`}>{item[header]}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    );
+  };
+
   return (
     <>
       {/* Pop up for setting layout name */}
@@ -192,11 +228,24 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            <FaInfoCircle />
-          </Modal.Title>
+          <Modal.Title>Additional Info</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{currentFile}</Modal.Body>
+        <Modal.Body>
+          <Tabs defaultActiveKey="current_file">
+            <Tab eventKey="current_file" title="Current File">
+              <br className="break" />
+              <Container>{currentFile}</Container>
+            </Tab>
+            {additionalInfo.map((info) => (
+              <Tab key={generateUUID()} eventKey={info.name} title={info.name}>
+                <br className="break" />
+                <Container>
+                  <InfoTable data={info} />
+                </Container>
+              </Tab>
+            ))}
+          </Tabs>
+        </Modal.Body>
       </Modal>
 
       {/* Actual Navbar */}
