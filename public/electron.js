@@ -42,7 +42,7 @@ function createWindow() {
   win.loadURL(`file://${path.join(__dirname, "../build/index.html")}`);
   // win.loadURL(`http://localhost:3000`);
   // Open the DevTools.
-  win.webContents.openDevTools({ mode: "detach" });
+  // win.webContents.openDevTools({ mode: "detach" });
   win.webContents.setWindowOpenHandler(({ url }) => {
     return {
       action: "allow",

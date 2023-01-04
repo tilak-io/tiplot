@@ -4,6 +4,7 @@ import Entity from "../controllers/Entity.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { defaultSettings } from "../views/Settings";
+import { PORT } from "../static/js/constants";
 
 function View3D({ socket, detached }) {
   const mount = useRef(0);
@@ -45,7 +46,7 @@ function View3D({ socket, detached }) {
 
   const getEntitiesProps = async () => {
     const raw_entities = await fetch(
-      "http://localhost:5000/entities_props"
+      `http://localhost:${PORT}/entities_props`
     ).then((res) => res.json());
     if (raw_entities.error) alert(raw_entities.error);
     else raw_entities.forEach(initEntity);
