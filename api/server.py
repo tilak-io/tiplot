@@ -8,7 +8,7 @@ from os import makedirs, path, getcwd
 from glob import glob
 from communication import Comm
 from datetime import datetime
-from sys import argv
+from argparse import ArgumentParser
 import store
 import json
 #import traceback
@@ -117,10 +117,7 @@ def upload_log():
 
 @app.route('/model')
 def model_3d():
-    if (len(argv) <= 1):
-        model = getcwd() + "/../obj/main.gltf" # debug mode
-    else:
-        model = argv[1]
+    model = args.model
     return send_file(model)
 
 @app.route('/entities_config')
@@ -241,6 +238,12 @@ def disconnected():
     # print("-> client has disconnected " + request.sid)
     pass
 
+arg_parser = ArgumentParser(description="Tiplot")
+arg_parser.add_argument('--port', type=int, default=5000, help='Port to run the server on')
+arg_parser.add_argument('--model', type=str, default= getcwd() + "/../obj/main.gltf", help='Path to the model file')
+args = arg_parser.parse_args()
+
+
 def print_tiplot():
     print('''
  _____ _ ____  _       _
@@ -249,13 +252,13 @@ def print_tiplot():
   | | | |  __/| | (_) | |_
   |_| |_|_|   |_|\___/ \__|
           ''')
-    print('-> Starting TiPlot...')
+    print(f'-> Starting TiPlot on port {args.port}...')
 
 def run_server():
     try:
-        socketio.run(app, host='127.0.0.1', port=5000)
+        socketio.run(app, host='127.0.0.1', port=args.port)
     except:
-        print('~> Server already running.')
+        print('~> Port busy.')
     finally:
         print('-> See you soon.')
 
