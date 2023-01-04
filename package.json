@@ -63,7 +63,7 @@
     "eject": "react-scripts eject",
     "start:api": "cd api && python3 server.py",
     "build:api": "node package_python.js",
-    "serve:electron": "concurrently -k \"yarn api:start \" \"cross-env BROWSER=none yarn start\" \"yarn electron:start\"",
+    "serve:electron": "concurrently -k \"yarn start:api \" \"cross-env BROWSER=none yarn start\" \"yarn start:electron\"",
     "build:electron": "yarn build && electron-builder",
     "start:electron": "wait-on tcp:3000 && electron .",
     "clean": "rm -rf dist/ server.spec main.spec build/ backend"
