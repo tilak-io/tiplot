@@ -38,6 +38,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "plotly.js": "^2.14.0",
+    "portfinder": "^1.0.32",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
     "react-bootstrap-submenu": "^2.0.0",
@@ -91,7 +92,6 @@
     "cross-env": "^7.0.3",
     "electron": "^20.2.0",
     "electron-builder": "^23.3.3",
-    "portfinder": "^1.0.32",
     "three-orbit-controls": "^82.1.0",
     "wait-on": "^6.0.1"
   }
