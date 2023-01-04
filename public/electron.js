@@ -9,7 +9,7 @@ const model = path.join(process.resourcesPath, "obj/main.gltf");
 
 var spawn = require("child_process").spawn;
 var start;
-portfinder.getPort({ port: 5005, stopPort: 6000 }, function (error, port) {
+portfinder.getPort({ port: 5000, stopPort: 6000 }, function (error, port) {
   if (error) {
     console.error(error);
   } else {
