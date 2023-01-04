@@ -1,7 +1,6 @@
 const path = require("path");
-const fs = require("fs");
 const { app, BrowserWindow } = require("electron");
-
+const portfinder = require("portfinder");
 const api = path.join(process.resourcesPath, "api/server");
 const model = path.join(process.resourcesPath, "obj/main.gltf");
 
@@ -9,10 +8,19 @@ const model = path.join(process.resourcesPath, "obj/main.gltf");
 // const api = "/home/hamza/projects/github/tiplot/backend/server";
 
 var spawn = require("child_process").spawn;
-var start = spawn(api, [model], {
-  windowsHide: true,
-  shell: process.env.ComSpec,
-  stdio: "inherit",
+var start;
+portfinder.getPort({ port: 5005, stopPort: 6000 }, function (error, port) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log(`Found available port: ${port}`);
+    process.env.API_PORT = port;
+    start = spawn(api, ["--model", model, "--port", port], {
+      windowsHide: true,
+      shell: process.env.ComSpec,
+      stdio: "inherit",
+    });
+  }
 });
 
 function createWindow() {
@@ -23,6 +31,7 @@ function createWindow() {
     // autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -33,7 +42,7 @@ function createWindow() {
   win.loadURL(`file://${path.join(__dirname, "../build/index.html")}`);
   // win.loadURL(`http://localhost:3000`);
   // Open the DevTools.
-  // win.webContents.openDevTools({ mode: "detach" });
+  win.webContents.openDevTools({ mode: "detach" });
   win.webContents.setWindowOpenHandler(({ url }) => {
     return {
       action: "allow",
