@@ -7,12 +7,13 @@ import { io } from "socket.io-client";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import MainLayout from "./views/layouts/MainLayout";
 import Entities from "./views/Entities";
+import { PORT } from "./static/js/constants";
 
 function App() {
   const [socketInstance, setSocketInstance] = useState("");
 
   useEffect(() => {
-    const socket = io("http://localhost:5000/", {
+    const socket = io(`http://localhost:${PORT}/`, {
       transports: ["websocket"],
       // cors: {
       //   origin: "http://localhost:3000/",

@@ -4,8 +4,8 @@ import { v4 as uuid } from "uuid";
 import ToolBar from "../components/ToolBar";
 import EntityConfig from "../components/EntityConfig";
 import { BsPlus } from "react-icons/bs";
-
 import { Container, Button, Row, Col, Spinner, Alert } from "react-bootstrap";
+import { PORT } from "../static/js/constants";
 
 function Entities() {
   const [current_entities, setCurrentEntities] = useState([]);
@@ -19,7 +19,7 @@ function Entities() {
   }, []);
 
   const getCurrentEntities = () => {
-    fetch("http://localhost:5000/entities_config")
+    fetch(`http://localhost:${PORT}/entities_config`)
       .then((res) => res.json())
       .then((res) => {
         setCurrentEntities(res);
@@ -87,7 +87,7 @@ function Entities() {
   };
 
   const addEntity = () => {
-    fetch("http://localhost:5000/default_entity")
+    fetch(`http://localhost:${PORT}/default_entity`)
       .then((res) => res.json())
       .then((res) => {
         // res.id = parseInt(Math.random() * 10000);
@@ -102,7 +102,7 @@ function Entities() {
   };
 
   const validateCurrentConfig = async (entities) => {
-    const response = await fetch("http://localhost:5000/validate_config", {
+    const response = await fetch(`http://localhost:${PORT}/validate_config`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -125,7 +125,7 @@ function Entities() {
       configs.push(c);
     });
 
-    const response = await fetch("http://localhost:5000/write_config", {
+    const response = await fetch(`http://localhost:${PORT}/write_config`, {
       headers: {
         "Content-Type": "application/json",
       },

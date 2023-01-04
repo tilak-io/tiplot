@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import PlotData from "./PlotData";
+import { PORT } from "../static/js/constants";
 
 const mockPlot = new PlotData(0, null);
 
@@ -118,7 +119,7 @@ export default class Entity {
     const instance = this;
     const loader = new GLTFLoader();
     loader.load(
-      "http://localhost:5000/model",
+      `http://localhost:${PORT}/model`,
       function (gltf) {
         instance.mesh = gltf.scene;
         instance.mesh.children[0].children[0].material.transparent = true;

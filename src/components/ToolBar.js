@@ -16,6 +16,7 @@ import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
 import "react-bootstrap-submenu/dist/index.css";
 import logo from "../static/img/logo.png";
 import { generateUUID } from "three/src/math/MathUtils";
+import { PORT } from "../static/js/constants";
 
 function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   const [layouts, setLayouts] = useState([]);
@@ -35,14 +36,14 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
   }, []);
 
   const getAdditionalInfo = async () => {
-    var response = await fetch("http://localhost:5000/additional_info").then(
+    var response = await fetch(`http://localhost:${PORT}/additional_info`).then(
       (res) => res.json()
     );
     setAdditionalInfo(response);
   };
 
   const getCurrentFile = async () => {
-    var response = await fetch("http://localhost:5000/current_file").then(
+    var response = await fetch(`http://localhost:${PORT}/current_file`).then(
       (res) => res.json()
     );
     if (response.msg) setCurrentFile(response.msg);

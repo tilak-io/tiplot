@@ -1,4 +1,5 @@
 import Plotly from "plotly.js/dist/plotly";
+import { PORT } from "../static/js/constants";
 
 export default class PlotData {
   constructor(id, initialKeys) {
@@ -9,8 +10,8 @@ export default class PlotData {
 
   getOptions = async () => {
     const options = [];
-    const response = await fetch("http://localhost:5000/tables").then((res) =>
-      res.json()
+    const response = await fetch(`http://localhost:${PORT}/tables`).then(
+      (res) => res.json()
     );
     const tables = response.tables;
     tables.forEach((t) => {
@@ -30,7 +31,7 @@ export default class PlotData {
   };
 
   getTables = async () => {
-    const response = await fetch("http://localhost:5000/keys").then((res) =>
+    const response = await fetch(`http://localhost:${PORT}/keys`).then((res) =>
       res.json()
     );
     const tables = response.keys.map((table) => {
@@ -46,7 +47,7 @@ export default class PlotData {
 
   // get data for yt graphs
   getData = async (field) => {
-    const response = await fetch("http://localhost:5000/values_yt", {
+    const response = await fetch(`http://localhost:${PORT}/values_yt`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -89,7 +90,7 @@ export default class PlotData {
   // get data for xy graphs
   getDataXY = async (x, y) => {
     const field = { table: x.table, columns: [x.column, y.column] };
-    const response = await fetch("http://localhost:5000/values_xy", {
+    const response = await fetch(`http://localhost:${PORT}/values_xy`, {
       headers: {
         "Content-Type": "application/json",
       },

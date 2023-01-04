@@ -3,6 +3,7 @@ import { FcOpenedFolder, FcFile } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
 import ToolBar from "../components/ToolBar";
+import { PORT } from "../static/js/constants";
 import "../static/css/loader.css";
 import "../static/css/overlay.css";
 
@@ -34,7 +35,7 @@ function Loader({ socket }) {
 
   const parse = (file) => {
     setLoading(true);
-    fetch("http://localhost:5000/select_log", {
+    fetch(`http://localhost:${PORT}/select_log`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -55,7 +56,7 @@ function Loader({ socket }) {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append("log", file, file.name);
-    fetch("http://localhost:5000/upload_log", {
+    fetch(`http://localhost:${PORT}/upload_log`, {
       method: "POST",
       body: formData,
     })
@@ -68,7 +69,7 @@ function Loader({ socket }) {
   };
 
   const getLogFiles = async () => {
-    const logs = await fetch("http://localhost:5000/log_files").then((res) =>
+    const logs = await fetch(`http://localhost:${PORT}/log_files`).then((res) =>
       res.json()
     );
     setConnected(true);
