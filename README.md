@@ -10,70 +10,87 @@ We decided to opensource TiPlot, our log visualising tool, so the world can bene
 
 Please reach out to us via our website [Tilak.io](https://tilak.io/), we are happy to help !
 
-# About the project
+# About TiPlot
 
-TiPlot is a cool and simple visualising tool to analyse your drone flights. 
-With this tool you can: 
-- Upload a ulg file, a csv or send a datadict via a socket (see snippets below)
-- Display the trajectory in 3d
-- Browse over all the fields and plot whatever you want. 
+TiPlot is an open-source visualisation tool for flight logs. With TiPlot, you can easily visualize your flight data in 2D and 3D graphs, helping you better understand the performance and behavior of your unmanned aerial vehicle (UAV).
 
-# Installation
+![Entities](docs/demo.png)
 
-## AppImage
+## Features
 
-Download the latest AppImage available in the [releases page](https://github.com/tilak-io/tiplot/releases).
+- Supports multiple file formats, including : 
+  - PX4's .ulg
+  - Generic .csv
+  - DJI's .DAT
+  - QGroundControl's .tlog
+  - Ardupilot's .BIN Logs.
+- 2D yt and xy graphs for visualizing flight data.
+- 3D viewer for displaying the paths of your UAVs.
+- Add multiple UAVs to compare flights.
+- Sync the 3D view with a specific timestamp by hovering over it.
+- Ability to send a data dictionary and entities to be displayed in the 3D view over TCP port `5555` from a Python script or a Jupyter notebook.
+- Layouts are automatically saved after every change.
+- Drag and drop plots to reposition them.
+- Plot multiple fields from different topics in yt graphs.
+- X scale of all graphs is synced when zooming in.
+- Y scale of graphs is automatically set to fit all available data in the timestamp range.
+- Change view layout from split to detached to detach the 3D view as a new window.
+- Adjust camera settings and change background color and show grids on the 3 axis in the settings page.
 
-```bash
+## Installation
+
+### Prebuilt AppImage
+
+To install TiPlot using the prebuilt AppImage, follow these steps:
+
+1. Download the latest AppImage from the [releases page](https://github.com/tilak-io/tiplot/releases/latest).
+2. Make the AppImage executable by running:
+```bash 
 cd ~/Downloads
-chmod +x tiplot-0.1.0.AppImage
-./tiplot-0.1.0.AppImage
+chmod +x tiplot-1.x.x.AppImage
+```
+3. Run the AppImage:
+```bash 
+./tiplot-1.x.x.AppImage
 ```
 
-## Building from source 
+### Building from source
 
-Clone the repo using:
+To build TiPlot from source, follow these steps:
 
+1. Clone the repository:
 ```
-git clone https://gitlab.com/tilak.io/tiplot.git
+git clone https://github.com/tilak-io/tiplot
 cd tiplot
 ```
-
-Install the dependencies:
-
+2. Install dependencies:
 ```
+# Install Node dependencies 
 yarn install
+# Install Python dependencies:
 pip3 install -r api/requirements.txt
 ```
+3. Start the API server:
 
-Then you can run:
+```
+yarn start:api
+```
+In a new terminal, start the front end: 
+```
+yarn start
+```
 
-`yarn start` to run the app in your browser (this will only start the front-end).
+## Usage
+To use TiPlot, follow these steps:
 
-`yarn start:electron` to run the standalone desktop app (again, only the front-end).
+1. Launch TiPlot's AppImage, exe or compiled build.
+2. Click the "Browse" button to select a flight log file.
+3. Add a graph (yt or xy).
+4. Use the ALT + hover feature to sync the 3D view with a specific timestamp.
+5. Use the entities page to choose the UAV's position/attitude tables.
 
-`yarn start:api` to run the back-end server.
-
-`yarn serve:electron` to run the back-end and the standalone app
-
-`yarn build` to build the html/css/js files for the front-end (in the `build` folder).
-
-`yarn build:api` to build the back-end into one executable (in the `backend` folder).
-
-`yarn build:electron` to build an AppImage with the back-end intagrated (in the `dist` folder).
-
-# Getting started
-
-TiPlot currently provides a parser for **ULG** logs (PX4 logs) and a default parser for **CSV** files. So you can directly import/upload your log file via the loader page once your app is running. (logs will automatically upload/copy files to `~/Documents/tiplot/logs`)
-
-![Entities](docs/demo_ulg.gif)
-
-If you want to draw custom entites, you can use the default config templates found in the `templates` folder.
-Copy the config template into `~/Documents/tiplot`.
-The parser config is a json list ([see examples](#example-of-the-default-ulg-entity))
-
-You can also create your own **parser** and send the parsed data via a websocket on port `5555`.
-
+##  Sending data from a Python script or Jupyter notebook
+To send data to TiPlot from a Python script or Jupyter notebook, you can use the following code:
 ```python
 import zmq
 import zlib
@@ -90,138 +107,24 @@ def send_zipped_pickle(socket, obj, flags=0, protocol=-1):
     p = pickle.dumps(obj, protocol)
     z = zlib.compress(p)
     return socket.send(z, flags=flags)
-```
 
-## example of a ULG parser
-
-```python
-def parse_ulg(filename):
-    ulg = pyulog.ULog(filename)
-    datadict = {}
-    for data in ulg.data_list:
-        if data.multi_id > 0:
-            name = f"{data.name}_{data.multi_id}"
-        else:
-            name = data.name
-        datadict[name] = pd.DataFrame(data.data)
-        datadict[name]['timestamp_tiplot'] = datadict[name]['timestamp'] / 1e6 # Timestamp in seconds
-    return datadict
-```
-
-## example of a CSV parser
-```python
-def parse_csv(filename):
-    csv = pd.read_csv(filename)
-    csv['timestamp'] = pd.to_datetime(csv["timestamp"]).values.astype(np.int64) / 1e3
-    csv['timestamp_tiplot'] = csv['timestamp'] / 1e6 # Timestamp in seconds
-    datadict = {"data": csv} 
-    return datadict
-```
-
-Note that the you need to add new column called `timestamp_tiplot` which contains the timestamp converted to `seconds`.
-
-Once you defined your parser, you can use the `send_zipped_pickle` function to send your parsed data to TiPlot.
-
-```python
-datadict = parse_csv('/home/hamza/Documents/tiplot/logs/16_8.0_Mission-2022-08-23_09-43-20_corrected.csv')
-```
-
-Or
-
-```python
-datadict = parse_ulg('/home/hamza/Documents/tiplot/logs/025.220809.016.ulg')
-```
-
-```
 send_zipped_pickle(socket, [datadict, []])
 ```
 
-Note that **you need to send an array of two values as an argument**.
+Note that `datadict` is the data dictionary returned by the parser.
+`[]` is the entities array (empty array means we don't want to display anything on 3d view)
 
-- First value is our parsed data (`datadict`).
-
-- Second value is our array of entities that we wish to be displayed on the 3D viewer (`[]` empty array if you don't want to display any entity). 
-
-An `Entity` is defined by its:
-- `name`: the name of the entity (**<span style="color:red">required</span>**).
-- `alpha`: the desired transparency of the entity (*optional value between 0 and 1, default to `1`*)
-- `useRPY`: a parameter to select the attitude representation  (*optional, default to `false`*).
-  - True if the attitude data is represented by roll, pitch and yaw.
-  - False if the attitude data is represented by quaternions.
-- `position`: the position table of the entity (**<span style="color:red">required</span>**).
-    - `longitude`: the longitude column.
-    - `lattitude`: the lattitude column.
-    - `altitude`: the altitude column.
-- `attitude`: the name of the entity (**<span style="color:red">required</span>**).
-  - if `useRPY` is `false`
-      - `table`: the attitude table name
-      - `q0`: the Qw column name.
-      - `q1`: the Qx column name.
-      - `q2`: the Qy column name.
-      - `q3`: the Qz column name. 
-  - if `useRPY` is `true`
-      - `table`: the attitude table name
-      - `roll`: the roll column name.
-      - `pitch`: the pitch column name.
-      - `yaw`: the yaw column name.
-
-## example of the default ulg entity
-```python
-entity_ulg_default = {
-    'name': 'ulg default entity',
-    'position':{
-        'table': 'vehicle_global_position',
-        'longitude': 'lon',
-        'lattitude': 'lat',
-        'altitude': 'alt',
-    },
-    'attitude':{
-        'table':'vehicle_attitude',
-        'q0': 'q[0]',
-        'q1': 'q[1]',
-        'q2': 'q[2]',
-        'q3': 'q[3]',
-    }
-}
-```
-## example of the default csv entity
-```python
-entity_csv_default = {
-    'name': 'csv default entity',
-    'alpha': 1,
-    'useRPY': True,
-    'position':{
-      'table': 'data',
-      'longitude': 'lon',
-      'lattitude': 'lat',
-      'altitude': 'altitude'
-  },
-    'attitude':{
-      'table': 'data',
-      'roll': 'roll',
-      'pitch': 'pitch',
-      'yaw': 'yaw',
-  }
-}
-
-```
-Having multiple entities should help you analyse and spot the differences between the desired flight and the actual flight data.
-
-```python
-send_zipped_pickle(socket, [datadict, [desired_behaviour, actual_behaviour]])
-```
-
-<!-- ![Entities](docs/entities.gif) -->
+For more info check out the Jupyter notebooks in the [templates](https://github.com/tilak-io/tiplot/blob/main/templates) folder.
 
 
-## Layouts
+## Contributing
+We welcome contributions to TiPlot. If you would like to contribute, please follow these steps:
 
-A layout is the collection of table/column keys used in the plot.
+1. Fork the repository.
+2. Create a new branch for your changes.
+3. Make your changes and commit them to your branch.
+4. Push your branch to your forked repository.
+5. Create a new pull request.
 
-The *current* layout is always saved, and is the default layout that will be loaded once you re-open the app.
-
-In addition, you can save and name multiple layouts and load them whenever you want.
-
-You can also import/export the layout in a `json` format.
-
-<!-- ![Entities](docs/layouts.gif) -->
+## License
+This project is licensed under the Apache License, Version 2.0. See the [LICENSE](https://github.com/tilak-io/tiplot/blob/main/LICENSE.md) file for details.
