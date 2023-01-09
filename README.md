@@ -12,7 +12,7 @@ Please reach out to us via our website [Tilak.io](https://tilak.io/), we are hap
 
 # About TiPlot
 
-TiPlot is an open-source visualisation tool for flight logs. With TiPlot, you can easily visualize your flight data in 2D and 3D graphs, helping you better understand the performance and behavior of your unmanned aerial vehicle (UAV).
+TiPlot is an open-source visualisation tool for flight logs. With TiPlot, you can easily visualize your flight data in 2D graphs and a 3D view, helping you better understand the performance and behavior of your unmanned aerial vehicle (UAV).
 
 ![Entities](docs/demo.png)
 
