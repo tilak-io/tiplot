@@ -167,14 +167,14 @@ function ToolBar({
     if (!showControls) return;
     return (
       <Nav>
-        <Nav.Link onClick={addHM}>
-          <FcHeatMap />
-        </Nav.Link>
         <Nav.Link onClick={addYT}>
           <FcScatterPlot />
         </Nav.Link>
         <Nav.Link onClick={addXY}>
           <FcRadarPlot />
+        </Nav.Link>
+        <Nav.Link onClick={addHM}>
+          <FcHeatMap />
         </Nav.Link>
         <Nav.Link onClick={handle3DViewClicked}>
           <ViewButton />
