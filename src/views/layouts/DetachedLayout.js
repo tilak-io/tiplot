@@ -8,6 +8,7 @@ import Graph from "../../components/Graph";
 import GraphXY from "../../components/GraphXY";
 import View3D from "../../components/View3D";
 import NewWindow from "react-new-window";
+import Heatmap from "../../components/Heatmap";
 
 const ReactGridLayout = WidthProvider(RGL);
 
@@ -67,6 +68,22 @@ function DetachedLayout({ socket, defaultShowView }) {
     addGraphToLayout("xy", id);
   };
 
+  const addGraphHM = () => {
+    const id = uuid();
+    const graph = (
+      <div key={id}>
+        <Heatmap
+          id={id}
+          initialKeys={[]}
+          updateKeys={updateKeys}
+          removeGraph={removeGraph}
+        />
+      </div>
+    );
+    setGraphs([...graphs, graph]);
+    addGraphToLayout("hm", id);
+  };
+
   const updateKeys = (id, keys) => {
     var layout = parseLocalStorage("current_layout");
     const plot = layout.find((p) => p.id === id);
@@ -116,6 +133,17 @@ function DetachedLayout({ socket, defaultShowView }) {
             />
           </div>
         );
+      if (p.type === "hm")
+        graph = (
+          <div key={p.id}>
+            <Heatmap
+              id={p.id}
+              initialKeys={p.keys}
+              updateKeys={updateKeys}
+              removeGraph={removeGraph}
+            />
+          </div>
+        );
       g.push(graph);
     });
     setGraphs(g);
@@ -149,6 +177,7 @@ function DetachedLayout({ socket, defaultShowView }) {
         page="home"
         addYT={addGraphYT}
         addXY={addGraphXY}
+        addXY={addGraphHM}
         toggle3dView={toggle3dView}
         showView={showView}
         showControls={true}

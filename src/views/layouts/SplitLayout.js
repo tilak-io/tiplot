@@ -75,7 +75,7 @@ function SplitLayout({ socket, defaultShowView }) {
     addGraphToLayout("xy", id);
   };
 
-  const addHeatMap = () => {
+  const addGraphHM = () => {
     const id = uuid();
     const graph = (
       <div key={id}>
@@ -180,7 +180,7 @@ function SplitLayout({ socket, defaultShowView }) {
         page="home"
         addYT={addGraphYT}
         addXY={addGraphXY}
-        addHM={addHeatMap}
+        addHM={addGraphHM}
         toggle3dView={toggle3dView}
         showView={showView}
         showControls={true}
