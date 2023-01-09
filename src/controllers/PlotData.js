@@ -118,6 +118,20 @@ export default class PlotData {
     };
   };
 
+  // get correlation matrix for heatmaps
+  getCorrMatrix = async (fields) => {
+    console.log(fields);
+    // return {
+    //   z: [
+    //     [1, 2, 3, 2, 1],
+    //     [2, 3, 4, 3, 2],
+    //     [3, 4, 5, 4, 3],
+    //   ],
+    //   type: "heatmap",
+    //   hoverongaps: false,
+    // };
+  };
+
   // find the closest point to 'x' in 'array'
   findClosest = (x, array) => {
     return array.reduce((a, b) => {
