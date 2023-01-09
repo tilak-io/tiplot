@@ -73,7 +73,7 @@ body {
 }
 
 .plot-yt,
-.plot-xy {
+.plot-xy, .plot-hm {
   width: calc(100% - 30px);
 }
 

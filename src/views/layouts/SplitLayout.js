@@ -7,6 +7,7 @@ import { v4 as uuid } from "uuid";
 import ToolBar from "../../components/ToolBar";
 import Graph from "../../components/Graph";
 import GraphXY from "../../components/GraphXY";
+import Heatmap from "../../components/Heatmap";
 import View3D from "../../components/View3D";
 import SplitPane from "react-split-pane";
 
@@ -74,6 +75,22 @@ function SplitLayout({ socket, defaultShowView }) {
     addGraphToLayout("xy", id);
   };
 
+  const addHeatMap = () => {
+    const id = uuid();
+    const graph = (
+      <div key={id}>
+        <Heatmap
+          id={id}
+          initialKeys={[]}
+          updateKeys={updateKeys}
+          removeGraph={removeGraph}
+        />
+      </div>
+    );
+    setGraphs([...graphs, graph]);
+    addGraphToLayout("hm", id);
+  };
+
   const updateKeys = (id, keys) => {
     var layout = parseLocalStorage("current_layout");
     const plot = layout.find((p) => p.id === id);
@@ -123,6 +140,18 @@ function SplitLayout({ socket, defaultShowView }) {
             />
           </div>
         );
+
+      if (p.type === "hm")
+        graph = (
+          <div key={p.id}>
+            <Heatmap
+              id={p.id}
+              initialKeys={p.keys}
+              updateKeys={updateKeys}
+              removeGraph={removeGraph}
+            />
+          </div>
+        );
       g.push(graph);
     });
     setGraphs(g);
@@ -151,6 +180,7 @@ function SplitLayout({ socket, defaultShowView }) {
         page="home"
         addYT={addGraphYT}
         addXY={addGraphXY}
+        addHM={addHeatMap}
         toggle3dView={toggle3dView}
         showView={showView}
         showControls={true}

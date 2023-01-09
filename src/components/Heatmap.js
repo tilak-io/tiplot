@@ -12,6 +12,7 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    getInitialData();
     getOptions();
     const plot = document.getElementById(`plot-${id}`);
     new ResizeObserver(stretchHeight).observe(plot);
@@ -20,6 +21,14 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
 
   const stretchHeight = () => {
     plotData.stretchHeight();
+  };
+
+  const getInitialData = async () => {
+    if (initialKeys == null) return;
+    setSelectedOptions(initialKeys);
+    const d = await plotData.getCorrMatrix(initialKeys);
+    setData([d]);
+    squeezeSelect();
   };
 
   const getOptions = async () => {
@@ -102,7 +111,7 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
       <div className="placeholder" id={`whiteout-${id}`} />
       <div className="d-flex flex-yt">
         <Plot
-          className="plot-yt"
+          className="plot-hm"
           divId={`plot-${id}`}
           data={data}
           useResizeHandler
@@ -117,8 +126,8 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
             margin: {
               t: 10,
               b: 25,
-              l: 100,
-              r: 0,
+              // l: 100,
+              // r: 0,
             },
             xaxis: {
               showspikes: true,
