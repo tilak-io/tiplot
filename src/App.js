@@ -64,6 +64,7 @@ function App() {
             />
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/entities" element={<Entities />} />
+            <Route exact path="/test" element={<Test />} />
             <Route path="*" element={"not found"} />
           </Routes>
         </Router>
