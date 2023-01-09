@@ -18,10 +18,6 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
     // plotData.autoRange();
   }, []);
 
-  useEffect(() => {
-    plotData.autoRange();
-  }, [data]);
-
   const stretchHeight = () => {
     plotData.stretchHeight();
   };
@@ -39,7 +35,18 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
   const handleSelectChange = (keysList, actionMeta) => {
     setSelectedOptions(keysList);
     updateKeys(id, keysList);
-    getCorrMatrix(keysList);
+    switch (actionMeta.action) {
+      case "select-option":
+      case "remove-value":
+      case "pop-value":
+        getCorrMatrix(keysList);
+        break;
+      case "clear":
+        setData([]);
+        break;
+      default:
+        break;
+    }
   };
 
   const handleInput = (value, event) => {
@@ -100,7 +107,6 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
           data={data}
           useResizeHandler
           layout={{
-            height: 800,
             autoresize: true,
             showlegend: false,
             legend: {
@@ -111,18 +117,18 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
             margin: {
               t: 10,
               b: 25,
-              l: 50,
-              r: 25,
+              l: 100,
+              r: 0,
             },
             xaxis: {
               showspikes: true,
-              spikecolor: "#000",
               spikemode: "across+marker",
               spikethickness: 1,
-              exponentformat: "e",
             },
             yaxis: {
-              exponentformat: "e",
+              showspikes: true,
+              spikemode: "across+marker",
+              spikethickness: 1,
             },
             // hovermode: "x unified",
             hovermode: "x",

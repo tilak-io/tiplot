@@ -9,6 +9,7 @@ from glob import glob
 from communication import Comm
 from datetime import datetime
 from argparse import ArgumentParser
+import pandas as pd
 import store
 import json
 #import traceback
@@ -190,6 +191,33 @@ def get_xy_values():
         values = []
     response = {"table": table, "x": columns[0], "y": columns[1] , "values": values}
     return response
+
+@app.route('/correlation', methods=['POST'])
+def get_correlation_matrix():
+    tables = request.get_json()
+    if not tables:
+        return []
+    df_list = []
+    for topic in list(tables.keys()):
+        cols = tables[topic]
+        cols.append("timestamp_tiplot")
+        df = store.Store.get().datadict[topic][cols]
+        df = df.add_prefix(f'{topic}_')
+        renamed = df.rename(columns={f'{topic}_timestamp_tiplot': "timestamp_tiplot"})
+        # df = df.rename(columns = {'actuator_controls_0_timestamp_tiplot': 'timestamp_tiplot'}, inplace=True)
+        df_list.append(renamed)
+
+    result = df_list[0]
+    for i in range(1, len(df_list)):
+        result = pd.merge_asof(result, df_list[i], on='timestamp_tiplot')
+
+    result = result.drop(columns=["timestamp_tiplot"])
+    corr = result.corr().fillna(-1)
+    data = json.loads(corr.to_json(orient='split'))
+    columns = data['columns']
+    values = data['data']
+
+    return { 'columns': columns, 'values': values}
 
 @app.route('/log_files')
 def get_logs():
