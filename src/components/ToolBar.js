@@ -12,13 +12,21 @@ import {
 } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { FaToggleOn, FaToggleOff, FaInfoCircle } from "react-icons/fa";
-import { FcRadarPlot, FcScatterPlot } from "react-icons/fc";
+import { FcRadarPlot, FcScatterPlot, FcHeatMap } from "react-icons/fc";
 import "react-bootstrap-submenu/dist/index.css";
 import logo from "../static/img/logo.png";
 import { generateUUID } from "three/src/math/MathUtils";
 import { PORT } from "../static/js/constants";
 
-function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
+function ToolBar({
+  page,
+  toggle3dView,
+  showView,
+  addYT,
+  addXY,
+  addHM,
+  showControls,
+}) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
   const [currentFile, setCurrentFile] = useState("");
@@ -164,6 +172,9 @@ function ToolBar({ page, toggle3dView, showView, addYT, addXY, showControls }) {
         </Nav.Link>
         <Nav.Link onClick={addXY}>
           <FcRadarPlot />
+        </Nav.Link>
+        <Nav.Link onClick={addHM}>
+          <FcHeatMap />
         </Nav.Link>
         <Nav.Link onClick={handle3DViewClicked}>
           <ViewButton />

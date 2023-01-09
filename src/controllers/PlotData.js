@@ -118,6 +118,37 @@ export default class PlotData {
     };
   };
 
+  // get correlation matrix for heatmaps
+  getCorrMatrix = async (fields) => {
+    const tables = {};
+    // regrouping all the columns of the same table
+    for (const {
+      value: { table, column },
+    } of fields) {
+      if (!tables[table]) {
+        tables[table] = [];
+      }
+      tables[table] = tables[table].concat(column);
+    }
+    const response = await fetch(`http://localhost:${PORT}/correlation`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(tables),
+    }).then((res) => res.json());
+
+    return {
+      x: response["columns"],
+      y: response["columns"],
+      z: response["values"],
+      zmin: 0,
+      zmax: 1,
+      type: "heatmap",
+      hoverongaps: false,
+    };
+  };
+
   // find the closest point to 'x' in 'array'
   findClosest = (x, array) => {
     return array.reduce((a, b) => {
