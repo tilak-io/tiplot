@@ -1,7 +1,7 @@
 const path = require("path");
 const { app, BrowserWindow } = require("electron");
 const portfinder = require("portfinder");
-const api = path.join(process.resourcesPath, "api/server");
+const api = path.join(process.resourcesPath, "api/server/server");
 const model = path.join(process.resourcesPath, "obj/main.gltf");
 
 // just for debugging
