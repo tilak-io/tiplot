@@ -17,6 +17,7 @@ export default class PlotData {
     tables.forEach((t) => {
       var table = Object.keys(t)[0];
       var columns = Object.values(t)[0];
+      columns = columns.filter((col) => col != "timestamp_tiplot");
       columns.forEach((column) => {
         options.push({
           value: {
