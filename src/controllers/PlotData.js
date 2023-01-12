@@ -290,7 +290,7 @@ export default class PlotData {
     // reset the x_range
     // and notify the heatmaps
     window.x_range = undefined;
-    for (let i = 0; i < plots.length; i++) {
+    for (let i = 0; i < heatmaps.length; i++) {
       Plotly.relayout(heatmaps[i], { x_rangeChanged: true });
     }
   };
@@ -312,7 +312,7 @@ export default class PlotData {
     // this.filterPointInTimeRange(event);
     // mainly to use for heatmaps
     window.x_range = [event["xaxis.range[0]"], event["xaxis.range[1]"]];
-    for (let i = 0; i < plots.length; i++) {
+    for (let i = 0; i < heatmaps.length; i++) {
       Plotly.relayout(heatmaps[i], { x_rangeChanged: true });
     }
   };

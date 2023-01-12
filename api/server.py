@@ -207,12 +207,10 @@ def get_correlation_matrix():
         renamed = df.rename(columns={f'{topic}_timestamp_tiplot': "timestamp_tiplot"})
         df_list.append(renamed)
 
-    if len(df_list) == 0:
-        return []
-
     result = df_list[0]
     for i in range(1, len(df_list)):
-        result = pd.merge_asof(result, df_list[i], on='timestamp_tiplot')
+        sorted = df_list[i].sort_values(by='timestamp_tiplot')
+        result = pd.merge_asof(result, sorted, on='timestamp_tiplot')
 
     # filter data to include only the zoomed timestamp
     if "x_range" in req:
@@ -224,7 +222,6 @@ def get_correlation_matrix():
     data = json.loads(corr.to_json(orient='split'))
     columns = data['columns']
     values = data['data']
-
     return { 'columns': columns, 'values': values}
 
 @app.route('/log_files')
