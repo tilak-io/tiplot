@@ -50,7 +50,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     setData([...data, d]);
   };
 
-  const removeData = (field) => {
+  const removeData = async (field) => {
     const d = data.filter((e) => e.name != `${field.table}/${field.column}`);
     setData(d);
   };

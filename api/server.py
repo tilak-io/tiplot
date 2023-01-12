@@ -194,29 +194,42 @@ def get_xy_values():
 
 @app.route('/correlation', methods=['POST'])
 def get_correlation_matrix():
-    tables = request.get_json()
-    if not tables:
+    req = request.get_json()
+    if not req:
         return []
+    tables = req["tables"]
     df_list = []
     for topic in list(tables.keys()):
         cols = tables[topic]
         cols.append("timestamp_tiplot")
-        df = store.Store.get().datadict[topic][cols]
-        df = df.add_prefix(f'{topic}_')
-        renamed = df.rename(columns={f'{topic}_timestamp_tiplot': "timestamp_tiplot"})
-        # df = df.rename(columns = {'actuator_controls_0_timestamp_tiplot': 'timestamp_tiplot'}, inplace=True)
-        df_list.append(renamed)
+        try:
+            df = store.Store.get().datadict[topic][cols]
+            df = df.add_prefix(f'{topic}_')
+            renamed = df.rename(columns={f'{topic}_timestamp_tiplot': "timestamp_tiplot"})
+            df_list.append(renamed)
+        except:
+            # columns not found
+            pass
+
+    if (len(df_list) == 0):
+        return []
 
     result = df_list[0]
     for i in range(1, len(df_list)):
-        result = pd.merge_asof(result, df_list[i], on='timestamp_tiplot')
+        sorted = df_list[i].sort_values(by='timestamp_tiplot')
+        result = pd.merge_asof(result, sorted, on='timestamp_tiplot')
+
+    # filter data to include only the zoomed timestamp
+    if "x_range" in req:
+        x_range = req["x_range"]
+        result = result.query('@x_range[0] < timestamp_tiplot < @x_range[1]')        
 
     result = result.drop(columns=["timestamp_tiplot"])
-    corr = result.corr().fillna(-1)
+    # corr = result.corr().fillna(-1)
+    corr = result.corr()
     data = json.loads(corr.to_json(orient='split'))
     columns = data['columns']
     values = data['data']
-
     return { 'columns': columns, 'values': values}
 
 @app.route('/log_files')
