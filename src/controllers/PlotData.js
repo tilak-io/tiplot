@@ -147,7 +147,7 @@ export default class PlotData {
       zmin: 0,
       zmax: 1,
       type: "heatmap",
-      hoverongaps: false,
+      hoverongaps: true,
     };
   };
 

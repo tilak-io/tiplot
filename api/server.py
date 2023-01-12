@@ -207,6 +207,9 @@ def get_correlation_matrix():
         renamed = df.rename(columns={f'{topic}_timestamp_tiplot': "timestamp_tiplot"})
         df_list.append(renamed)
 
+    if (len(df_list) == 0):
+        return []
+
     result = df_list[0]
     for i in range(1, len(df_list)):
         sorted = df_list[i].sort_values(by='timestamp_tiplot')
@@ -218,7 +221,8 @@ def get_correlation_matrix():
         result = result.query('@x_range[0] < timestamp_tiplot < @x_range[1]')        
 
     result = result.drop(columns=["timestamp_tiplot"])
-    corr = result.corr().fillna(-1)
+    # corr = result.corr().fillna(-1)
+    corr = result.corr()
     data = json.loads(corr.to_json(orient='split'))
     columns = data['columns']
     values = data['data']
