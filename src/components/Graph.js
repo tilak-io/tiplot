@@ -48,13 +48,11 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   const addData = async (field) => {
     const d = await plotData.getData(field);
     setData([...data, d]);
-    console.log("adding data");
   };
 
   const removeData = async (field) => {
     const d = data.filter((e) => e.name != `${field.table}/${field.column}`);
     setData(d);
-    console.log("removing data");
   };
 
   const handleSelectChange = (keysList, actionMeta) => {

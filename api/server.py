@@ -202,10 +202,14 @@ def get_correlation_matrix():
     for topic in list(tables.keys()):
         cols = tables[topic]
         cols.append("timestamp_tiplot")
-        df = store.Store.get().datadict[topic][cols]
-        df = df.add_prefix(f'{topic}_')
-        renamed = df.rename(columns={f'{topic}_timestamp_tiplot': "timestamp_tiplot"})
-        df_list.append(renamed)
+        try:
+            df = store.Store.get().datadict[topic][cols]
+            df = df.add_prefix(f'{topic}_')
+            renamed = df.rename(columns={f'{topic}_timestamp_tiplot': "timestamp_tiplot"})
+            df_list.append(renamed)
+        except:
+            # columns not found
+            pass
 
     if (len(df_list) == 0):
         return []
