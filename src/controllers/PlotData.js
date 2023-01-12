@@ -130,12 +130,13 @@ export default class PlotData {
       }
       tables[table] = tables[table].concat(column);
     }
+    const req = { tables: tables, x_range: window.x_range };
     const response = await fetch(`http://localhost:${PORT}/correlation`, {
       headers: {
         "Content-Type": "application/json",
       },
       method: "POST",
-      body: JSON.stringify(tables),
+      body: JSON.stringify(req),
     }).then((res) => res.json());
 
     return {
@@ -245,6 +246,7 @@ export default class PlotData {
     //   Plotly.relayout(plots[i], event);
     // }
     const plots = document.getElementsByClassName("plot-yt");
+    const heatmaps = document.getElementsByClassName("plot-hm");
     var max_values = [];
     var min_values = [];
 
@@ -284,11 +286,19 @@ export default class PlotData {
       if (plots[i].data === undefined) continue;
       Plotly.relayout(plots[i], update);
     }
+
+    // reset the x_range
+    // and notify the heatmaps
+    window.x_range = undefined;
+    for (let i = 0; i < plots.length; i++) {
+      Plotly.relayout(heatmaps[i], { x_rangeChanged: true });
+    }
   };
 
   syncHorizontalAxis = (event) => {
     if (!event["xaxis.range"] && !event["xaxis.range[0]"]) return; // ignore {autoresize: true}
     const plots = document.getElementsByClassName("plot-yt");
+    const heatmaps = document.getElementsByClassName("plot-hm");
     const update = {
       "xaxis.range": event["xaxis.range"],
       "xaxis.range[0]": event["xaxis.range[0]"],
@@ -300,6 +310,11 @@ export default class PlotData {
       Plotly.relayout(plots[i], update);
     }
     // this.filterPointInTimeRange(event);
+    // mainly to use for heatmaps
+    window.x_range = [event["xaxis.range[0]"], event["xaxis.range[1]"]];
+    for (let i = 0; i < plots.length; i++) {
+      Plotly.relayout(heatmaps[i], { x_rangeChanged: true });
+    }
   };
 
   // TODO: FINISH THIS

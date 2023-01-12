@@ -194,9 +194,10 @@ def get_xy_values():
 
 @app.route('/correlation', methods=['POST'])
 def get_correlation_matrix():
-    tables = request.get_json()
-    if not tables:
+    req = request.get_json()
+    if not req:
         return []
+    tables = req["tables"]
     df_list = []
     for topic in list(tables.keys()):
         cols = tables[topic]
@@ -204,12 +205,19 @@ def get_correlation_matrix():
         df = store.Store.get().datadict[topic][cols]
         df = df.add_prefix(f'{topic}_')
         renamed = df.rename(columns={f'{topic}_timestamp_tiplot': "timestamp_tiplot"})
-        # df = df.rename(columns = {'actuator_controls_0_timestamp_tiplot': 'timestamp_tiplot'}, inplace=True)
         df_list.append(renamed)
+
+    if len(df_list) == 0:
+        return []
 
     result = df_list[0]
     for i in range(1, len(df_list)):
         result = pd.merge_asof(result, df_list[i], on='timestamp_tiplot')
+
+    # filter data to include only the zoomed timestamp
+    if "x_range" in req:
+        x_range = req["x_range"]
+        result = result.query('@x_range[0] < timestamp_tiplot < @x_range[1]')        
 
     result = result.drop(columns=["timestamp_tiplot"])
     corr = result.corr().fillna(-1)

@@ -19,10 +19,6 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     // plotData.autoRange();
   }, []);
 
-  useEffect(() => {
-    plotData.autoRange();
-  }, [data]);
-
   const getInitialData = async () => {
     if (initialKeys == null) return;
     setSelectedOptions(initialKeys);
