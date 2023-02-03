@@ -47,7 +47,7 @@ function ToolBar({
     var response = await fetch(`http://localhost:${PORT}/additional_info`).then(
       (res) => res.json()
     );
-    setAdditionalInfo(response);
+    setAdditionalInfo(response.info);
   };
 
   const getCurrentFile = async () => {

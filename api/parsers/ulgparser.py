@@ -35,20 +35,19 @@ class ULGParser(Parser):
         return angles
 
     def add_euler(self,datadict):
-        a=datadict['vehicle_attitude']
-
-        result = []
-        for i in a.to_dict('records'):
-            result.append(self.euler_from_quaternion(
-                i['q[0]'],
-                i['q[1]'],
-                i['q[2]'],
-                i['q[3]'],))
-        
-        r = DataFrame(result)
-        a['pitch'] = r['pitch']
-        a['roll'] = r['roll']
-        a['yaw'] = r['yaw']
+        if "vehicle_attitude" in datadict: 
+            a=datadict['vehicle_attitude']
+            result = []
+            for i in a.to_dict('records'):
+                result.append(self.euler_from_quaternion(
+                    i['q[0]'],
+                    i['q[1]'],
+                    i['q[2]'],
+                    i['q[3]'],))
+            r = DataFrame(result)
+            a['pitch'] = r['pitch']
+            a['roll'] = r['roll']
+            a['yaw'] = r['yaw']
 
     def parse(self,filename):
         self.ulg = ULog(filename)

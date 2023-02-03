@@ -22,9 +22,9 @@ function Entities() {
     fetch(`http://localhost:${PORT}/entities_config`)
       .then((res) => res.json())
       .then((res) => {
-        setCurrentEntities(res);
+        setCurrentEntities(res.config);
         setLoading(false);
-        validateCurrentConfig(res);
+        validateCurrentConfig(res.config);
       });
   };
 
