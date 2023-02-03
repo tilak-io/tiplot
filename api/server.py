@@ -46,6 +46,7 @@ extension_to_parser = {
 }
 
 def choose_parser(file, logs_dir):
+
     global current_parser
     full_path = logs_dir + file
 
@@ -124,7 +125,8 @@ def model_3d():
 @app.route('/entities_config')
 def entities_config():
     config = store.Store.get().getEntities()
-    return config
+    res = {"config": config}
+    return res
 
 @app.route('/default_entity')
 def default_entity():
@@ -253,7 +255,8 @@ def select_log():
 def get_entities_props():
     props, err = store.Store.get().getEntitiesProps()
     if err is not None: print(err)
-    return props
+    res = {"data": props}
+    return res
 
 @app.route('/current_file')
 def get_current_file():
@@ -272,7 +275,8 @@ def get_keys():
 @app.route('/additional_info')
 def get_additional_info():
     info = store.Store.get().info
-    return info
+    res = {"info": info}
+    return res
 
 @socketio.on("disconnect")
 def disconnected():

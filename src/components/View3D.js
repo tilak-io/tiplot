@@ -49,7 +49,7 @@ function View3D({ socket, detached }) {
       `http://localhost:${PORT}/entities_props`
     ).then((res) => res.json());
     if (raw_entities.error) alert(raw_entities.error);
-    else raw_entities.forEach(initEntity);
+    else raw_entities.data.forEach(initEntity);
   };
 
   const initEntity = (e, index) => {
