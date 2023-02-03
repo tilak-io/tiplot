@@ -32,6 +32,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           #CI: false
         run: yarn build:electron
+      - name: test
+        run: echo $GITHUB_TOKEN
 
   Build-EXE:
     runs-on: windows-latest
