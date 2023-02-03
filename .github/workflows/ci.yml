@@ -30,7 +30,7 @@ jobs:
       - name: build desktop app
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          #CI: false
+          CI: false
         run: yarn build:electron
       - name: test
         run: echo $GITHUB_TOKEN
