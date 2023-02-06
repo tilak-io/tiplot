@@ -16,6 +16,7 @@ function Entities() {
 
   useEffect(() => {
     getCurrentEntities();
+    // eslint-disable-next-line
   }, []);
 
   const getCurrentEntities = () => {
@@ -97,7 +98,7 @@ function Entities() {
   };
 
   const removeEntity = (id) => {
-    const remaining = current_entities.filter((e) => e.id != id);
+    const remaining = current_entities.filter((e) => e.id !== id);
     setCurrentEntities(remaining);
   };
 

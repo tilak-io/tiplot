@@ -29,8 +29,8 @@ jobs:
         run: yarn build:api
       - name: build desktop app
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-          CI: false
+          GH_TOKEN: ${{ github.token }}
+          # CI: false # ignore warnings
         run: yarn build:electron
       - name: test
         run: echo $GITHUB_TOKEN
@@ -50,6 +50,6 @@ jobs:
         run: yarn build:api
       - name: build desktop app
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-          CI: false
+          GH_TOKEN: ${{ github.token }}
+          # CI: false # ignore warnings
         run: yarn build:electron

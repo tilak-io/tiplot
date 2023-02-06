@@ -30,6 +30,7 @@ function EntityConfig({
     getOptions();
     getTables();
     hideUnusedFields();
+    // eslint-disable-next-line
   }, []);
 
   position = position ?? { table: "" };
@@ -45,13 +46,13 @@ function EntityConfig({
     setOptions(opt);
 
     // setting default options
-    const p_opt = opt.filter((o) => o.value.table == position["table"]);
+    const p_opt = opt.filter((o) => o.value.table === position["table"]);
     const p_mapped = p_opt.map((o) => {
       return { value: o.value, label: o.value.column };
     });
     setPositionOptions(p_mapped);
 
-    const a_opt = opt.filter((o) => o.value.table == attitude["table"]);
+    const a_opt = opt.filter((o) => o.value.table === attitude["table"]);
     const a_mapped = a_opt.map((o) => {
       return { value: o.value, label: o.value.column };
     });
@@ -59,7 +60,7 @@ function EntityConfig({
   };
 
   const handlePositionTableSelect = (e) => {
-    const opt = options.filter((o) => o.value.table == e.value.table);
+    const opt = options.filter((o) => o.value.table === e.value.table);
     const mapped = opt.map((o) => {
       return { value: o.value, label: o.value.column };
     });
@@ -67,7 +68,7 @@ function EntityConfig({
   };
 
   const handleAttitudeTableSelect = (e) => {
-    const opt = options.filter((o) => o.value.table == e.value.table);
+    const opt = options.filter((o) => o.value.table === e.value.table);
     const mapped = opt.map((o) => {
       return { value: o.value, label: o.value.column };
     });

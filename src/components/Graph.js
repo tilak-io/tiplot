@@ -17,10 +17,12 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     const plot = document.getElementById(`plot-${id}`);
     new ResizeObserver(stretchHeight).observe(plot);
     // plotData.autoRange();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     plotData.autoRange();
+    // eslint-disable-next-line
   }, [data]);
 
   const getInitialData = async () => {
@@ -51,7 +53,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   };
 
   const removeData = async (field) => {
-    const d = data.filter((e) => e.name != `${field.table}/${field.column}`);
+    const d = data.filter((e) => e.name !== `${field.table}/${field.column}`);
     setData(d);
   };
 
@@ -117,7 +119,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
 
   const handleInput = (value, event) => {
     setInputValue(value);
-    if (event.action == "set-value") setInputValue(event.prevInputValue);
+    if (event.action === "set-value") setInputValue(event.prevInputValue);
   };
 
   const squeezeSelect = () => {

@@ -17,7 +17,7 @@ export default class PlotData {
     tables.forEach((t) => {
       var table = Object.keys(t)[0];
       var columns = Object.values(t)[0];
-      columns = columns.filter((col) => col != "timestamp_tiplot");
+      columns = columns.filter((col) => col !== "timestamp_tiplot");
       columns.forEach((column) => {
         options.push({
           value: {
@@ -198,7 +198,7 @@ export default class PlotData {
     const plots = document.getElementsByClassName("plot-xy");
     for (let i = 0; i < plots.length; i++) {
       const plot = plots[i];
-      if (plot.data.length == 0) return;
+      if (plot.data.length === 0) return;
       const t = plot.data[0].t;
       const closest = this.findClosest(x, t);
       const index = t.indexOf(closest);

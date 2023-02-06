@@ -156,6 +156,8 @@ function View3D({ socket, detached }) {
         case "PageUp":
           target.goFirstPoint();
           break;
+        default:
+          break;
       }
     };
 
@@ -167,6 +169,8 @@ function View3D({ socket, detached }) {
         case "PageDown":
         case "PageUp":
           target.updateTimelineIndicator();
+          break;
+        default:
           break;
       }
     };

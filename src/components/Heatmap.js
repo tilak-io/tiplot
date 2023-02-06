@@ -16,6 +16,7 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
     getOptions();
     const plot = document.getElementById(`plot-${id}`);
     new ResizeObserver(stretchHeight).observe(plot);
+    // eslint-disable-next-line
   }, []);
 
   const stretchHeight = () => {
@@ -24,7 +25,7 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
 
   const getInitialData = async () => {
     if (initialKeys == null) return;
-    if (initialKeys.length == 0) return;
+    if (initialKeys.length === 0) return;
     setSelectedOptions(initialKeys);
     const d = await plotData.getCorrMatrix(initialKeys);
     setData([d]);
@@ -60,7 +61,7 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
 
   const handleInput = (value, event) => {
     setInputValue(value);
-    if (event.action == "set-value") setInputValue(event.prevInputValue);
+    if (event.action === "set-value") setInputValue(event.prevInputValue);
   };
 
   const handleRelayout = (event) => {

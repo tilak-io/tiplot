@@ -160,7 +160,7 @@ export default class Entity {
       this.ref_z = e.props[0].z;
     } else {
       const [x, y] = getXY(e.props[0].longitude, e.props[0].lattitude);
-      const z = -e.props[0].altitude;
+      // const z = -e.props[0].altitude;
       this.ref_x = x;
       this.ref_y = y;
       // this.ref_z = z;

@@ -17,6 +17,7 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
     getOptions();
     const plot = document.getElementById(`plot-${id}`);
     new ResizeObserver(stretchHeight).observe(plot);
+    // eslint-disable-next-line
   }, []);
 
   const getInitialData = async () => {
@@ -38,11 +39,11 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
 
   const handleChangeX = (e) => {
     setSelectedX(e);
-    const opt = options_x.filter((o) => o.value.table == e.value.table);
+    const opt = options_x.filter((o) => o.value.table === e.value.table);
     setOptionsY(opt);
 
     if (selected_y == null) return;
-    if (selected_y.value.table == e.value.table) {
+    if (selected_y.value.table === e.value.table) {
       addData(e.value, selected_y.value);
       updateKeys(id, [e, selected_y]);
     } else {
@@ -78,7 +79,9 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
         onChange={handleChangeX}
         value={selected_x}
         menuPortalTarget={document.body}
-        styles={{ menuPortal: base => ({ ...base, zIndex: 9999, fontSize: "75%" }) }}
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999, fontSize: "75%" }),
+        }}
       />
       <Select
         className="multiselect"
@@ -86,7 +89,9 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
         onChange={handleChangeY}
         value={selected_y}
         menuPortalTarget={document.body}
-        styles={{ menuPortal: base => ({ ...base, zIndex: 9999, fontSize: "75%" }) }}
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999, fontSize: "75%" }),
+        }}
       />
       <div className="d-flex flex-xy">
         <Plot
