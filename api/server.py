@@ -45,7 +45,7 @@ extension_to_parser = {
     'tlog': TLOGParser,
 }
 
-def choose_parser(file, logs_dir):
+def choose_parser(file, logs_dir, isExtra=False):
 
     global current_parser
     full_path = logs_dir + file
@@ -63,12 +63,18 @@ def choose_parser(file, logs_dir):
     parser = parser_cls()
     try:
         datadict, entities, additional_info = parser.parse(full_path)
-        store.Store.get().setStore(datadict, entities, additional_info)
+        if isExtra:
+            store.Store.get().setExtra(datadict)
+        else:
+            store.Store.get().setStore(datadict, entities, additional_info)
         ok = True
         current_parser = parser
     except ValueError:
         datadict, entities = parser.parse(full_path)
-        store.Store.get().setStore(datadict, entities)
+        if isExtra:
+            store.Store.get().setExtra(datadict)
+        else:
+            store.Store.get().setStore(datadict, entities)
         ok = True
         current_parser = parser
     return ok
@@ -248,6 +254,12 @@ def select_log():
     file = request.get_json()
     current_file = file
     ok = choose_parser(file[0], logs_dir)
+    return {"ok": ok}
+
+@app.route('/add_log', methods=['POST'])
+def add_log():
+    file = request.get_json()
+    ok = choose_parser(file[0], logs_dir, True)
     return {"ok": ok}
 
 

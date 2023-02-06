@@ -7,7 +7,7 @@ import { PORT } from "../static/js/constants";
 import "../static/css/loader.css";
 import "../static/css/overlay.css";
 
-function Loader({ socket }) {
+function Loader({ socket, isExtra }) {
   const [files, setFiles] = useState([]);
   const [logsDir, setLogsDir] = useState("..");
   const [connected, setConnected] = useState(false);
@@ -35,19 +35,35 @@ function Loader({ socket }) {
 
   const parse = (file) => {
     setLoading(true);
-    fetch(`http://localhost:${PORT}/select_log`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(file),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setLoading(false);
-        if (res.ok) navigate("/home");
-        else alert("unsupported format");
-      });
+    if (isExtra) {
+      fetch(`http://localhost:${PORT}/add_log`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(file),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          setLoading(false);
+          // if (res.ok) navigate("/home");
+          // else alert("unsupported format");
+        });
+    } else {
+      fetch(`http://localhost:${PORT}/select_log`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(file),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          setLoading(false);
+          if (res.ok) navigate("/home");
+          else alert("unsupported format");
+        });
+    }
     // socket.emit("select_log_file", file);
   };
 
@@ -63,8 +79,11 @@ function Loader({ socket }) {
       .then((res) => res.json())
       .then((res) => {
         setLoading(false);
-        if (res.ok) navigate("/home");
-        else alert("unsupported format");
+        if (res.ok) {
+          if (!isExtra) {
+            navigate("/home");
+          }
+        } else alert("unsupported format");
       });
   };
 

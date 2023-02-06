@@ -22,6 +22,7 @@ class Store:
                 Store.__instance = self
 
             self.datadict = {}
+            self.extra_datadict = {}
             self.entities = []
             self.info = []
             self.lock = threading.Lock()
@@ -35,6 +36,10 @@ class Store:
             self.datadict = datadict
             self.entities = entities
             self.info = info
+
+    def setExtra(self, datadict):
+        with self.lock:
+            self.extra_datadict = datadict
 
     def getKeys(self):
         keys = list(self.datadict.keys())
