@@ -26,10 +26,11 @@ function MainLayout({ socket }) {
 
   function Layout() {
     switch (selectedLayout) {
-      case "split-fit":
-        return <SplitLayout socket={socket} defaultShowView={showView} />;
       case "detached-fit":
         return <DetachedLayout socket={socket} defaultShowView={showView} />;
+      case "split-fit":
+      default:
+        return <SplitLayout socket={socket} defaultShowView={showView} />;
     }
   }
 

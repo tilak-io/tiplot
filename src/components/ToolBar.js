@@ -86,7 +86,7 @@ function ToolBar({
         </NavDropdown.Item>
       );
     });
-    if (rows.length == 0) {
+    if (rows.length === 0) {
       rows.push(
         <NavDropdown.Item key={generateUUID()} disabled>
           No Saved Layouts

@@ -19,6 +19,7 @@ function Settings() {
   useEffect(() => {
     getCurrentSettings();
     getCurrentLayout();
+    // eslint-disable-next-line
   }, []);
 
   const parseLocalStorage = (key) => {
@@ -33,7 +34,7 @@ function Settings() {
     const keys = Object.keys(defaultSettings);
     keys.forEach((key) => {
       const input = document.getElementById(key);
-      if (input.type == "checkbox")
+      if (input.type === "checkbox")
         input.checked = general_settings[key] ?? defaultSettings[key];
       else input.value = general_settings[key] ?? defaultSettings[key];
     });
@@ -41,9 +42,9 @@ function Settings() {
 
   const handleChange = (e) => {
     const general_settings = parseLocalStorage("general_settings");
-    if (e.target.type == "checkbox")
+    if (e.target.type === "checkbox")
       general_settings[e.target.id] = e.target.checked;
-    else if (e.target.type == "number")
+    else if (e.target.type === "number")
       general_settings[e.target.id] = parseFloat(e.target.value) ?? 1;
     else general_settings[e.target.id] = e.target.value;
     localStorage.setItem("general_settings", JSON.stringify(general_settings));
@@ -62,7 +63,7 @@ function Settings() {
 
     layouts.forEach((layout) => {
       const input = document.getElementById(layout);
-      input.checked = view_layout == input.id;
+      input.checked = view_layout === input.id;
     });
   };
 

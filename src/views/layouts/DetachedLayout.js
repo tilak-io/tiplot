@@ -20,11 +20,13 @@ function DetachedLayout({ socket, defaultShowView }) {
 
   useEffect(() => {
     initializeLayout();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     fitToScreen();
     window.addEventListener("resize", fitToScreen);
+    // eslint-disable-next-line
   }, [graphs]);
 
   const fitToScreen = () => {
@@ -177,7 +179,7 @@ function DetachedLayout({ socket, defaultShowView }) {
         page="home"
         addYT={addGraphYT}
         addXY={addGraphXY}
-        addXY={addGraphHM}
+        addHM={addGraphHM}
         toggle3dView={toggle3dView}
         showView={showView}
         showControls={true}

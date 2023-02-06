@@ -27,10 +27,10 @@ function Loader({ socket }) {
       getLogFiles();
     });
 
-    // eslint-disable-next-line
     return () => {
       socket.off("entities_loaded");
     };
+    // eslint-disable-next-line
   }, []);
 
   const parse = (file) => {
