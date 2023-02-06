@@ -35,35 +35,24 @@ function Loader({ socket, isExtra }) {
 
   const parse = (file) => {
     setLoading(true);
-    if (isExtra) {
-      fetch(`http://localhost:${PORT}/add_log`, {
+    fetch(
+      isExtra
+        ? `http://localhost:${PORT}/add_log`
+        : `http://localhost:${PORT}/select_log`,
+      {
         headers: {
           "Content-Type": "application/json",
         },
         method: "POST",
         body: JSON.stringify(file),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          setLoading(false);
-          // if (res.ok) navigate("/home");
-          // else alert("unsupported format");
-        });
-    } else {
-      fetch(`http://localhost:${PORT}/select_log`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify(file),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          setLoading(false);
-          if (res.ok) navigate("/home");
-          else alert("unsupported format");
-        });
-    }
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setLoading(false);
+        if (res.ok) isExtra ? navigate("/sync") : navigate("/home");
+        else alert("unsupported format");
+      });
     // socket.emit("select_log_file", file);
   };
 
@@ -79,11 +68,8 @@ function Loader({ socket, isExtra }) {
       .then((res) => res.json())
       .then((res) => {
         setLoading(false);
-        if (res.ok) {
-          if (!isExtra) {
-            navigate("/home");
-          }
-        } else alert("unsupported format");
+        if (res.ok) isExtra ? navigate("/sync") : navigate("/home");
+        else alert("unsupported format");
       });
   };
 

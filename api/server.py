@@ -169,13 +169,23 @@ def get_table_keys():
     response = {"tables": tables}
     return response
 
+@app.route('/extra_tables')
+def get_extra_table_keys():
+    tables = store.Store.get().getNestedKeys(isExtra = True)
+    response = {"tables": tables}
+    return response
+
 @app.route('/values_yt', methods=['POST'])
 def get_yt_values():
     field = request.get_json()
     table = field['table']
     column = field['column']
+    isExtra = field['isExtra']
     columns = list(set([column, "timestamp_tiplot"])) # remove duplicates
-    datadict = store.Store.get().datadict
+    if isExtra:
+        datadict = store.Store.get().extra_datadict
+    else:
+        datadict = store.Store.get().datadict
     try:
         values = datadict[table][columns].fillna(0).to_dict('records')
     except:

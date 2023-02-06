@@ -134,11 +134,16 @@ class Store:
         nested = list(self.datadict[key].keys())
         return nested
 
-    def getNestedKeys(self):
+    def getNestedKeys(self, isExtra = False):
         nested = []
-        for key in self.datadict.keys():
-            k = list(self.datadict[key].keys())
-            nested.append({key: k})
+        if isExtra:
+            for key in self.extra_datadict.keys():
+                k = list(self.extra_datadict[key].keys())
+                nested.append({key: k})
+        else:
+            for key in self.datadict.keys():
+                k = list(self.datadict[key].keys())
+                nested.append({key: k})
         return nested
 
 

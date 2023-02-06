@@ -8,11 +8,13 @@ export default class PlotData {
     this.initialKeys = initialKeys;
   }
 
-  getOptions = async () => {
+  getOptions = async (isExtra = false) => {
     const options = [];
-    const response = await fetch(`http://localhost:${PORT}/tables`).then(
-      (res) => res.json()
-    );
+    const response = await fetch(
+      isExtra
+        ? `http://localhost:${PORT}/extra_tables`
+        : `http://localhost:${PORT}/tables`
+    ).then((res) => res.json());
     const tables = response.tables;
     tables.forEach((t) => {
       var table = Object.keys(t)[0];
@@ -47,7 +49,8 @@ export default class PlotData {
   };
 
   // get data for yt graphs
-  getData = async (field) => {
+  getData = async (field, isExtra = false) => {
+    field["isExtra"] = isExtra;
     const response = await fetch(`http://localhost:${PORT}/values_yt`, {
       headers: {
         "Content-Type": "application/json",
