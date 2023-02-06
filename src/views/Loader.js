@@ -103,7 +103,11 @@ function Loader({ socket, isExtra }) {
         <center>
           <label
             htmlFor="fileUpload"
-            className="file-upload btn btn-warning btn-lg rounded-pill shadow"
+            className={
+              isExtra
+                ? "file-upload btn btn-info btn-lg rounded-pill shadow"
+                : "file-upload btn btn-warning btn-lg rounded-pill shadow"
+            }
           >
             <i className="fa fa-upload mr-2"></i>Browse for file
             <input id="fileUpload" type="file" onChange={handleChange} />

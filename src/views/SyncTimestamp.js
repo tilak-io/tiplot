@@ -54,7 +54,6 @@ function SyncTimestamp() {
   };
 
   const shiftTimestamp = (_delta) => {
-    console.log(xaxis);
     const dt = parseFloat(_delta);
     const ed = Object.assign({}, extraData);
     if ("x" in ed) {
