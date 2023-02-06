@@ -287,6 +287,7 @@ function ToolBar({
             <NavDropdownMenu title="Tools" id="collasible-nav-dropdown">
               <NavDropdown.Item href="#/entities">Entities</NavDropdown.Item>
               <NavDropdown.Item href="#/settings">Settings</NavDropdown.Item>
+              <NavDropdown.Item href="#/add_log">Add Log</NavDropdown.Item>
               <DropdownSubmenu href="#" title="Layouts">
                 <DropdownSubmenu href="#" title="Saved Layouts">
                   {layouts}
