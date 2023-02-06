@@ -13,8 +13,11 @@ function SyncTimestamp() {
 
   const [extraOptions, setExtraOptions] = useState([]);
   const [extraData, setExtraData] = useState({});
+  const [shiftedData, setShiftedData] = useState({});
 
   const [data, setData] = useState([]);
+
+  const [delta, setDelta] = useState(0);
 
   useEffect(() => {
     getOptions();
@@ -22,8 +25,12 @@ function SyncTimestamp() {
   }, []);
 
   useEffect(() => {
-    setData([mainData, extraData]);
-  }, [mainData, extraData]);
+    setData([mainData, shiftedData]);
+  }, [mainData, shiftedData]);
+
+  useEffect(() => {
+    shiftTimestamp(delta);
+  }, [delta]);
 
   const getOptions = async () => {
     const m_opt = await plotData.getOptions(false);
@@ -41,6 +48,16 @@ function SyncTimestamp() {
   const getExtraData = async (field) => {
     const d = await plotData.getData(field, true);
     setExtraData(d);
+    setShiftedData(d);
+  };
+
+  const shiftTimestamp = (_delta) => {
+    const dt = parseFloat(_delta);
+    const ed = Object.assign({}, extraData);
+    if ("x" in ed) {
+      ed.x = ed.x.map((t) => t + dt);
+      setShiftedData(ed);
+    }
   };
 
   return (
@@ -56,10 +73,17 @@ function SyncTimestamp() {
             <Form.Control
               placeholder="Timestamp Delta"
               type="number"
-              defaultValue={0}
+              value={delta}
+              onChange={(e) => setDelta(e.target.value)}
             />
           </Col>
         </Row>
+        <Form.Range
+          value={delta}
+          onChange={(e) => setDelta(e.target.value)}
+          min={-100}
+          max={100}
+        />
         <br />
         <Select
           placeholder="Main Datadict"
@@ -83,7 +107,10 @@ function SyncTimestamp() {
               y: 1,
             },
           }}
-          // config={{ responsive: true }}
+          config={{
+            responsive: true,
+            displayModeBar: false,
+          }}
         />
       </Container>
     </>
