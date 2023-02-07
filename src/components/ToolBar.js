@@ -288,6 +288,7 @@ function ToolBar({
               <NavDropdown.Item href="#/entities">Entities</NavDropdown.Item>
               <NavDropdown.Item href="#/settings">Settings</NavDropdown.Item>
               <NavDropdown.Item href="#/add_log">Add Log</NavDropdown.Item>
+              <NavDropdown.Item href="#/sync">Sync Logs</NavDropdown.Item>
               <DropdownSubmenu href="#" title="Layouts">
                 <DropdownSubmenu href="#" title="Saved Layouts">
                   {layouts}
