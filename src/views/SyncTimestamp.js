@@ -30,7 +30,7 @@ function SyncTimestamp() {
   useEffect(() => {
     shiftTimestamp(delta);
     // eslint-disable-next-line
-  }, [delta]);
+  }, [delta, extraData]);
 
   const getOptions = async () => {
     const m_opt = await plotData.getOptions(false);
@@ -89,6 +89,10 @@ function SyncTimestamp() {
     }
   };
 
+  const handleClick = (event) => {
+    console.log(event);
+  };
+
   return (
     <>
       <ToolBar />
@@ -103,6 +107,7 @@ function SyncTimestamp() {
               placeholder="Timestamp Delta"
               type="number"
               value={delta}
+              step={0.01}
               onChange={(e) => setDelta(e.target.value)}
             />
           </Col>
@@ -110,8 +115,9 @@ function SyncTimestamp() {
         <Form.Range
           value={delta}
           onChange={(e) => setDelta(e.target.value)}
-          min={-100}
-          max={100}
+          step={0.01}
+          min={-10000}
+          max={10000}
         />
         <br />
         <Select
@@ -126,8 +132,9 @@ function SyncTimestamp() {
         />
         <Plot
           data={data}
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "600px" }}
           onRelayout={handleRelayout}
+          onClick={handleClick}
           layout={{
             autoresize: true,
             showlegend: true,
@@ -137,7 +144,15 @@ function SyncTimestamp() {
               y: 1,
             },
             xaxis: {
+              showspikes: true,
+              spikecolor: "#000",
+              spikemode: "across+marker",
+              spikethickness: 1,
+              exponentformat: "e",
               range: xaxis,
+            },
+            yaxis: {
+              exponentformat: "e",
             },
           }}
           config={{
