@@ -6,7 +6,7 @@ import ToolBar from "../components/ToolBar";
 import PlotData from "../controllers/PlotData";
 
 function SyncTimestamp() {
-  const plotData = new PlotData("sync-timestamp", []);
+  const plotData = new PlotData("sync-plot", []);
 
   const [mainOptions, setMainOptions] = useState([]);
   const [mainData, setMainData] = useState({});
@@ -17,6 +17,8 @@ function SyncTimestamp() {
   const [delta, setDelta] = useState(0);
   const [xaxis, setXAxis] = useState(null);
   const [zoomed, setZoomed] = useState(false);
+  const [syncType, setSyncType] = useState("custom");
+  const [range, setRange] = useState(1000);
 
   useEffect(() => {
     getOptions();
@@ -31,6 +33,33 @@ function SyncTimestamp() {
     shiftTimestamp(delta);
     // eslint-disable-next-line
   }, [delta, extraData]);
+
+  useEffect(() => {
+    switch (syncType) {
+      case "first-change":
+        if ("x" in mainData && "x" in extraData) {
+          const main_x = findFirstChange(mainData);
+          const extra_x = findFirstChange(extraData);
+          setDelta(main_x - extra_x);
+          updateXAxis();
+        }
+        break;
+
+      case "first-point":
+        if ("x" in mainData && "x" in extraData) {
+          const main_x = mainData.x[0];
+          const extra_x = extraData.x[0];
+          setDelta(main_x - extra_x);
+          updateXAxis();
+        }
+        break;
+
+      case "custom":
+      default:
+        break;
+    }
+  }, [syncType, mainData, extraData]);
+
 
   const getOptions = async () => {
     const m_opt = await plotData.getOptions(false);
@@ -90,8 +119,25 @@ function SyncTimestamp() {
   };
 
   const handleClick = (event) => {
-    console.log(event);
+    if (event.event.ctrlKey) {
+      console.log(event);
+    }
   };
+
+  const handleRadioChange = (event) => {
+    var selected = event.target.id;
+    setSyncType(selected);
+  };
+
+  const findFirstChange = (data) => {
+    for (let i = 0; i < data.y.length - 1; i++) {
+      if (data.y[i] !== data.y[i + 1]) {
+        return data.x[i];
+      }
+    }
+    return data.x[0];
+  }
+
 
   return (
     <>
@@ -109,6 +155,7 @@ function SyncTimestamp() {
               value={delta}
               step={0.01}
               onChange={(e) => setDelta(e.target.value)}
+              disabled={syncType !== "custom"}
             />
           </Col>
         </Row>
@@ -116,8 +163,31 @@ function SyncTimestamp() {
           value={delta}
           onChange={(e) => setDelta(e.target.value)}
           step={0.01}
-          min={-10000}
-          max={10000}
+          min={-range}
+          max={range}
+          disabled={syncType !== "custom"}
+        />
+        <Form.Check
+          name="sync-type"
+          id="custom"
+          type="radio"
+          label="Custom"
+          defaultChecked={true}
+          onChange={handleRadioChange}
+        />
+        <Form.Check
+          name="sync-type"
+          id="first-change"
+          type="radio"
+          label="Sync on first change"
+          onChange={handleRadioChange}
+        />
+        <Form.Check
+          name="sync-type"
+          id="first-point"
+          type="radio"
+          label="Sync on first point"
+          onChange={handleRadioChange}
         />
         <br />
         <Select
@@ -131,13 +201,14 @@ function SyncTimestamp() {
           onChange={(e) => getExtraData(e.value)}
         />
         <Plot
+          divId="sync-plot"
           data={data}
           style={{ width: "100%", height: "600px" }}
           onRelayout={handleRelayout}
           onClick={handleClick}
           layout={{
             autoresize: true,
-            showlegend: true,
+            showlegend: false,
             legend: {
               x: 1,
               xanchor: "right",
@@ -160,6 +231,7 @@ function SyncTimestamp() {
             displayModeBar: false,
           }}
         />
+
       </Container>
     </>
   );
