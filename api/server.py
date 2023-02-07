@@ -300,6 +300,18 @@ def get_additional_info():
     res = {"info": info}
     return res
 
+@app.route('/merge_extra', methods=['POST'])
+def merge_extra():
+    res = request.get_json()
+    prefix = res['prefix']
+    delta = res['delta']
+    try:
+        store.Store.get().mergeExtra(prefix, delta)
+        ok = True
+    except:
+        ok = False
+    return {"ok": ok}
+
 @socketio.on("disconnect")
 def disconnected():
     # print("-> client has disconnected " + request.sid)

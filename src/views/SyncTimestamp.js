@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import Plot from "react-plotly.js";
-import { Container, Form, Row, Col } from "react-bootstrap";
+import { Container, Form, Row, Col, Button } from "react-bootstrap";
 import ToolBar from "../components/ToolBar";
 import PlotData from "../controllers/PlotData";
+import { PORT } from "../static/js/constants";
+import { useNavigate } from "react-router-dom";
 
 function SyncTimestamp() {
   const plotData = new PlotData("sync-plot", []);
@@ -19,6 +21,8 @@ function SyncTimestamp() {
   const [zoomed, setZoomed] = useState(false);
   const [syncType, setSyncType] = useState("custom");
   const [range, setRange] = useState(1000);
+  const [prefix, setPrefix] = useState("extra_");
+  const navigate = useNavigate();
 
   useEffect(() => {
     getOptions();
@@ -138,6 +142,24 @@ function SyncTimestamp() {
     return data.x[0];
   }
 
+  const handleApply = async () => {
+    const req = {
+      "prefix": prefix,
+      "delta": delta
+    };
+
+    const response = await fetch(`http://localhost:${PORT}/merge_extra`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(req),
+    }).then((res) => res.json()).then((res) => {
+      if (res.ok) navigate("/home");
+      else alert("Error: Can't merge datadicts");
+
+    });
+  }
 
   return (
     <>
@@ -146,7 +168,7 @@ function SyncTimestamp() {
       <Container className="settings-page">
         <Row>
           <Col>
-            <Form.Control placeholder="Prefix" defaultValue="extra_" />
+            <Form.Control placeholder="Prefix" defaultValue="extra_" onChange={(e) => setPrefix(e.target.value)} />
           </Col>
           <Col>
             <Form.Control
@@ -232,6 +254,12 @@ function SyncTimestamp() {
           }}
         />
 
+        <Col className="text-center">
+          <Button variant="primary" onClick={handleApply} type="submit">
+            Apply
+          </Button>
+        </Col>
+        <div className="break" />
       </Container>
     </>
   );
