@@ -99,11 +99,16 @@ def get_table_columns(data):
 
 @app.route('/upload_log', methods=['POST'])
 def upload_log():
+    isExtra = request.headers["isExtra"]
+    if (isExtra == "true"):
+        isExtra = True
+    else:
+        isExtra = False
     try:
         file = request.files['log']
         if file:
             file.save(path.join(logs_dir, file.filename))
-            ok = choose_parser(file.filename, logs_dir)
+            ok = choose_parser(file.filename, logs_dir, isExtra)
     except:
         ok = False
     return {'ok': ok}

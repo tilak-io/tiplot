@@ -81,8 +81,8 @@ function View3D({ socket, detached }) {
     updateEntities();
     resizeCanvasToDisplaySize();
     renderer.render(scene, camera);
-    const target = getTrackedEntity();
-    target.updateTimelineOnTick(tick);
+    // const target = getTrackedEntity();
+    // target.updateTimelineOnTick(tick);
   };
 
   const resizeCanvasToDisplaySize = () => {

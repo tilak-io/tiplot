@@ -68,6 +68,9 @@ function Loader({ socket, isExtra }) {
     const formData = new FormData();
     formData.append("log", file, file.name);
     fetch(`http://localhost:${PORT}/upload_log`, {
+      headers: {
+        isExtra: isExtra,
+      },
       method: "POST",
       body: formData,
     })
