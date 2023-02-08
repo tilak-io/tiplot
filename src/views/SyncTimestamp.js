@@ -26,6 +26,7 @@ function SyncTimestamp() {
 
   useEffect(() => {
     getOptions();
+    setRange(1000); // TODO:
     // eslint-disable-next-line
   }, []);
 
@@ -62,8 +63,8 @@ function SyncTimestamp() {
       default:
         break;
     }
+    // eslint-disable-next-line
   }, [syncType, mainData, extraData]);
-
 
   const getOptions = async () => {
     const m_opt = await plotData.getOptions(false);
@@ -140,26 +141,27 @@ function SyncTimestamp() {
       }
     }
     return data.x[0];
-  }
+  };
 
   const handleApply = async () => {
     const req = {
-      "prefix": prefix,
-      "delta": delta
+      prefix: prefix,
+      delta: delta,
     };
 
-    const response = await fetch(`http://localhost:${PORT}/merge_extra`, {
+    await fetch(`http://localhost:${PORT}/merge_extra`, {
       headers: {
         "Content-Type": "application/json",
       },
       method: "POST",
       body: JSON.stringify(req),
-    }).then((res) => res.json()).then((res) => {
-      if (res.ok) navigate("/home");
-      else alert("Error: Can't merge datadicts");
-
-    });
-  }
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.ok) navigate("/home");
+        else alert("Error: Can't merge datadicts");
+      });
+  };
 
   return (
     <>
@@ -168,7 +170,11 @@ function SyncTimestamp() {
       <Container className="settings-page">
         <Row>
           <Col>
-            <Form.Control placeholder="Prefix" defaultValue="extra_" onChange={(e) => setPrefix(e.target.value)} />
+            <Form.Control
+              placeholder="Prefix"
+              defaultValue="extra_"
+              onChange={(e) => setPrefix(e.target.value)}
+            />
           </Col>
           <Col>
             <Form.Control

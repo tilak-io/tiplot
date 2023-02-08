@@ -306,12 +306,12 @@ def get_additional_info():
 def merge_extra():
     res = request.get_json()
     prefix = res['prefix']
-    delta = res['delta']
-    # try:
-    store.Store.get().mergeExtra(prefix, delta)
-    ok = True
-    # except:
-    #     ok = False
+    delta = float(res['delta'])
+    try:
+        store.Store.get().mergeExtra(prefix, delta)
+        ok = True
+    except:
+        ok = False
     return {"ok": ok}
 
 @socketio.on("disconnect")
