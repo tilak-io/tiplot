@@ -6,6 +6,7 @@ import ToolBar from "../components/ToolBar";
 import PlotData from "../controllers/PlotData";
 import { PORT } from "../static/js/constants";
 import { useNavigate } from "react-router-dom";
+import Plotly from "plotly.js/dist/plotly";
 
 function SyncTimestamp() {
   const plotData = new PlotData("sync-plot", []);
@@ -61,13 +62,21 @@ function SyncTimestamp() {
         break;
 
       case "back-to-back":
+      case "btb-inversed":
+        const inv = document.getElementById("btb-inversed").checked;
         if ("x" in mainData && "x" in extraData) {
-          const main_x = mainData.x[mainData.x.length - 1];
-          const extra_x = extraData.x[0];
-          setDelta(main_x - extra_x);
+          if (inv) {
+            const main_x = mainData.x[0];
+            const extra_x = extraData.x[extraData.x.length - 1];
+            setDelta(main_x - extra_x);
+          } else {
+            const main_x = mainData.x[mainData.x.length - 1];
+            const extra_x = extraData.x[0];
+            setDelta(main_x - extra_x);
+          }
           updateXAxis();
         }
-
+        break;
       case "custom":
       default:
         break;
@@ -141,6 +150,18 @@ function SyncTimestamp() {
   const handleRadioChange = (event) => {
     var selected = event.target.id;
     setSyncType(selected);
+    setTimeout(function () {
+      autoRange();
+    }, 100);
+  };
+
+  const handleInversedCheck = (event) => {
+    var selected = event.target.id;
+    if (event.target.checked) setSyncType(selected);
+    else setSyncType("back-to-back");
+    setTimeout(function () {
+      autoRange();
+    }, 100);
   };
 
   const findFirstChange = (data) => {
@@ -186,6 +207,15 @@ function SyncTimestamp() {
     }
   };
 
+  const autoRange = () => {
+    const plot = document.getElementById("sync-plot");
+    const update = {
+      "xaxis.autorange": true,
+      "yaxis.autorange": true,
+    };
+    Plotly.relayout(plot, update);
+  };
+
   return (
     <>
       <ToolBar />
@@ -217,6 +247,7 @@ function SyncTimestamp() {
           min={-range}
           max={range}
           disabled={syncType !== "custom"}
+          onMouseUp={autoRange}
         />
         <Form.Check
           name="sync-type"
@@ -240,13 +271,26 @@ function SyncTimestamp() {
           label="Sync on first point"
           onChange={handleRadioChange}
         />
-        <Form.Check
-          name="sync-type"
-          id="back-to-back"
-          type="radio"
-          label="Back to back"
-          onChange={handleRadioChange}
-        />
+        <div className="mb-3">
+          <Form.Check
+            inline
+            name="sync-type"
+            id="back-to-back"
+            type="radio"
+            label="Back to back"
+            onChange={handleRadioChange}
+          />
+          <Form.Check
+            inline
+            id="btb-inversed"
+            type="checkbox"
+            label="Inversed"
+            onChange={handleInversedCheck}
+            disabled={
+              syncType !== "back-to-back" && syncType !== "btb-inversed"
+            }
+          />
+        </div>
         <br />
         <Select
           placeholder="Main Datadict"
@@ -259,6 +303,7 @@ function SyncTimestamp() {
           onChange={(e) => getExtraData(e.value)}
         />
         <Plot
+          className="plot-yt"
           divId="sync-plot"
           data={data}
           style={{ width: "100%", height: "600px" }}
