@@ -3,7 +3,9 @@ const isWin = process.platform === "win32";
 
 var add_data;
 if (isWin) add_data = "--add-data api;api";
-else add_data = "--add-data api:api";
+else
+  add_data =
+    "--add-data api:api --add-data $(pip show pymavlink | grep 'Location:' | awk '{print $2}')/pymavlink:pymavlink";
 
 const spawn = require("child_process").spawn,
   ls = spawn(
@@ -16,8 +18,6 @@ const spawn = require("child_process").spawn,
       "--distpath backend",
       add_data,
       "api/server.py",
-      "--add-data",
-      "$(pip show pymavlink | grep 'Location:' | awk '{print $2}')/pymavlink:pymavlink",
     ],
     {
       shell: true,
