@@ -66,6 +66,11 @@ function SyncTimestamp() {
       case "back-to-back":
       case "btb-inversed":
         const inv = document.getElementById("btb-inversed").checked;
+
+        if (syncType == "back-to-back" && inv) {
+          setSyncType("btb-inversed");
+          return;
+        }
         if ("x" in mainData && "x" in extraData) {
           if (inv) {
             const main_x = mainData.x[0];
@@ -164,7 +169,7 @@ function SyncTimestamp() {
     setSyncType(selected);
     setTimeout(function () {
       autoRange();
-    }, 100);
+    }, 200);
   };
 
   const handleInversedCheck = (event) => {
@@ -173,7 +178,7 @@ function SyncTimestamp() {
     else setSyncType("back-to-back");
     setTimeout(function () {
       autoRange();
-    }, 100);
+    }, 200);
   };
 
   const findFirstChange = (data) => {
