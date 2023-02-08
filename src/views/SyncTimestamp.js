@@ -66,7 +66,7 @@ function SyncTimestamp() {
       case "btb-inversed":
         const inv = document.getElementById("btb-inversed").checked;
 
-        if (syncType == "back-to-back" && inv) {
+        if (syncType === "back-to-back" && inv) {
           setSyncType("btb-inversed");
           return;
         }
