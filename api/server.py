@@ -235,10 +235,31 @@ def get_correlation_matrix():
     values = data['data']
     return { 'columns': columns, 'values': values}
 
-@app.route('/log_files')
-def get_logs():
-    files = [(path.basename(x), path.getsize(x), strftime(
-        '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
+@app.route('/log_files/<sort>')
+def get_sorted_logs(sort):
+    sort = sort.lower()
+    if sort == "time":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), key=path.getmtime)]
+    elif sort == "time_desc":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), key=path.getmtime, reverse=True)]
+    elif sort == "size":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), key=path.getsize)]
+    elif sort == "size_desc":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), key=path.getsize, reverse=True)]
+    elif sort == "name":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'))]
+    elif sort == "name_desc":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), reverse=True)]
+    else:
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
+
     data = {'path': logs_dir, 'files': files}
     return data
 
