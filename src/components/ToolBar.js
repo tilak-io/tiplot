@@ -32,6 +32,8 @@ function ToolBar({
   const [currentFile, setCurrentFile] = useState("");
   const [showInfoBox, setShowInfo] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState([]);
+  const [hasExtra, setHasExtra] = useState(false);
+  const [hasMain, setHasMain] = useState(false);
 
   const handleClose = () => setShowSaveMsg(false);
   const saveCurrentLayoutNamed = () => setShowSaveMsg(true);
@@ -48,6 +50,8 @@ function ToolBar({
       (res) => res.json()
     );
     setAdditionalInfo(response.info);
+    setHasExtra(response.hasExtra);
+    setHasMain(response.hasMain);
   };
 
   const getCurrentFile = async () => {
@@ -287,8 +291,12 @@ function ToolBar({
             <NavDropdownMenu title="Tools" id="collasible-nav-dropdown">
               <NavDropdown.Item href="#/entities">Entities</NavDropdown.Item>
               <NavDropdown.Item href="#/settings">Settings</NavDropdown.Item>
-              <NavDropdown.Item href="#/add_log">Add Log</NavDropdown.Item>
-              <NavDropdown.Item href="#/sync">Sync Logs</NavDropdown.Item>
+              <NavDropdown.Item href="#/add_log" disabled={!hasMain}>
+                Add Log
+              </NavDropdown.Item>
+              <NavDropdown.Item href="#/sync" disabled={!hasExtra}>
+                Sync Logs
+              </NavDropdown.Item>
               <DropdownSubmenu href="#" title="Layouts">
                 <DropdownSubmenu href="#" title="Saved Layouts">
                   {layouts}

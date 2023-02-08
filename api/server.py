@@ -297,7 +297,9 @@ def get_keys():
 @app.route('/additional_info')
 def get_additional_info():
     info = store.Store.get().info
-    res = {"info": info}
+    hasExtra = bool(store.Store.get().extra_datadict)
+    hasMain = bool(store.Store.get().datadict)
+    res = {"info": info, "hasExtra": hasExtra, "hasMain": hasMain}
     return res
 
 @app.route('/merge_extra', methods=['POST'])
