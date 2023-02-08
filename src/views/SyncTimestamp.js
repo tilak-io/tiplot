@@ -21,12 +21,12 @@ function SyncTimestamp() {
   const [zoomed, setZoomed] = useState(false);
   const [syncType, setSyncType] = useState("custom");
   const [range, setRange] = useState(1000);
+  const [step, setStep] = useState(1);
   const [prefix, setPrefix] = useState("extra_");
   const navigate = useNavigate();
 
   useEffect(() => {
     getOptions();
-    setRange(1000); // TODO:
     // eslint-disable-next-line
   }, []);
 
@@ -40,6 +40,7 @@ function SyncTimestamp() {
   }, [delta, extraData]);
 
   useEffect(() => {
+    calculateRange();
     switch (syncType) {
       case "first-change":
         if ("x" in mainData && "x" in extraData) {
@@ -163,6 +164,20 @@ function SyncTimestamp() {
       });
   };
 
+  const calculateRange = () => {
+    if ("x" in mainData && "x" in extraData) {
+      let min = Math.min(mainData.x[0], extraData.x[0]);
+      let max = Math.max(
+        mainData.x[mainData.x.length - 1],
+        extraData.x[extraData.x.length - 1]
+      );
+      setRange(max - min);
+
+      let stp = mainData.x[1] - mainData.x[0];
+      setStep(stp);
+    }
+  };
+
   return (
     <>
       <ToolBar />
@@ -181,7 +196,7 @@ function SyncTimestamp() {
               placeholder="Timestamp Delta"
               type="number"
               value={delta}
-              step={0.01}
+              step={step}
               onChange={(e) => setDelta(e.target.value)}
               disabled={syncType !== "custom"}
             />
@@ -190,7 +205,7 @@ function SyncTimestamp() {
         <Form.Range
           value={delta}
           onChange={(e) => setDelta(e.target.value)}
-          step={0.01}
+          step={step}
           min={-range}
           max={range}
           disabled={syncType !== "custom"}
