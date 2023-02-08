@@ -97,21 +97,6 @@ def get_table_columns(data):
     data = {"index": index,"table": table, "columns": columns}
     emit('table_columns', data)
 
-@app.route('/takeoff_position')
-def get_takeoff_position():
-    try:
-        values = store.Store.get().datadict['vehicle_gps_position'][['lon', 'lat', 'alt']].to_dict('records')
-        data = {'takeoff': values[0]}
-    except:
-        # dummy data for tests
-        takeoff = {
-            "alt": 270840,
-            "lat": 498044179,
-            "lon": 88782777,
-          }
-        data = {'takeoff': takeoff}
-    return data
-
 @app.route('/upload_log', methods=['POST'])
 def upload_log():
     try:
