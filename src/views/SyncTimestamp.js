@@ -60,6 +60,14 @@ function SyncTimestamp() {
         }
         break;
 
+      case "back-to-back":
+        if ("x" in mainData && "x" in extraData) {
+          const main_x = mainData.x[mainData.x.length - 1];
+          const extra_x = extraData.x[0];
+          setDelta(main_x - extra_x);
+          updateXAxis();
+        }
+
       case "custom":
       default:
         break;
@@ -230,6 +238,13 @@ function SyncTimestamp() {
           id="first-point"
           type="radio"
           label="Sync on first point"
+          onChange={handleRadioChange}
+        />
+        <Form.Check
+          name="sync-type"
+          id="back-to-back"
+          type="radio"
+          label="Back to back"
           onChange={handleRadioChange}
         />
         <br />
