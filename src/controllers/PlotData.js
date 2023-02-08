@@ -257,28 +257,32 @@ export default class PlotData {
     for (let i = 0; i < plots.length; i++) {
       if (plots[i].data === undefined) continue;
       if (plots[i].data.length === 0) continue;
-      if (plots[i].data[0].visible === "legendonly") continue;
+      for (let j = 0; j < plots[i].data.length; j++) {
+        if (plots[i].data[j].visible === "legendonly") continue;
 
-      // TODO: investigate
-      try {
-        let minMax = plots[i].data[0].x.reduce(
-          (acc, cur) => {
-            return {
-              min: Math.min(acc.min, cur),
-              max: Math.max(acc.max, cur),
-            };
-          },
-          { min: Infinity, max: -Infinity }
-        );
-        min_values.push(minMax.min);
-        max_values.push(minMax.max);
-      } catch (e) {
-        alert(e);
+        // TODO: check performance
+        try {
+          let minMax = plots[i].data[j].x.reduce(
+            (acc, cur) => {
+              return {
+                min: Math.min(acc.min, cur),
+                max: Math.max(acc.max, cur),
+              };
+            },
+            { min: Infinity, max: -Infinity }
+          );
+          min_values.push(minMax.min);
+          max_values.push(minMax.max);
+        } catch (e) {
+          alert(e);
+        }
       }
     }
 
     const all_min = Math.min.apply(Math, min_values);
     const all_max = Math.max.apply(Math, max_values);
+
+    console.log(all_min, all_max);
 
     const update = {
       custom: true,
