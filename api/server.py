@@ -313,11 +313,11 @@ def merge_extra():
     res = request.get_json()
     prefix = res['prefix']
     delta = float(res['delta'])
-    try:
-        store.Store.get().mergeExtra(prefix, delta)
-        ok = True
-    except:
-        ok = False
+    # try:
+    store.Store.get().mergeExtra(prefix, delta)
+    ok = True
+    # except:
+    #     ok = False
     return {"ok": ok}
 
 @socketio.on("disconnect")

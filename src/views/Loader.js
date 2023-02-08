@@ -21,7 +21,7 @@ function Loader({ socket, isExtra }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getSortedLogFiles("unsorted");
+    getSortedLogFiles("time_desc");
 
     // when recieving entities from jupyter notebook
     socket.on("entities_loaded", () => {
@@ -30,7 +30,7 @@ function Loader({ socket, isExtra }) {
 
     socket.on("connect", () => {
       // First app launch
-      getSortedLogFiles("unsorted");
+      getSortedLogFiles("time_desc");
     });
 
     return () => {

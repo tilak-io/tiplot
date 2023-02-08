@@ -150,7 +150,8 @@ class Store:
         shifted = {}
         for topic, df in self.extra_datadict.items():
             new_df = df.copy()
-            new_df['timestamp_tiplot'] = new_df['timestamp_tiplot'] + delta
+            if "timestamp_tiplot" in new_df:
+                new_df['timestamp_tiplot'] = new_df['timestamp_tiplot'] + delta
             shifted[topic] = new_df
 
         prefixed = {prefix + key: value for key, value in shifted.items()}
