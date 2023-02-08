@@ -282,8 +282,6 @@ export default class PlotData {
     const all_min = Math.min.apply(Math, min_values);
     const all_max = Math.max.apply(Math, max_values);
 
-    console.log(all_min, all_max);
-
     const update = {
       custom: true,
       "xaxis.range": [all_min, all_max],
@@ -349,7 +347,10 @@ export default class PlotData {
     // const yData = plot.data.map((series) => series.y);
     const yData = plot.data.reduce((acc, series) => {
       const filteredY = series.y.filter(
-        (y, i) => series.x[i] >= xrange[0] && series.x[i] <= xrange[1]
+        (y, i) =>
+          series.x[i] >= xrange[0] &&
+          series.x[i] <= xrange[1] &&
+          series.visible !== "legendonly"
       );
       return acc.concat(filteredY);
     }, []);

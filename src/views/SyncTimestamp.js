@@ -253,6 +253,7 @@ function SyncTimestamp() {
             yaxis: {
               exponentformat: "e",
             },
+            hovermode: "x",
           }}
           config={{
             responsive: true,
