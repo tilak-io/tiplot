@@ -37,7 +37,6 @@ function SyncTimestamp() {
   }, [mainData, shiftedData]);
 
   useEffect(() => {
-    // shiftTimestamp(delta);
     debouncedShiftTimestamp(delta);
     // eslint-disable-next-line
   }, [delta, extraData]);
@@ -112,16 +111,6 @@ function SyncTimestamp() {
     updateXAxis();
   };
 
-  // const shiftTimestamp = (_delta) => {
-  //   const dt = parseFloat(_delta);
-  //   const ed = Object.assign({}, extraData);
-  //   if ("x" in ed) {
-  //     ed.x = ed.x.map((t) => t + dt);
-  //     setShiftedData(ed);
-  //   }
-  //   updateXAxis();
-  // };
-
   const debouncedShiftTimestamp = debounce((_delta) => {
     const dt = parseFloat(_delta);
     const ed = Object.assign({}, extraData);
@@ -148,10 +137,7 @@ function SyncTimestamp() {
   };
 
   const handleRelayout = (event) => {
-    if (
-      event["xaxis.autorange"] !== undefined &&
-      event["yaxis.autorange"] !== undefined
-    ) {
+    if (event["xaxis.autorange"] === true) {
       setZoomed(false);
     } else {
       setZoomed(true);
@@ -222,6 +208,10 @@ function SyncTimestamp() {
       let stp = mainData.x[1] - mainData.x[0];
       setStep(stp);
     }
+
+    setTimeout(function () {
+      autoRange();
+    }, 200);
   };
 
   const autoRange = () => {
