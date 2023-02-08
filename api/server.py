@@ -45,7 +45,7 @@ extension_to_parser = {
     'tlog': TLOGParser,
 }
 
-def choose_parser(file, logs_dir):
+def choose_parser(file, logs_dir, isExtra=False):
 
     global current_parser
     full_path = logs_dir + file
@@ -63,12 +63,18 @@ def choose_parser(file, logs_dir):
     parser = parser_cls()
     try:
         datadict, entities, additional_info = parser.parse(full_path)
-        store.Store.get().setStore(datadict, entities, additional_info)
+        if isExtra:
+            store.Store.get().setExtra(datadict)
+        else:
+            store.Store.get().setStore(datadict, entities, additional_info)
         ok = True
         current_parser = parser
     except ValueError:
         datadict, entities = parser.parse(full_path)
-        store.Store.get().setStore(datadict, entities)
+        if isExtra:
+            store.Store.get().setExtra(datadict)
+        else:
+            store.Store.get().setStore(datadict, entities)
         ok = True
         current_parser = parser
     return ok
@@ -91,28 +97,18 @@ def get_table_columns(data):
     data = {"index": index,"table": table, "columns": columns}
     emit('table_columns', data)
 
-@app.route('/takeoff_position')
-def get_takeoff_position():
-    try:
-        values = store.Store.get().datadict['vehicle_gps_position'][['lon', 'lat', 'alt']].to_dict('records')
-        data = {'takeoff': values[0]}
-    except:
-        # dummy data for tests
-        takeoff = {
-            "alt": 270840,
-            "lat": 498044179,
-            "lon": 88782777,
-          }
-        data = {'takeoff': takeoff}
-    return data
-
 @app.route('/upload_log', methods=['POST'])
 def upload_log():
+    isExtra = request.headers["isExtra"]
+    if (isExtra == "true"):
+        isExtra = True
+    else:
+        isExtra = False
     try:
         file = request.files['log']
         if file:
             file.save(path.join(logs_dir, file.filename))
-            ok = choose_parser(file.filename, logs_dir)
+            ok = choose_parser(file.filename, logs_dir, isExtra)
     except:
         ok = False
     return {'ok': ok}
@@ -163,13 +159,23 @@ def get_table_keys():
     response = {"tables": tables}
     return response
 
+@app.route('/extra_tables')
+def get_extra_table_keys():
+    tables = store.Store.get().getNestedKeys(isExtra = True)
+    response = {"tables": tables}
+    return response
+
 @app.route('/values_yt', methods=['POST'])
 def get_yt_values():
     field = request.get_json()
     table = field['table']
     column = field['column']
+    isExtra = field['isExtra']
     columns = list(set([column, "timestamp_tiplot"])) # remove duplicates
-    datadict = store.Store.get().datadict
+    if isExtra:
+        datadict = store.Store.get().extra_datadict
+    else:
+        datadict = store.Store.get().datadict
     try:
         values = datadict[table][columns].fillna(0).to_dict('records')
     except:
@@ -234,10 +240,31 @@ def get_correlation_matrix():
     values = data['data']
     return { 'columns': columns, 'values': values}
 
-@app.route('/log_files')
-def get_logs():
-    files = [(path.basename(x), path.getsize(x), strftime(
-        '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
+@app.route('/log_files/<sort>')
+def get_sorted_logs(sort):
+    sort = sort.lower()
+    if sort == "time":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), key=path.getmtime)]
+    elif sort == "time_desc":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), key=path.getmtime, reverse=True)]
+    elif sort == "size":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), key=path.getsize)]
+    elif sort == "size_desc":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), key=path.getsize, reverse=True)]
+    elif sort == "name":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'))]
+    elif sort == "name_desc":
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in sorted(glob(logs_dir + '/*'), reverse=True)]
+    else:
+        files = [(path.basename(x), path.getsize(x), strftime(
+            '%Y-%m-%d %H:%M:%S', localtime(path.getmtime(x)))) for x in glob(logs_dir + '/*')]
+
     data = {'path': logs_dir, 'files': files}
     return data
 
@@ -248,6 +275,12 @@ def select_log():
     file = request.get_json()
     current_file = file
     ok = choose_parser(file[0], logs_dir)
+    return {"ok": ok}
+
+@app.route('/add_log', methods=['POST'])
+def add_log():
+    file = request.get_json()
+    ok = choose_parser(file[0], logs_dir, True)
     return {"ok": ok}
 
 
@@ -275,8 +308,22 @@ def get_keys():
 @app.route('/additional_info')
 def get_additional_info():
     info = store.Store.get().info
-    res = {"info": info}
+    hasExtra = bool(store.Store.get().extra_datadict)
+    hasMain = bool(store.Store.get().datadict)
+    res = {"info": info, "hasExtra": hasExtra, "hasMain": hasMain}
     return res
+
+@app.route('/merge_extra', methods=['POST'])
+def merge_extra():
+    res = request.get_json()
+    prefix = res['prefix']
+    delta = float(res['delta'])
+    # try:
+    store.Store.get().mergeExtra(prefix, delta)
+    ok = True
+    # except:
+    #     ok = False
+    return {"ok": ok}
 
 @socketio.on("disconnect")
 def disconnected():

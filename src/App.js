@@ -1,6 +1,7 @@
 import "./static/css/overlay.css";
 import Loader from "./views/Loader";
 import Settings from "./views/Settings";
+import SyncTimestamp from "./views/SyncTimestamp";
 import Test from "./views/Test";
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
@@ -64,6 +65,12 @@ function App() {
             />
             <Route exact path="/settings" element={<Settings />} />
             <Route exact path="/entities" element={<Entities />} />
+            <Route
+              exact
+              path="/add_log"
+              element={<Loader socket={socketInstance} isExtra={true} />}
+            />
+            <Route exact path="/sync" element={<SyncTimestamp />} />
             <Route exact path="/test" element={<Test />} />
             <Route path="*" element={"not found"} />
           </Routes>

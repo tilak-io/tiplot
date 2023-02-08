@@ -4,6 +4,7 @@ import PlotData from "./PlotData";
 import { PORT } from "../static/js/constants";
 
 const mockPlot = new PlotData(0, null);
+const UPDATE_MS = 16.67; // 60 fps
 
 export default class Entity {
   positions = [];
@@ -14,6 +15,7 @@ export default class Entity {
   pathPoints = null;
   path = new THREE.Line();
   mesh = null;
+  lastTick = 0;
 
   constructor(e) {
     const size = e.props.length;
@@ -224,11 +226,20 @@ export default class Entity {
   }
 
   // Updating timeline/crosshair indicators
-  //
+
   updateTimelineIndicator() {
     if (this.currentX !== window.currentX) {
       this.currentX = window.currentX;
       mockPlot.updateTimelineIndicator(window.currentX);
+    }
+  }
+
+  updateTimelineOnTick(tick) {
+    const update = tick - this.lastTick > UPDATE_MS;
+    if (this.currentX !== window.currentX && update) {
+      this.currentX = window.currentX;
+      mockPlot.updateTimelineIndicator(window.currentX);
+      this.lastTick = tick;
     }
   }
 }

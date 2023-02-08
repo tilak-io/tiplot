@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { FcOpenedFolder, FcFile } from "react-icons/fc";
+import {
+  TiArrowSortedDown,
+  TiArrowSortedUp,
+  TiArrowUnsorted,
+} from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
 import ToolBar from "../components/ToolBar";
@@ -7,15 +12,16 @@ import { PORT } from "../static/js/constants";
 import "../static/css/loader.css";
 import "../static/css/overlay.css";
 
-function Loader({ socket }) {
+function Loader({ socket, isExtra }) {
   const [files, setFiles] = useState([]);
   const [logsDir, setLogsDir] = useState("..");
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sortType, setSortType] = useState("name");
   const navigate = useNavigate();
 
   useEffect(() => {
-    getLogFiles();
+    getSortedLogFiles("time_desc");
 
     // when recieving entities from jupyter notebook
     socket.on("entities_loaded", () => {
@@ -24,7 +30,7 @@ function Loader({ socket }) {
 
     socket.on("connect", () => {
       // First app launch
-      getLogFiles();
+      getSortedLogFiles("time_desc");
     });
 
     return () => {
@@ -35,17 +41,22 @@ function Loader({ socket }) {
 
   const parse = (file) => {
     setLoading(true);
-    fetch(`http://localhost:${PORT}/select_log`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(file),
-    })
+    fetch(
+      isExtra
+        ? `http://localhost:${PORT}/add_log`
+        : `http://localhost:${PORT}/select_log`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(file),
+      }
+    )
       .then((res) => res.json())
       .then((res) => {
         setLoading(false);
-        if (res.ok) navigate("/home");
+        if (res.ok) isExtra ? navigate("/sync") : navigate("/home");
         else alert("unsupported format");
       });
     // socket.emit("select_log_file", file);
@@ -57,28 +68,50 @@ function Loader({ socket }) {
     const formData = new FormData();
     formData.append("log", file, file.name);
     fetch(`http://localhost:${PORT}/upload_log`, {
+      headers: {
+        isExtra: isExtra,
+      },
       method: "POST",
       body: formData,
     })
       .then((res) => res.json())
       .then((res) => {
         setLoading(false);
-        if (res.ok) navigate("/home");
+        if (res.ok) isExtra ? navigate("/sync") : navigate("/home");
         else alert("unsupported format");
       });
   };
 
-  const getLogFiles = async () => {
-    const logs = await fetch(`http://localhost:${PORT}/log_files`).then((res) =>
-      res.json()
+  const getSortedLogFiles = async (sort) => {
+    const logs = await fetch(`http://localhost:${PORT}/log_files/${sort}`).then(
+      (res) => res.json()
     );
     setConnected(true);
     setLogsDir(logs.path);
     setFiles(logs.files);
+    setSortType(sort);
+  };
+
+  const sortFiles = (type) => {
+    if (type === sortType) {
+      getSortedLogFiles(`${type}_desc`);
+    } else {
+      getSortedLogFiles(type);
+    }
   };
 
   const show = connected ? "hide" : "show";
   const showLoading = loading ? "show" : "hide";
+
+  function SortIcon({ type }) {
+    if (sortType === type) {
+      return <TiArrowSortedDown />;
+    } else if (sortType === `${type}_desc`) {
+      return <TiArrowSortedUp />;
+    } else {
+      return <TiArrowUnsorted style={{ color: "#999" }} />;
+    }
+  }
   return (
     <>
       <ToolBar page="loader" />
@@ -98,7 +131,11 @@ function Loader({ socket }) {
         <center>
           <label
             htmlFor="fileUpload"
-            className="file-upload btn btn-warning btn-lg rounded-pill shadow"
+            className={
+              isExtra
+                ? "file-upload btn btn-info btn-lg rounded-pill shadow"
+                : "file-upload btn btn-warning btn-lg rounded-pill shadow"
+            }
           >
             <i className="fa fa-upload mr-2"></i>Browse for file
             <input id="fileUpload" type="file" onChange={handleChange} />
@@ -111,12 +148,33 @@ function Loader({ socket }) {
               <Table striped bordered hover>
                 <tbody>
                   <tr>
-                    <th className="align-middle">
+                    <th
+                      className="align-middle"
+                      onClick={() => sortFiles("unsorted")}
+                    >
                       <FcOpenedFolder />
                     </th>
-                    <th className="align-middle">{logsDir}</th>
-                    <th className="align-middle">Size</th>
-                    <th className="align-middle">Modified</th>
+                    <th
+                      className="align-middle"
+                      onClick={() => sortFiles("name")}
+                    >
+                      <SortIcon type="name" />
+                      {logsDir}
+                    </th>
+                    <th
+                      className="align-middle"
+                      onClick={() => sortFiles("size")}
+                    >
+                      <SortIcon type="size" />
+                      Size
+                    </th>
+                    <th
+                      className="align-middle"
+                      onClick={() => sortFiles("time")}
+                    >
+                      <SortIcon type="time" />
+                      Modified
+                    </th>
                   </tr>
                   {files.map((file, i) => {
                     return (

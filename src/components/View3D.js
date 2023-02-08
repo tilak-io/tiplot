@@ -76,13 +76,13 @@ function View3D({ socket, detached }) {
     orbit.update();
   };
 
-  const animation = () => {
+  const animation = (tick) => {
     if (entities.length === 0) return;
     updateEntities();
     resizeCanvasToDisplaySize();
     renderer.render(scene, camera);
     // const target = getTrackedEntity();
-    // target.updateTimelineIndicator();
+    // target.updateTimelineOnTick(tick);
   };
 
   const resizeCanvasToDisplaySize = () => {

@@ -16,6 +16,8 @@ const spawn = require("child_process").spawn,
       "--distpath backend",
       add_data,
       "api/server.py",
+      "--add-data",
+      "$(pip show pymavlink | grep 'Location:' | awk '{print $2}')/pymavlink:pymavlink",
     ],
     {
       shell: true,

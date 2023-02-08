@@ -22,6 +22,7 @@ class Store:
                 Store.__instance = self
 
             self.datadict = {}
+            self.extra_datadict = {}
             self.entities = []
             self.info = []
             self.lock = threading.Lock()
@@ -35,6 +36,10 @@ class Store:
             self.datadict = datadict
             self.entities = entities
             self.info = info
+
+    def setExtra(self, datadict):
+        with self.lock:
+            self.extra_datadict = datadict
 
     def getKeys(self):
         keys = list(self.datadict.keys())
@@ -129,11 +134,27 @@ class Store:
         nested = list(self.datadict[key].keys())
         return nested
 
-    def getNestedKeys(self):
+    def getNestedKeys(self, isExtra = False):
         nested = []
-        for key in self.datadict.keys():
-            k = list(self.datadict[key].keys())
-            nested.append({key: k})
+        if isExtra:
+            for key in self.extra_datadict.keys():
+                k = list(self.extra_datadict[key].keys())
+                nested.append({key: k})
+        else:
+            for key in self.datadict.keys():
+                k = list(self.datadict[key].keys())
+                nested.append({key: k})
         return nested
+
+    def mergeExtra(self, prefix, delta):
+        shifted = {}
+        for topic, df in self.extra_datadict.items():
+            new_df = df.copy()
+            if "timestamp_tiplot" in new_df:
+                new_df['timestamp_tiplot'] = new_df['timestamp_tiplot'] + delta
+            shifted[topic] = new_df
+
+        prefixed = {prefix + key: value for key, value in shifted.items()}
+        self.datadict = {**self.datadict, **prefixed}
 
 

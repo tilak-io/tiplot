@@ -8,11 +8,13 @@ export default class PlotData {
     this.initialKeys = initialKeys;
   }
 
-  getOptions = async () => {
+  getOptions = async (isExtra = false) => {
     const options = [];
-    const response = await fetch(`http://localhost:${PORT}/tables`).then(
-      (res) => res.json()
-    );
+    const response = await fetch(
+      isExtra
+        ? `http://localhost:${PORT}/extra_tables`
+        : `http://localhost:${PORT}/tables`
+    ).then((res) => res.json());
     const tables = response.tables;
     tables.forEach((t) => {
       var table = Object.keys(t)[0];
@@ -47,7 +49,8 @@ export default class PlotData {
   };
 
   // get data for yt graphs
-  getData = async (field) => {
+  getData = async (field, isExtra = false) => {
+    field["isExtra"] = isExtra;
     const response = await fetch(`http://localhost:${PORT}/values_yt`, {
       headers: {
         "Content-Type": "application/json",
@@ -254,23 +257,25 @@ export default class PlotData {
     for (let i = 0; i < plots.length; i++) {
       if (plots[i].data === undefined) continue;
       if (plots[i].data.length === 0) continue;
-      if (plots[i].data[0].visible === "legendonly") continue;
+      for (let j = 0; j < plots[i].data.length; j++) {
+        if (plots[i].data[j].visible === "legendonly") continue;
 
-      // TODO: investigate
-      try {
-        let minMax = plots[i].data[0].x.reduce(
-          (acc, cur) => {
-            return {
-              min: Math.min(acc.min, cur),
-              max: Math.max(acc.max, cur),
-            };
-          },
-          { min: Infinity, max: -Infinity }
-        );
-        min_values.push(minMax.min);
-        max_values.push(minMax.max);
-      } catch (e) {
-        alert(e);
+        // TODO: check performance
+        try {
+          let minMax = plots[i].data[j].x.reduce(
+            (acc, cur) => {
+              return {
+                min: Math.min(acc.min, cur),
+                max: Math.max(acc.max, cur),
+              };
+            },
+            { min: Infinity, max: -Infinity }
+          );
+          min_values.push(minMax.min);
+          max_values.push(minMax.max);
+        } catch (e) {
+          alert(e);
+        }
       }
     }
 
@@ -342,7 +347,10 @@ export default class PlotData {
     // const yData = plot.data.map((series) => series.y);
     const yData = plot.data.reduce((acc, series) => {
       const filteredY = series.y.filter(
-        (y, i) => series.x[i] >= xrange[0] && series.x[i] <= xrange[1]
+        (y, i) =>
+          series.x[i] >= xrange[0] &&
+          series.x[i] <= xrange[1] &&
+          series.visible !== "legendonly"
       );
       return acc.concat(filteredY);
     }, []);
