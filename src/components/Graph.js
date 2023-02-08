@@ -21,7 +21,9 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   }, []);
 
   useEffect(() => {
-    plotData.autoRange();
+    setTimeout(function () {
+      plotData.autoRange();
+    }, 200);
     // eslint-disable-next-line
   }, [data]);
 
@@ -130,6 +132,10 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
       return;
     }
     select.style.maxHeight = "36px";
+
+    setTimeout(function () {
+      plotData.autoRange();
+    }, 200);
   };
 
   const stretchSelect = () => {
@@ -161,6 +167,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
         inputValue={inputValue}
         onInputChange={handleInput}
         onMenuOpen={stretchSelect}
+        onMenuClose={squeezeSelect}
         onBlur={squeezeSelect}
         menuPortalTarget={document.body}
         styles={{
