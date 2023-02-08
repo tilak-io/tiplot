@@ -7,6 +7,7 @@ import PlotData from "../controllers/PlotData";
 import { PORT } from "../static/js/constants";
 import { useNavigate } from "react-router-dom";
 import Plotly from "plotly.js/dist/plotly";
+import { debounce } from "lodash";
 
 function SyncTimestamp() {
   const plotData = new PlotData("sync-plot", []);
@@ -36,7 +37,8 @@ function SyncTimestamp() {
   }, [mainData, shiftedData]);
 
   useEffect(() => {
-    shiftTimestamp(delta);
+    // shiftTimestamp(delta);
+    debouncedShiftTimestamp(delta);
     // eslint-disable-next-line
   }, [delta, extraData]);
 
@@ -105,7 +107,17 @@ function SyncTimestamp() {
     updateXAxis();
   };
 
-  const shiftTimestamp = (_delta) => {
+  // const shiftTimestamp = (_delta) => {
+  //   const dt = parseFloat(_delta);
+  //   const ed = Object.assign({}, extraData);
+  //   if ("x" in ed) {
+  //     ed.x = ed.x.map((t) => t + dt);
+  //     setShiftedData(ed);
+  //   }
+  //   updateXAxis();
+  // };
+
+  const debouncedShiftTimestamp = debounce((_delta) => {
     const dt = parseFloat(_delta);
     const ed = Object.assign({}, extraData);
     if ("x" in ed) {
@@ -113,7 +125,7 @@ function SyncTimestamp() {
       setShiftedData(ed);
     }
     updateXAxis();
-  };
+  }, 50);
 
   const updateXAxis = () => {
     if (zoomed) return;
