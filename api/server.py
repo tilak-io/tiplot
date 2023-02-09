@@ -36,6 +36,7 @@ if not path.exists(logs_dir):
 thread = Thread()
 current_parser = None
 current_file = None
+current_ext = None
 
 extension_to_parser = {
     'ulg': ULGParser,
@@ -47,17 +48,18 @@ extension_to_parser = {
 
 def choose_parser(file, logs_dir, isExtra=False):
 
-    global current_parser
+    global current_parser, current_ext
     full_path = logs_dir + file
 
     _, file_extension = path.splitext(full_path)
     file_extension = file_extension.lower()[1:]  # remove the leading '.'
+    current_ext = file_extension
 
     # Look up the parser class in the dictionary using the file extension as the key
     parser_cls = extension_to_parser.get(file_extension)
     if parser_cls is None:
-        ok = False
-        raise ValueError(f"Unsupported file extension: {file_extension}")
+        return False
+        # raise ValueError(f"Unsupported file extension: {file_extension}")
 
     # Create an instance of the parser class and use it to parse the file
     parser = parser_cls()
@@ -295,8 +297,8 @@ def get_entities_props():
 def get_current_file():
     global current_file
     if current_file is None:
-        return {"msg": "no file selected"}
-    return {"file": current_file}
+        return {"msg": "no file selected", "appVersion": args.version}
+    return {"file": current_file, "appVersion": args.version}
 
 @app.route('/keys')
 def get_keys():
@@ -311,6 +313,18 @@ def get_additional_info():
     hasExtra = bool(store.Store.get().extra_datadict)
     hasMain = bool(store.Store.get().datadict)
     res = {"info": info, "hasExtra": hasExtra, "hasMain": hasMain}
+    return res
+
+
+@app.route('/current_parser')
+def get_current_parser():
+    global current_parser, current_ext
+    if (current_parser is None):
+        parser = "no_parser"
+    else:
+        parser = current_parser.name
+    ext = current_ext or "default"
+    res = {"parser": parser, "ext": ext}
     return res
 
 @app.route('/merge_extra', methods=['POST'])
@@ -333,6 +347,7 @@ def disconnected():
 arg_parser = ArgumentParser(description="Tiplot")
 arg_parser.add_argument('--port', type=int, default=5000, help='Port to run the server on')
 arg_parser.add_argument('--model', type=str, default= getcwd() + "/../obj/main.gltf", help='Path to the model file')
+arg_parser.add_argument('--version', type=str, default="0.0.0-debug", help='App version')
 args = arg_parser.parse_args()
 
 
@@ -344,7 +359,7 @@ def print_tiplot():
   | | | |  __/| | (_) | |_
   |_| |_|_|   |_|\___/ \__|
           ''')
-    print(f'-> Starting TiPlot on port {args.port}...')
+    print(f'-> Starting TiPlot v{args.version} on port {args.port}...')
 
 def run_server():
     try:

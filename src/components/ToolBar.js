@@ -30,6 +30,7 @@ function ToolBar({
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
   const [currentFile, setCurrentFile] = useState("");
+  const [appVersion, setAppVersion] = useState("0");
   const [showInfoBox, setShowInfo] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState([]);
   const [hasExtra, setHasExtra] = useState(false);
@@ -59,7 +60,29 @@ function ToolBar({
       (res) => res.json()
     );
     if (response.msg) setCurrentFile(response.msg);
-    else setCurrentFile("Current File: " + response.file[0]);
+    else
+      setCurrentFile(
+        "Current File: " +
+          response.file[0] +
+          " \nFile Size: " +
+          formatFileSize(response.file[1]) +
+          " \nLast Modified: " +
+          response.file[2]
+      );
+
+    setAppVersion(response.appVersion);
+  };
+
+  const formatFileSize = (fileSize) => {
+    const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB"];
+    let unitIndex = 0;
+
+    while (fileSize >= 1024) {
+      fileSize /= 1024;
+      unitIndex++;
+    }
+
+    return `${fileSize.toFixed(2)} ${units[unitIndex]}`;
   };
 
   const parseLocalStorage = (key) => {
@@ -143,7 +166,8 @@ function ToolBar({
 
   const clearLayouts = () => {
     localStorage.setItem("saved_layouts", "{}");
-    localStorage.setItem("current_layout", "[]");
+    localStorage.setItem("current_layout", "{}");
+    localStorage.setItem("current_positions", "{}");
     window.location.reload();
   };
 
@@ -244,13 +268,22 @@ function ToolBar({
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Additional Info</Modal.Title>
+          <Modal.Title>Tiplot v{appVersion}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Tabs defaultActiveKey="current_file">
             <Tab eventKey="current_file" title="Current File">
               <br className="break" />
-              <Container>{currentFile}</Container>
+              <Container fluid>
+                {currentFile.split("\n").map((e) => {
+                  return (
+                    <>
+                      {e}
+                      <br />
+                    </>
+                  );
+                })}
+              </Container>
             </Tab>
             {additionalInfo.map((info) => (
               <Tab key={generateUUID()} eventKey={info.name} title={info.name}>
@@ -318,7 +351,13 @@ function ToolBar({
                 </NavDropdown.Item>
               </DropdownSubmenu>
               <NavDropdown.Divider />
-              <NavDropdown.Item onClick={() => setShowInfo(true)}>
+              <NavDropdown.Item
+                onClick={() => {
+                  getCurrentFile();
+                  getAdditionalInfo();
+                  setShowInfo(true);
+                }}
+              >
                 Info <FaInfoCircle />
               </NavDropdown.Item>
             </NavDropdownMenu>

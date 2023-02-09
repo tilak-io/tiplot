@@ -29,6 +29,7 @@ function SyncTimestamp() {
 
   useEffect(() => {
     getOptions();
+    setupControls();
     // eslint-disable-next-line
   }, []);
 
@@ -145,6 +146,7 @@ function SyncTimestamp() {
   };
 
   const handleClick = (event) => {
+    // TODO: Add setting delta with the diff between two points
     if (event.event.ctrlKey) {
       console.log(event);
     }
@@ -221,6 +223,18 @@ function SyncTimestamp() {
       "yaxis.autorange": true,
     };
     Plotly.relayout(plot, update);
+  };
+
+  const setupControls = () => {
+    // TODO: Add Keyboard controls
+    document.onkeyup = function (e) {
+      switch (e.code) {
+        case "ArrowRight":
+        case "ArrowLeft":
+        default:
+          break;
+      }
+    };
   };
 
   return (

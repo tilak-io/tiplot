@@ -12,7 +12,7 @@ import SplitPane from "react-split-pane";
 
 const ReactGridLayout = WidthProvider(RGL);
 
-function SplitLayout({ socket, defaultShowView }) {
+function SplitLayout({ socket, defaultShowView, ext }) {
   const fullSize = window.innerWidth;
   const defaultSize = 0.55 * window.innerWidth; // percentage of screen width
 
@@ -94,7 +94,7 @@ function SplitLayout({ socket, defaultShowView }) {
 
   const updateKeys = (id, keys) => {
     var layout = parseLocalStorage("current_layout");
-    const plot = layout.find((p) => p.id === id);
+    const plot = layout[ext].find((p) => p.id === id);
     plot.keys = keys;
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
@@ -102,22 +102,30 @@ function SplitLayout({ socket, defaultShowView }) {
   const parseLocalStorage = (key) => {
     try {
       var value = localStorage.getItem(key);
-      if (value === "" || value === null) value = [];
-      else value = JSON.parse(value);
+      if (value === "" || value === null) {
+        value = {};
+      } else {
+        value = JSON.parse(value);
+      }
     } catch {
       alert("Please import a valid json file");
-      localStorage.setItem(key, "[]");
-      value = [];
+      localStorage.setItem(key, "{}");
+      value = {};
     }
+
+    if (!(ext in value)) {
+      value[ext] = [];
+    }
+
     return value;
   };
 
   const initializeLayout = () => {
     var layout = parseLocalStorage("current_layout");
     var pos = parseLocalStorage("current_positions");
-    setPositions(pos);
+    setPositions(pos[ext]);
     var g = [];
-    layout.forEach((p) => {
+    layout[ext].forEach((p) => {
       var graph;
       if (p.type === "yt")
         graph = (
@@ -141,7 +149,6 @@ function SplitLayout({ socket, defaultShowView }) {
             />
           </div>
         );
-
       if (p.type === "hm")
         graph = (
           <div key={p.id}>
@@ -160,19 +167,21 @@ function SplitLayout({ socket, defaultShowView }) {
 
   const addGraphToLayout = (type, id) => {
     var layout = parseLocalStorage("current_layout");
-    layout.push({ id: id, type: type, keys: [] });
+    layout[ext].push({ id: id, type: type, keys: [] });
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
   const removeGraph = (id) => {
     var layout = parseLocalStorage("current_layout");
-    const r = layout.filter((graph) => graph.id !== id);
-    localStorage.setItem("current_layout", JSON.stringify(r));
+    layout[ext] = layout[ext].filter((graph) => graph.id !== id);
+    localStorage.setItem("current_layout", JSON.stringify(layout));
     initializeLayout();
   };
 
   const handleLayoutChange = (layout) => {
-    localStorage.setItem("current_positions", JSON.stringify(layout));
+    var pos = parseLocalStorage("current_positions");
+    pos[ext] = layout;
+    localStorage.setItem("current_positions", JSON.stringify(pos));
   };
 
   return (

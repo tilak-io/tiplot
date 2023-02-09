@@ -112,6 +112,18 @@ function Loader({ socket, isExtra }) {
       return <TiArrowUnsorted style={{ color: "#999" }} />;
     }
   }
+
+  const formatFileSize = (fileSize) => {
+    const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB"];
+    let unitIndex = 0;
+
+    while (fileSize >= 1024) {
+      fileSize /= 1024;
+      unitIndex++;
+    }
+
+    return `${fileSize.toFixed(2)} ${units[unitIndex]}`;
+  };
   return (
     <>
       <ToolBar page="loader" />
@@ -187,12 +199,7 @@ function Loader({ socket, isExtra }) {
                           <FcFile />
                         </td>
                         <td>{file[0]}</td>
-                        <td>
-                          {/* TODO: a cleaner way to convert */}
-                          {file[1] < 1048576
-                            ? (file[1] / 1024).toFixed(2) + " KB"
-                            : (file[1] / 1048576).toFixed(2) + " MB"}
-                        </td>
+                        <td>{formatFileSize(file[1])}</td>
                         <td>{file[2]}</td>
                       </tr>
                     );
