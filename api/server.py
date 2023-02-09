@@ -58,8 +58,8 @@ def choose_parser(file, logs_dir, isExtra=False):
     # Look up the parser class in the dictionary using the file extension as the key
     parser_cls = extension_to_parser.get(file_extension)
     if parser_cls is None:
-        ok = False
-        raise ValueError(f"Unsupported file extension: {file_extension}")
+        return False
+        # raise ValueError(f"Unsupported file extension: {file_extension}")
 
     # Create an instance of the parser class and use it to parse the file
     parser = parser_cls()
