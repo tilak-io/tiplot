@@ -12,7 +12,7 @@ import Heatmap from "../../components/Heatmap";
 
 const ReactGridLayout = WidthProvider(RGL);
 
-function DetachedLayout({ socket, defaultShowView }) {
+function DetachedLayout({ socket, defaultShowView, ext }) {
   const [graphs, setGraphs] = useState([]);
   const [rowHeight, setRowHeight] = useState(null);
   const [positions, setPositions] = useState([]);
@@ -88,7 +88,8 @@ function DetachedLayout({ socket, defaultShowView }) {
 
   const updateKeys = (id, keys) => {
     var layout = parseLocalStorage("current_layout");
-    const plot = layout.find((p) => p.id === id);
+    const plot = layout[ext].find((p) => p.id === id);
+    console.log(layout);
     plot.keys = keys;
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
@@ -96,22 +97,30 @@ function DetachedLayout({ socket, defaultShowView }) {
   const parseLocalStorage = (key) => {
     try {
       var value = localStorage.getItem(key);
-      if (value === "" || value === null) value = [];
-      else value = JSON.parse(value);
+      if (value === "" || value === null) {
+        value = {};
+      } else {
+        value = JSON.parse(value);
+      }
     } catch {
       alert("Please import a valid json file");
-      localStorage.setItem(key, "[]");
-      value = [];
+      localStorage.setItem(key, "{}");
+      value = {};
     }
+
+    if (!(ext in value)) {
+      value[ext] = [];
+    }
+
     return value;
   };
 
   const initializeLayout = () => {
     var layout = parseLocalStorage("current_layout");
     var pos = parseLocalStorage("current_positions");
-    setPositions(pos);
+    setPositions(pos[ext]);
     var g = [];
-    layout.forEach((p) => {
+    layout[ext].forEach((p) => {
       var graph;
       if (p.type === "yt")
         graph = (
@@ -153,19 +162,21 @@ function DetachedLayout({ socket, defaultShowView }) {
 
   const addGraphToLayout = (type, id) => {
     var layout = parseLocalStorage("current_layout");
-    layout.push({ id: id, type: type, keys: [] });
+    layout[ext].push({ id: id, type: type, keys: [] });
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
   const removeGraph = (id) => {
     var layout = parseLocalStorage("current_layout");
-    const r = layout.filter((graph) => graph.id !== id);
-    localStorage.setItem("current_layout", JSON.stringify(r));
+    layout[ext] = layout[ext].filter((graph) => graph.id !== id);
+    localStorage.setItem("current_layout", JSON.stringify(layout));
     initializeLayout();
   };
 
   const handleLayoutChange = (layout) => {
-    localStorage.setItem("current_positions", JSON.stringify(layout));
+    var pos = parseLocalStorage("current_positions");
+    pos[ext] = layout;
+    localStorage.setItem("current_positions", JSON.stringify(pos));
   };
 
   const handleToggle = (value) => {

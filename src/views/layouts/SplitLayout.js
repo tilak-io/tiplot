@@ -9,11 +9,10 @@ import GraphXY from "../../components/GraphXY";
 import Heatmap from "../../components/Heatmap";
 import View3D from "../../components/View3D";
 import SplitPane from "react-split-pane";
-import { PORT } from "../../static/js/constants";
 
 const ReactGridLayout = WidthProvider(RGL);
 
-function SplitLayout({ socket, defaultShowView }) {
+function SplitLayout({ socket, defaultShowView, ext }) {
   const fullSize = window.innerWidth;
   const defaultSize = 0.55 * window.innerWidth; // percentage of screen width
 
@@ -22,10 +21,8 @@ function SplitLayout({ socket, defaultShowView }) {
   const [positions, setPositions] = useState([]);
   const [showView, setShowView] = useState(defaultShowView);
   const [size, setSize] = useState(defaultShowView ? defaultSize : fullSize);
-  const [ext, setExt] = useState("default");
 
   useEffect(() => {
-    getExt();
     initializeLayout();
     // eslint-disable-next-line
   }, []);
@@ -95,10 +92,9 @@ function SplitLayout({ socket, defaultShowView }) {
     addGraphToLayout("hm", id);
   };
 
-  const updateKeys = async (id, keys) => {
-    const e = await getCurrentExt();
+  const updateKeys = (id, keys) => {
     var layout = parseLocalStorage("current_layout");
-    const plot = layout[e].find((p) => p.id === id);
+    const plot = layout[ext].find((p) => p.id === id);
     plot.keys = keys;
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
@@ -124,13 +120,12 @@ function SplitLayout({ socket, defaultShowView }) {
     return value;
   };
 
-  const initializeLayout = async () => {
-    const e = await getCurrentExt();
+  const initializeLayout = () => {
     var layout = parseLocalStorage("current_layout");
     var pos = parseLocalStorage("current_positions");
-    setPositions(pos[e]);
+    setPositions(pos[ext]);
     var g = [];
-    layout[e].forEach((p) => {
+    layout[ext].forEach((p) => {
       var graph;
       if (p.type === "yt")
         graph = (
@@ -154,7 +149,6 @@ function SplitLayout({ socket, defaultShowView }) {
             />
           </div>
         );
-
       if (p.type === "hm")
         graph = (
           <div key={p.id}>
@@ -177,42 +171,17 @@ function SplitLayout({ socket, defaultShowView }) {
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
-  const removeGraph = async (id) => {
-    const e = await getCurrentExt();
+  const removeGraph = (id) => {
     var layout = parseLocalStorage("current_layout");
-    layout[e] = layout[ext].filter((graph) => graph.id !== id);
+    layout[ext] = layout[ext].filter((graph) => graph.id !== id);
     localStorage.setItem("current_layout", JSON.stringify(layout));
     initializeLayout();
   };
 
-  const handleLayoutChange = async (layout) => {
-    const e = await getCurrentExt();
+  const handleLayoutChange = (layout) => {
     var pos = parseLocalStorage("current_positions");
-    pos[e] = layout;
+    pos[ext] = layout;
     localStorage.setItem("current_positions", JSON.stringify(pos));
-  };
-
-  const getExt = () => {
-    fetch(`http://localhost:${PORT}/current_parser`)
-      .then((res) => res.json())
-      .then((res) => {
-        setExt(res.ext);
-      });
-  };
-
-  const getCurrentExt = async () => {
-    var e = ext;
-    if (e === "default") {
-      e = await fetch(`http://localhost:${PORT}/current_parser`)
-        .then((res) => res.json())
-        .then((res) => res.ext);
-    }
-    var layout = parseLocalStorage("current_layout");
-    if (!(e in layout)) {
-      layout[e] = [];
-      localStorage.setItem("current_layout", JSON.stringify(layout));
-    }
-    return e;
   };
 
   return (

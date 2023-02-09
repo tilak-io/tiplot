@@ -323,7 +323,7 @@ def get_current_parser():
         parser = "no_parser"
     else:
         parser = current_parser.name
-    ext = current_ext or "no_ext"
+    ext = current_ext or "default"
     res = {"parser": parser, "ext": ext}
     return res
 
