@@ -15,11 +15,15 @@ portfinder.getPort({ port: 5000, stopPort: 6000 }, function (error, port) {
   } else {
     console.log(`Found available port: ${port}`);
     process.env.API_PORT = port;
-    start = spawn(api, ["--model", model, "--port", port], {
-      windowsHide: true,
-      shell: process.env.ComSpec,
-      stdio: "inherit",
-    });
+    start = spawn(
+      api,
+      ["--model", model, "--port", port, "--version", app.getVersion()],
+      {
+        windowsHide: true,
+        shell: process.env.ComSpec,
+        stdio: "inherit",
+      }
+    );
   }
 });
 

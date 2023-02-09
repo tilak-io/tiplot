@@ -347,6 +347,7 @@ def disconnected():
 arg_parser = ArgumentParser(description="Tiplot")
 arg_parser.add_argument('--port', type=int, default=5000, help='Port to run the server on')
 arg_parser.add_argument('--model', type=str, default= getcwd() + "/../obj/main.gltf", help='Path to the model file')
+arg_parser.add_argument('--version', type=str, default="unknown", help='App version')
 args = arg_parser.parse_args()
 
 
@@ -358,7 +359,7 @@ def print_tiplot():
   | | | |  __/| | (_) | |_
   |_| |_|_|   |_|\___/ \__|
           ''')
-    print(f'-> Starting TiPlot on port {args.port}...')
+    print(f'-> Starting TiPlot v{args.version} on port {args.port}...')
 
 def run_server():
     try:
