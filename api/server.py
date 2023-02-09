@@ -297,8 +297,8 @@ def get_entities_props():
 def get_current_file():
     global current_file
     if current_file is None:
-        return {"msg": "no file selected"}
-    return {"file": current_file}
+        return {"msg": "no file selected", "appVersion": args.version}
+    return {"file": current_file, "appVersion": args.version}
 
 @app.route('/keys')
 def get_keys():
@@ -347,7 +347,7 @@ def disconnected():
 arg_parser = ArgumentParser(description="Tiplot")
 arg_parser.add_argument('--port', type=int, default=5000, help='Port to run the server on')
 arg_parser.add_argument('--model', type=str, default= getcwd() + "/../obj/main.gltf", help='Path to the model file')
-arg_parser.add_argument('--version', type=str, default="unknown", help='App version')
+arg_parser.add_argument('--version', type=str, default="0.0.0-debug", help='App version')
 args = arg_parser.parse_args()
 
 
