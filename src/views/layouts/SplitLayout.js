@@ -9,6 +9,7 @@ import GraphXY from "../../components/GraphXY";
 import Heatmap from "../../components/Heatmap";
 import View3D from "../../components/View3D";
 import SplitPane from "react-split-pane";
+import { PORT } from "../../static/js/constants";
 
 const ReactGridLayout = WidthProvider(RGL);
 
@@ -21,8 +22,10 @@ function SplitLayout({ socket, defaultShowView }) {
   const [positions, setPositions] = useState([]);
   const [showView, setShowView] = useState(defaultShowView);
   const [size, setSize] = useState(defaultShowView ? defaultSize : fullSize);
+  const [ext, setExt] = useState("default");
 
   useEffect(() => {
+    getExt();
     initializeLayout();
     // eslint-disable-next-line
   }, []);
@@ -92,9 +95,10 @@ function SplitLayout({ socket, defaultShowView }) {
     addGraphToLayout("hm", id);
   };
 
-  const updateKeys = (id, keys) => {
+  const updateKeys = async (id, keys) => {
+    const e = await getCurrentExt();
     var layout = parseLocalStorage("current_layout");
-    const plot = layout.find((p) => p.id === id);
+    const plot = layout[e].find((p) => p.id === id);
     plot.keys = keys;
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
@@ -102,22 +106,31 @@ function SplitLayout({ socket, defaultShowView }) {
   const parseLocalStorage = (key) => {
     try {
       var value = localStorage.getItem(key);
-      if (value === "" || value === null) value = [];
-      else value = JSON.parse(value);
+      if (value === "" || value === null) {
+        value = {};
+      } else {
+        value = JSON.parse(value);
+      }
     } catch {
       alert("Please import a valid json file");
-      localStorage.setItem(key, "[]");
-      value = [];
+      localStorage.setItem(key, "{}");
+      value = {};
     }
+
+    if (!(ext in value)) {
+      value[ext] = [];
+    }
+
     return value;
   };
 
-  const initializeLayout = () => {
+  const initializeLayout = async () => {
+    const e = await getCurrentExt();
     var layout = parseLocalStorage("current_layout");
     var pos = parseLocalStorage("current_positions");
-    setPositions(pos);
+    setPositions(pos[e]);
     var g = [];
-    layout.forEach((p) => {
+    layout[e].forEach((p) => {
       var graph;
       if (p.type === "yt")
         graph = (
@@ -160,19 +173,46 @@ function SplitLayout({ socket, defaultShowView }) {
 
   const addGraphToLayout = (type, id) => {
     var layout = parseLocalStorage("current_layout");
-    layout.push({ id: id, type: type, keys: [] });
+    layout[ext].push({ id: id, type: type, keys: [] });
     localStorage.setItem("current_layout", JSON.stringify(layout));
   };
 
-  const removeGraph = (id) => {
+  const removeGraph = async (id) => {
+    const e = await getCurrentExt();
     var layout = parseLocalStorage("current_layout");
-    const r = layout.filter((graph) => graph.id !== id);
-    localStorage.setItem("current_layout", JSON.stringify(r));
+    layout[e] = layout[ext].filter((graph) => graph.id !== id);
+    localStorage.setItem("current_layout", JSON.stringify(layout));
     initializeLayout();
   };
 
-  const handleLayoutChange = (layout) => {
-    localStorage.setItem("current_positions", JSON.stringify(layout));
+  const handleLayoutChange = async (layout) => {
+    const e = await getCurrentExt();
+    var pos = parseLocalStorage("current_positions");
+    pos[e] = layout;
+    localStorage.setItem("current_positions", JSON.stringify(pos));
+  };
+
+  const getExt = () => {
+    fetch(`http://localhost:${PORT}/current_parser`)
+      .then((res) => res.json())
+      .then((res) => {
+        setExt(res.ext);
+      });
+  };
+
+  const getCurrentExt = async () => {
+    var e = ext;
+    if (e === "default") {
+      e = await fetch(`http://localhost:${PORT}/current_parser`)
+        .then((res) => res.json())
+        .then((res) => res.ext);
+    }
+    var layout = parseLocalStorage("current_layout");
+    if (!(e in layout)) {
+      layout[e] = [];
+      localStorage.setItem("current_layout", JSON.stringify(layout));
+    }
+    return e;
   };
 
   return (

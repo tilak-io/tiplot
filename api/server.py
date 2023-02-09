@@ -36,6 +36,7 @@ if not path.exists(logs_dir):
 thread = Thread()
 current_parser = None
 current_file = None
+current_ext = None
 
 extension_to_parser = {
     'ulg': ULGParser,
@@ -47,11 +48,12 @@ extension_to_parser = {
 
 def choose_parser(file, logs_dir, isExtra=False):
 
-    global current_parser
+    global current_parser, current_ext
     full_path = logs_dir + file
 
     _, file_extension = path.splitext(full_path)
     file_extension = file_extension.lower()[1:]  # remove the leading '.'
+    current_ext = file_extension
 
     # Look up the parser class in the dictionary using the file extension as the key
     parser_cls = extension_to_parser.get(file_extension)
@@ -311,6 +313,18 @@ def get_additional_info():
     hasExtra = bool(store.Store.get().extra_datadict)
     hasMain = bool(store.Store.get().datadict)
     res = {"info": info, "hasExtra": hasExtra, "hasMain": hasMain}
+    return res
+
+
+@app.route('/current_parser')
+def get_current_parser():
+    global current_parser, current_ext
+    if (current_parser is None):
+        parser = "no_parser"
+    else:
+        parser = current_parser.name
+    ext = current_ext or "no_ext"
+    res = {"parser": parser, "ext": ext}
     return res
 
 @app.route('/merge_extra', methods=['POST'])

@@ -143,7 +143,8 @@ function ToolBar({
 
   const clearLayouts = () => {
     localStorage.setItem("saved_layouts", "{}");
-    localStorage.setItem("current_layout", "[]");
+    localStorage.setItem("current_layout", "{}");
+    localStorage.setItem("current_positions", "{}");
     window.location.reload();
   };
 
