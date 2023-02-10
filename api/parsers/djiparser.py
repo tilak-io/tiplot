@@ -68,7 +68,7 @@ class DJIParser(Parser):
                     gps_data.append(data)
 
         out = DataFrame(gps_data).bfill()
-        out['timestamp_tiplot'] = out['time'] - out['time'][0]
+        out['timestamp_tiplot'] = (out['time'] - out['time'][0]) / 1e6
         out = out.fillna(0)
         self.datadict = {"data": out} 
         return self.datadict, self.entities
