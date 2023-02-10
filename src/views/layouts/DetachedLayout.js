@@ -87,11 +87,11 @@ function DetachedLayout({ socket, defaultShowView, ext }) {
   };
 
   const updateKeys = (id, keys) => {
-    var layout = parseLocalStorage("current_layout");
+    var layout = parseLocalStorage("curr_layout");
     const plot = layout[ext].find((p) => p.id === id);
     console.log(layout);
     plot.keys = keys;
-    localStorage.setItem("current_layout", JSON.stringify(layout));
+    localStorage.setItem("curr_layout", JSON.stringify(layout));
   };
 
   const parseLocalStorage = (key) => {
@@ -116,8 +116,8 @@ function DetachedLayout({ socket, defaultShowView, ext }) {
   };
 
   const initializeLayout = () => {
-    var layout = parseLocalStorage("current_layout");
-    var pos = parseLocalStorage("current_positions");
+    var layout = parseLocalStorage("curr_layout");
+    var pos = parseLocalStorage("curr_positions");
     setPositions(pos[ext]);
     var g = [];
     layout[ext].forEach((p) => {
@@ -161,22 +161,22 @@ function DetachedLayout({ socket, defaultShowView, ext }) {
   };
 
   const addGraphToLayout = (type, id) => {
-    var layout = parseLocalStorage("current_layout");
+    var layout = parseLocalStorage("curr_layout");
     layout[ext].push({ id: id, type: type, keys: [] });
-    localStorage.setItem("current_layout", JSON.stringify(layout));
+    localStorage.setItem("curr_layout", JSON.stringify(layout));
   };
 
   const removeGraph = (id) => {
-    var layout = parseLocalStorage("current_layout");
+    var layout = parseLocalStorage("curr_layout");
     layout[ext] = layout[ext].filter((graph) => graph.id !== id);
-    localStorage.setItem("current_layout", JSON.stringify(layout));
+    localStorage.setItem("curr_layout", JSON.stringify(layout));
     initializeLayout();
   };
 
   const handleLayoutChange = (layout) => {
-    var pos = parseLocalStorage("current_positions");
+    var pos = parseLocalStorage("curr_positions");
     pos[ext] = layout;
-    localStorage.setItem("current_positions", JSON.stringify(pos));
+    localStorage.setItem("curr_positions", JSON.stringify(pos));
   };
 
   const handleToggle = (value) => {
