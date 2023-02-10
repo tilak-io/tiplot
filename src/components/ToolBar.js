@@ -63,11 +63,11 @@ function ToolBar({
     else
       setCurrentFile(
         "Current File: " +
-          response.file[0] +
-          " \nFile Size: " +
-          formatFileSize(response.file[1]) +
-          " \nLast Modified: " +
-          response.file[2]
+        response.file[0] +
+        " \nFile Size: " +
+        formatFileSize(response.file[1]) +
+        " \nLast Modified: " +
+        response.file[2]
       );
 
     setAppVersion(response.appVersion);
@@ -277,10 +277,10 @@ function ToolBar({
               <Container fluid>
                 {currentFile.split("\n").map((e) => {
                   return (
-                    <>
+                    <div key={generateUUID()}>
                       {e}
-                      <br />
-                    </>
+                      <div className="break" />
+                    </div>
                   );
                 })}
               </Container>
