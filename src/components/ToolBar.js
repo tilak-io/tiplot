@@ -63,11 +63,11 @@ function ToolBar({
     else
       setCurrentFile(
         "Current File: " +
-          response.file[0] +
-          " \nFile Size: " +
-          formatFileSize(response.file[1]) +
-          " \nLast Modified: " +
-          response.file[2]
+        response.file[0] +
+        " \nFile Size: " +
+        formatFileSize(response.file[1]) +
+        " \nLast Modified: " +
+        response.file[2]
       );
 
     setAppVersion(response.appVersion);
@@ -95,16 +95,16 @@ function ToolBar({
 
   const onSave = () => {
     var name = document.getElementById("layout-name").value;
-    var savedLayouts = parseLocalStorage("saved_layouts");
-    var currentLayout = parseLocalStorage("current_layout");
+    var savedLayouts = parseLocalStorage("fav_layouts");
+    var currentLayout = parseLocalStorage("curr_layout");
     savedLayouts[name] = currentLayout;
-    localStorage.setItem("saved_layouts", JSON.stringify(savedLayouts));
+    localStorage.setItem("fav_layouts", JSON.stringify(savedLayouts));
     mapLayouts();
     setShowSaveMsg(false);
   };
 
   const mapLayouts = () => {
-    const savedLayouts = parseLocalStorage("saved_layouts");
+    const savedLayouts = parseLocalStorage("fav_layouts");
     var rows = [];
     Object.keys(savedLayouts).forEach((layout_name, i) => {
       rows.push(
@@ -125,14 +125,14 @@ function ToolBar({
   };
 
   const selectLayout = (name) => {
-    var savedLayouts = parseLocalStorage("saved_layouts");
+    var savedLayouts = parseLocalStorage("fav_layouts");
     var selectedLayout = savedLayouts[name];
-    localStorage.setItem("current_layout", JSON.stringify(selectedLayout));
+    localStorage.setItem("curr_layout", JSON.stringify(selectedLayout));
     window.location.reload();
   };
 
   const exportLayout = () => {
-    var currentLayout = parseLocalStorage("current_layout");
+    var currentLayout = parseLocalStorage("curr_layout");
     var dataStr =
       "data:text/json;charset=utf-8," +
       encodeURIComponent(JSON.stringify(currentLayout));
@@ -148,7 +148,7 @@ function ToolBar({
 
     fr.onload = (event) => {
       const layout = event.target.result;
-      localStorage.setItem("current_layout", layout);
+      localStorage.setItem("curr_layout", layout);
       window.location.reload();
     };
 
@@ -165,9 +165,9 @@ function ToolBar({
   };
 
   const clearLayouts = () => {
-    localStorage.setItem("saved_layouts", "{}");
-    localStorage.setItem("current_layout", "{}");
-    localStorage.setItem("current_positions", "{}");
+    localStorage.setItem("fav_layouts", "{}");
+    localStorage.setItem("curr_layout", "{}");
+    localStorage.setItem("curr_positions", "{}");
     window.location.reload();
   };
 
@@ -277,10 +277,10 @@ function ToolBar({
               <Container fluid>
                 {currentFile.split("\n").map((e) => {
                   return (
-                    <>
+                    <div key={generateUUID()}>
                       {e}
-                      <br />
-                    </>
+                      <div className="break" />
+                    </div>
                   );
                 })}
               </Container>
