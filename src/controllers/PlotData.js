@@ -93,7 +93,7 @@ export default class PlotData {
 
   // get data for xy graphs
   getDataXY = async (x, y) => {
-    const field = { table: x.table, columns: [x.column, y.column] };
+    const field = { table: x.table, x: x.column, y: y.column };
     const response = await fetch(`http://localhost:${PORT}/values_xy`, {
       headers: {
         "Content-Type": "application/json",

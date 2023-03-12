@@ -190,16 +190,16 @@ def get_yt_values():
 def get_xy_values():
     field = request.get_json()
     table = field['table']
-    columns = field['columns']
-    columns.append("timestamp_tiplot")
-    columns = list(set(columns))
+    xCol = field['x']
+    yCol = field['y']
+    columns = [xCol, yCol, "timestamp_tiplot"]
     datadict = store.Store.get().datadict
     try:
         values = datadict[table][columns].fillna(0).to_dict('records')
     except:
         # columns not found
         values = []
-    response = {"table": table, "x": columns[0], "y": columns[1] , "values": values}
+    response = {"table": table, "x": xCol, "y": yCol, "values": values}
     return response
 
 @app.route('/correlation', methods=['POST'])
