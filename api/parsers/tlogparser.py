@@ -2,6 +2,7 @@ from pandas import DataFrame
 from cesium_entity import CesiumEntity
 from .parser import Parser
 from pymavlink import mavutil
+import datetime
 
 class TLOGParser(Parser):
     def __init__(self):
@@ -19,11 +20,11 @@ class TLOGParser(Parser):
             if (m is None): break
             name = m.get_type()
             data = m.to_dict()
-            if 'time_boot_ms' in list(data.keys()):
-                data['timestamp_tiplot'] = data['time_boot_ms'] / 1e3
-            else:
-                #ignore tables with no timestamp
-                continue
+            data['timestamp_tiplot'] = m._timestamp
+            try:
+                data['time_utc'] = str(datetime.datetime.fromtimestamp(m._timestamp))
+            except:
+                pass
 
             if(name in buf):
                 del data['mavpackettype']
