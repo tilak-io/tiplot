@@ -256,7 +256,7 @@ function ToolBar({
       method: "POST",
       body: JSON.stringify({ sequence: sequenceName }),
     }).then((res) => res.json());
-    if (response.ok) toast.success(`\"${sequenceName}\" executed successfully`);
+    if (response.ok) toast.success(`"${sequenceName}" executed successfully`);
     else toast.error(response.err);
   };
 
@@ -298,7 +298,7 @@ function ToolBar({
       }
     ).then((res) => res.json());
 
-    if (response.ok) toast.success(`\"${name}\" created successfully`);
+    if (response.ok) toast.success(`"${name}" created successfully`);
     else toast.error(response.err);
 
     getSequences();
