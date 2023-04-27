@@ -1,4 +1,5 @@
 import Plotly from "plotly.js/dist/plotly";
+import { toast } from "react-toastify";
 import { PORT } from "../static/js/constants";
 
 export default class PlotData {
@@ -58,6 +59,7 @@ export default class PlotData {
       method: "POST",
       body: JSON.stringify(field),
     }).then((res) => res.json());
+    if (!response.ok) toast.warning(response.err);
     const table = response["table"];
     const column = response["column"];
     const x_name = "timestamp_tiplot";
@@ -101,6 +103,8 @@ export default class PlotData {
       method: "POST",
       body: JSON.stringify(field),
     }).then((res) => res.json());
+
+    if (!response.ok) toast.warning(response.err);
     const table = response["table"];
     const x_name = response["x"];
     const x_values = [];

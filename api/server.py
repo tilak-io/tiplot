@@ -180,16 +180,20 @@ def get_yt_values():
     column = field['column']
     isExtra = field['isExtra']
     columns = list(set([column, "timestamp_tiplot"])) # remove duplicates
+    err = "no error"
+    ok = True
     if isExtra:
         datadict = store.Store.get().extra_datadict
     else:
         datadict = store.Store.get().datadict
     try:
         values = datadict[table][columns].fillna(0).to_dict('records')
-    except:
+    except Exception as e:
         # columns not found
         values = []
-    response = {"table": table, "column": column , "values": values}
+        err = str(e)
+        ok = False
+    response = {"table": table, "column": column , "values": values, "err": err, "ok": ok}
     return response
 
 @app.route('/values_xy', methods=['POST'])
@@ -200,12 +204,16 @@ def get_xy_values():
     yCol = field['y']
     columns = [xCol, yCol, "timestamp_tiplot"]
     datadict = store.Store.get().datadict
+    err = "no error"
+    ok = True
     try:
         values = datadict[table][columns].fillna(0).to_dict('records')
-    except:
+    except Exception as e:
         # columns not found
         values = []
-    response = {"table": table, "x": xCol, "y": yCol, "values": values}
+        err = str(e)
+        ok = False
+    response = {"table": table, "x": xCol, "y": yCol, "values": values, "err": err, "ok": ok}
     return response
 
 @app.route('/correlation', methods=['POST'])
@@ -294,9 +302,8 @@ def add_log():
 
 @app.route('/entities_props')
 def get_entities_props():
-    props, err = store.Store.get().getEntitiesProps()
-    if err is not None: print(err)
-    res = {"data": props}
+    props, err, ok = store.Store.get().getEntitiesProps()
+    res = {"data": props, "err": err, "ok": ok}
     return res
 
 @app.route('/current_file')
@@ -361,12 +368,11 @@ def run_sequence():
         handle_data = local_namespace['handle_data']
         store.Store.get().datadict = handle_data(datadict)
         ok = True
+        err = "no error"
     except Exception as e:
         err = traceback.format_exc()
-        print("Error occurred: ", e)
-        print("Error occurred: ", err)
         ok = False
-    return {"ok": ok}
+    return {"ok": ok, "err": err}
 
 @app.route('/sequences')
 def get_sequences():
@@ -390,10 +396,12 @@ def create_sequence_file():
         new = datadict
         return new""")
         ok = True
-    except:
+        err = "no error"
+    except Exception as e:
+        err = traceback.format_exc()
         ok = False
 
-    return {"ok": ok}
+    return {"ok": ok, "err": err}
     
 
 

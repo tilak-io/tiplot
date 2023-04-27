@@ -47,7 +47,8 @@ class Store:
 
     def getEntitiesProps(self):
         data = []
-        err = None
+        err = "no error"
+        ok = True
         for e in self.entities:
             try:
                 if (e.position['table'] == e.attitude['table']):
@@ -83,10 +84,10 @@ class Store:
                              "wireframe": e.wireframe,
                              "tracked": e.tracked,
                              "pathColor": e.pathColor})
-            except KeyError as error:
+            except Exception as error:
                 err = str(error)
-                print("-> Error " + str(error))
-        return data, err
+                ok = False
+        return data, err, ok
 
     def getEntities(self):
         data = []

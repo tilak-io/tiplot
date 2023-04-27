@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { defaultSettings } from "../views/Settings";
 import { PORT } from "../static/js/constants";
+import { toast } from "react-toastify";
 
 function View3D({ socket, detached }) {
   const mount = useRef(0);
@@ -45,11 +46,11 @@ function View3D({ socket, detached }) {
   }, []);
 
   const getEntitiesProps = async () => {
-    const raw_entities = await fetch(
+    const response = await fetch(
       `http://localhost:${PORT}/entities_props`
     ).then((res) => res.json());
-    if (raw_entities.error) alert(raw_entities.error);
-    else raw_entities.data.forEach(initEntity);
+    if (response.ok) response.data.forEach(initEntity);
+    else toast.error(response.error);
   };
 
   const initEntity = (e, index) => {

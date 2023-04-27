@@ -17,6 +17,8 @@ import "react-bootstrap-submenu/dist/index.css";
 import logo from "../static/img/logo.png";
 import { generateUUID } from "three/src/math/MathUtils";
 import { PORT } from "../static/js/constants";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ToolBar({
   page,
@@ -253,8 +255,9 @@ function ToolBar({
       },
       method: "POST",
       body: JSON.stringify({ sequence: sequenceName }),
-    }).then((res) => res.json);
-    console.log(response);
+    }).then((res) => res.json());
+    if (response.ok) toast.success(`\"${sequenceName}\" executed successfully`);
+    else toast.error(response.err);
   };
 
   const getSequences = async () => {
@@ -280,7 +283,6 @@ function ToolBar({
       );
     }
     setSequences(rows);
-    console.log(seqs);
   };
 
   const onCreate = async () => {
@@ -295,12 +297,17 @@ function ToolBar({
         body: JSON.stringify({ name: name }),
       }
     ).then((res) => res.json());
+
+    if (response.ok) toast.success(`\"${name}\" created successfully`);
+    else toast.error(response.err);
+
     getSequences();
     setShowCreateMessage(false);
   };
 
   return (
     <>
+      <ToastContainer />
       {/* Pop up for setting sequence name */}
       <Modal
         show={showCreateMsg}

@@ -51,6 +51,7 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.4.0",
     "react-split-pane": "^0.1.92",
+    "react-toastify": "^9.1.2",
     "socket.io": "^4.5.2",
     "socket.io-client": "^4.5.2",
     "three": "^0.148.0",
