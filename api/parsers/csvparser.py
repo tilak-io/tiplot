@@ -2,6 +2,9 @@ from pandas import read_csv, to_datetime
 import numpy as np
 from cesium_entity import CesiumEntity
 from .parser import Parser
+import sys
+import importlib
+import os
 
 class CSVParser(Parser):
     def __init__(self):

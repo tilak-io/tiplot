@@ -17,6 +17,8 @@ import "react-bootstrap-submenu/dist/index.css";
 import logo from "../static/img/logo.png";
 import { generateUUID } from "three/src/math/MathUtils";
 import { PORT } from "../static/js/constants";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ToolBar({
   page,
@@ -29,20 +31,31 @@ function ToolBar({
 }) {
   const [layouts, setLayouts] = useState([]);
   const [showSaveMsg, setShowSaveMsg] = useState(false);
+  const [showCreateMsg, setShowCreateMessage] = useState(false);
+
   const [currentFile, setCurrentFile] = useState("");
   const [appVersion, setAppVersion] = useState("0");
   const [showInfoBox, setShowInfo] = useState(false);
+
   const [additionalInfo, setAdditionalInfo] = useState([]);
   const [hasExtra, setHasExtra] = useState(false);
   const [hasMain, setHasMain] = useState(false);
 
-  const handleClose = () => setShowSaveMsg(false);
+  const [sequences, setSequences] = useState([]);
+
+  const handleClose = () => {
+    setShowSaveMsg(false);
+    setShowCreateMessage(false);
+  };
+
   const saveCurrentLayoutNamed = () => setShowSaveMsg(true);
+  const createSequence = () => setShowCreateMessage(true);
 
   useEffect(() => {
     getCurrentFile();
     getAdditionalInfo();
     mapLayouts();
+    getSequences();
     // eslint-disable-next-line
   }, []);
 
@@ -63,11 +76,11 @@ function ToolBar({
     else
       setCurrentFile(
         "Current File: " +
-        response.file[0] +
-        " \nFile Size: " +
-        formatFileSize(response.file[1]) +
-        " \nLast Modified: " +
-        response.file[2]
+          response.file[0] +
+          " \nFile Size: " +
+          formatFileSize(response.file[1]) +
+          " \nLast Modified: " +
+          response.file[2]
       );
 
     setAppVersion(response.appVersion);
@@ -235,8 +248,103 @@ function ToolBar({
     );
   };
 
+  const runSequence = async (sequenceName) => {
+    const response = await fetch(`http://localhost:${PORT}/run_sequence`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ sequence: sequenceName }),
+    }).then((res) => res.json());
+    if (response.ok) toast.success(`\"${sequenceName}\" executed successfully`);
+    else toast.error(response.err);
+  };
+
+  const getSequences = async () => {
+    const seqs = await fetch(`http://localhost:${PORT}/sequences`).then((res) =>
+      res.json()
+    );
+    var rows = [];
+    seqs.files.forEach((seq_name) => {
+      rows.push(
+        <NavDropdown.Item
+          key={generateUUID()}
+          onClick={() => runSequence(seq_name)}
+        >
+          {seq_name}
+        </NavDropdown.Item>
+      );
+    });
+    if (rows.length === 0) {
+      rows.push(
+        <NavDropdown.Item key={generateUUID()} disabled>
+          No Saved Sequences
+        </NavDropdown.Item>
+      );
+    }
+    setSequences(rows);
+  };
+
+  const onCreate = async () => {
+    var name = document.getElementById("sequence-name").value;
+    const response = await fetch(
+      `http://localhost:${PORT}/create_sequence_file`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({ name: name }),
+      }
+    ).then((res) => res.json());
+
+    if (response.ok) toast.success(`\"${name}\" created successfully`);
+    else toast.error(response.err);
+
+    getSequences();
+    setShowCreateMessage(false);
+  };
+
   return (
     <>
+      <ToastContainer />
+      {/* Pop up for setting sequence name */}
+      <Modal
+        show={showCreateMsg}
+        onHide={handleClose}
+        animation={false}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Create new sequence</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-group">
+            <div className="d-flex">
+              <label htmlFor="layout-name" className="col-form-label">
+                Name:
+              </label>
+              <input type="text" className="form-control" id="sequence-name" />
+              <input
+                type="text"
+                className="form-control ml-2"
+                value=".py"
+                style={{ width: "10%" }}
+                disabled
+              />
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={onCreate}>
+            Create
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       {/* Pop up for setting layout name */}
       <Modal show={showSaveMsg} onHide={handleClose} animation={false} centered>
         <Modal.Header closeButton>
@@ -350,6 +458,16 @@ function ToolBar({
                   Clear layouts
                 </NavDropdown.Item>
               </DropdownSubmenu>
+              <DropdownSubmenu href="#" title="Sequences">
+                <DropdownSubmenu href="#" title="Saved Sequences">
+                  {sequences}
+                </DropdownSubmenu>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={createSequence}>
+                  Add new sequence
+                </NavDropdown.Item>
+              </DropdownSubmenu>
+
               <NavDropdown.Divider />
               <NavDropdown.Item
                 onClick={() => {
