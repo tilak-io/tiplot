@@ -2,6 +2,9 @@ from pandas import read_csv, to_datetime
 import numpy as np
 from cesium_entity import CesiumEntity
 from .parser import Parser
+import sys
+import importlib
+import os
 
 class CSVParser(Parser):
     def __init__(self):
@@ -12,6 +15,16 @@ class CSVParser(Parser):
 
     def parse(self,filename):
         csv = read_csv(filename)
+
+        prepfilename = filename[:-3]+'py'
+        print((prepfilename))
+        print(os.path.exists(prepfilename))
+        if(os.path.exists(prepfilename)):
+           print("Preprocessor Exist")
+           sys.path.append(os.path.abspath(prepfilename))
+           module = importlib.import_module(os.path.basename(prepfilename).split('.')[0])
+           csv = module.preprocess(csv)
+
         start_time = to_datetime(csv['timestamp'][0])
         time_delta = (to_datetime(csv['timestamp']) - start_time)
         seconds = time_delta / np.timedelta64(1, 's')
