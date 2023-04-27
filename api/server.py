@@ -4,7 +4,7 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from threading import Thread
 from time import localtime, strftime
-from os import makedirs, path, getcwd
+from os import makedirs, path, getcwd, environ
 from glob import glob
 from communication import Comm
 from datetime import datetime
@@ -12,7 +12,9 @@ from argparse import ArgumentParser
 import pandas as pd
 import store
 import json
-#import traceback
+import subprocess
+import zmq, zlib, pickle
+import traceback
 
 from parsers.ulgparser import ULGParser 
 from parsers.csvparser import CSVParser 
@@ -29,9 +31,13 @@ logs_dir = path.expanduser("~/Documents/tiplot/logs/")
 logs_dir = logs_dir.replace("\\", "/")
 
 configs_dir = path.expanduser("~/Documents/tiplot/config/")
+sequences_dir = path.expanduser("~/Documents/tiplot/sequences/")
 
 if not path.exists(logs_dir):
     makedirs(logs_dir)
+
+if not path.exists(sequences_dir):
+    makedirs(sequences_dir)
 
 thread = Thread()
 current_parser = None
@@ -339,10 +345,63 @@ def merge_extra():
     #     ok = False
     return {"ok": ok}
 
+@app.route('/run_sequence', methods=['POST'])
+def run_sequence():
+    body = request.get_json()
+    sequence_name = body['sequence']
+    sequence_file = sequences_dir + sequence_name
+    print("Running " + sequence_file)
+    datadict = store.Store.get().datadict
+    try:
+        with open(sequence_file, "r") as f:
+            code = f.read()
+        global_namespace = {}
+        local_namespace = {}
+        exec(code, global_namespace, local_namespace)
+        handle_data = local_namespace['handle_data']
+        store.Store.get().datadict = handle_data(datadict)
+        ok = True
+    except Exception as e:
+        err = traceback.format_exc()
+        print("Error occurred: ", e)
+        print("Error occurred: ", err)
+        ok = False
+    return {"ok": ok}
+
+@app.route('/sequences')
+def get_sequences():
+    files = glob(sequences_dir + "/*")
+    # use the path module to get only the basename of each file
+    file_names = [path.basename(file) for file in files]
+    data = {'path': sequences_dir, 'files': file_names}
+    return data
+
+@app.route('/create_sequence_file', methods=['POST'])
+def create_sequence_file():
+    body = request.get_json()
+    sequence_name = body['name']+".py"
+    file_path = path.join(sequences_dir, sequence_name)
+    try:
+        with open(file_path, 'w') as file:
+            file.write("""def handle_data(datadict):
+        import numpy as np
+        import pandas as pd
+
+        new = datadict
+        return new""")
+        ok = True
+    except:
+        ok = False
+
+    return {"ok": ok}
+    
+
+
 @socketio.on("disconnect")
 def disconnected():
     # print("-> client has disconnected " + request.sid)
     pass
+
 
 arg_parser = ArgumentParser(description="Tiplot")
 arg_parser.add_argument('--port', type=int, default=5000, help='Port to run the server on')
