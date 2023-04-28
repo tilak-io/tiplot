@@ -14,7 +14,7 @@ class CSVParser(Parser):
         self.initEntities()
 
     def parse(self,filename):
-        csv = read_csv(filename)
+        csv = read_csv(filename, low_memory=False)
         start_time = to_datetime(csv['timestamp'][0])
         time_delta = (to_datetime(csv['timestamp']) - start_time)
         seconds = time_delta / np.timedelta64(1, 's')
