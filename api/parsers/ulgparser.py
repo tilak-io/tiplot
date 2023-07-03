@@ -16,21 +16,19 @@ class ULGParser(Parser):
         angles = {}
 
         #roll(x-axis rotation)
-        sinr_cosp = 2 * (w * x + y * z);
-        cosr_cosp = 1 - 2 * (x * x + y * y);
-        angles['roll'] = math.atan2(sinr_cosp, cosr_cosp);
+        sinr_cosp = 2 * (w * x + y * z)
+        cosr_cosp = 1 - 2 * (x * x + y * y)
+        angles['roll'] = math.atan2(sinr_cosp, cosr_cosp)
 
         #pitch (y-axis rotation)
-        sinp = 2 * (w * y - z * x);
-        if (abs(sinp) >= 1):
-            angles['pitch'] = math.copysign(math.pi / 2, sinp); # use 90 degrees if out of range
-        else:
-            angles['pitch'] = math.asin(sinp);
+        sinp = math.sqrt(1+2*(w*y - x*z))
+        cosp = math.sqrt(1-2*(w*y - x*z))
+        angles['pitch'] = 2*math.atan2(sinp,cosp) - math.pi/2
 
         # yaw (z-axis rotation)
-        siny_cosp = 2 * (w * z + x * y);
-        cosy_cosp = 1 - 2 * (y * y + z * z);
-        angles['yaw'] = math.atan2(siny_cosp, cosy_cosp);
+        siny_cosp = 2 * (w * z + x * y)
+        cosy_cosp = 1 - 2 * (y * y + z * z)
+        angles['yaw'] = math.atan2(siny_cosp, cosy_cosp)
 
         return angles
 
