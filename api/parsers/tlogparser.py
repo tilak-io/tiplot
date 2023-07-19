@@ -18,8 +18,8 @@ class TLOGParser(Parser):
         while True:
             m = mlog.recv_match()
             if (m is None): break
-            name = m.get_type()
             data = m.to_dict()
+            name = data['mavpackettype']
             data['timestamp_tiplot'] = m._timestamp
             try:
                 data['time_utc'] = str(datetime.datetime.fromtimestamp(m._timestamp))
