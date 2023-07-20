@@ -21,6 +21,7 @@ class TLOGParser(Parser):
             data = m.to_dict()
             name = data['mavpackettype']
             data['timestamp_tiplot'] = m._timestamp
+            data['time_utc_usec'] = m._timestamp*1e6
             try:
                 data['time_utc'] = str(datetime.datetime.fromtimestamp(m._timestamp))
             except:
