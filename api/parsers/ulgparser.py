@@ -2,6 +2,7 @@ from pyulog import ULog
 from pandas import DataFrame
 from cesium_entity import CesiumEntity
 import math
+import datetime
 from .parser import Parser
 
 class ULGParser(Parser):
@@ -32,6 +33,13 @@ class ULGParser(Parser):
 
         return angles
 
+    def add_utc_string(self, datadict):
+        if("vehicle_gps_position" in datadict):
+            a = datadict['vehicle_gps_position']
+            def timestampusec2string(x):
+                return str(datetime.datetime.fromtimestamp(x/1e6))
+            a['time_utc'] = a.apply(lambda row: timestampusec2string(row['time_utc_usec']), axis=1)
+
     def add_euler(self,datadict):
         if "vehicle_attitude" in datadict: 
             a=datadict['vehicle_attitude']
@@ -58,6 +66,7 @@ class ULGParser(Parser):
             self.datadict[name] = DataFrame(data.data)
             self.datadict[name]['timestamp_tiplot'] = self.datadict[name]['timestamp'] / 1e6
         self.add_euler(self.datadict)
+        self.add_utc_string(self.datadict)
         self.setAdditionalInfo()
         return self.datadict, self.entities, self.additionalInfo
 
