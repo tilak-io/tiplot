@@ -63,6 +63,20 @@ function SyncTimestamp() {
         }
         break;
 
+      case "closest-point":
+        if ("y" in mainData && "y" in extraData) {
+          const extra_y = extraData.y[0];
+          const extra_x = extraData.x[0]; // Time reference
+          console.log("Extra Y", extra_y);
+          // Find time whe,e we have the closest value of main_y in extra_y 
+          console.log("Closest is", mainData.x[findClosestIndex(mainData.y, extra_y)]);
+          const main_x = mainData.x[findClosestIndex(mainData.y, extra_y)];
+
+          setDelta(main_x - extra_x);
+          updateXAxis();
+        }
+        break;
+
       case "back-to-back":
       case "btb-inversed":
         const inv = document.getElementById("btb-inversed").checked;
@@ -155,7 +169,7 @@ function SyncTimestamp() {
   const handleRadioChange = (event) => {
     var selected = event.target.id;
     setSyncType(selected);
-    setTimeout(function () {
+    setTimeout(function() {
       autoRange();
     }, 200);
   };
@@ -164,7 +178,7 @@ function SyncTimestamp() {
     var selected = event.target.id;
     if (event.target.checked) setSyncType(selected);
     else setSyncType("back-to-back");
-    setTimeout(function () {
+    setTimeout(function() {
       autoRange();
     }, 200);
   };
@@ -177,6 +191,20 @@ function SyncTimestamp() {
     }
     return data.x[0];
   };
+
+  const findClosestIndex = (arr, value) => {
+    let minDiff = Number.MAX_VALUE;
+    let closestIndex = -1;
+
+    for (let i = 0; i < arr.length; i++) {
+      const diff = Math.abs(arr[i] - value);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = i;
+      }
+    }
+    return closestIndex;
+  }
 
   const handleApply = async () => {
     const req = {
@@ -211,7 +239,7 @@ function SyncTimestamp() {
       setStep(stp);
     }
 
-    setTimeout(function () {
+    setTimeout(function() {
       autoRange();
     }, 200);
   };
@@ -227,7 +255,7 @@ function SyncTimestamp() {
 
   const setupControls = () => {
     // TODO: Add Keyboard controls
-    document.onkeyup = function (e) {
+    document.onkeyup = function(e) {
       switch (e.code) {
         case "ArrowRight":
         case "ArrowLeft":
@@ -290,6 +318,13 @@ function SyncTimestamp() {
           id="first-point"
           type="radio"
           label="Sync on first point"
+          onChange={handleRadioChange}
+        />
+        <Form.Check
+          name="sync-type"
+          id="closest-point"
+          type="radio"
+          label="Sync on closest point"
           onChange={handleRadioChange}
         />
         <div className="mb-3">
