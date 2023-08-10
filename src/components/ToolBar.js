@@ -9,6 +9,7 @@ import {
   Tab,
   Tabs,
   Table,
+  Form
 } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
 import { FaToggleOn, FaToggleOff, FaInfoCircle } from "react-icons/fa";
@@ -41,6 +42,9 @@ function ToolBar({
   const [hasExtra, setHasExtra] = useState(false);
   const [hasMain, setHasMain] = useState(false);
 
+  const [filteredParams, setFilteredParams] = useState([]); // used for param search
+  const [searchQuery, setSearchQuery] = useState("");       // used for param search
+
   const [sequences, setSequences] = useState([]);
 
   const handleClose = () => {
@@ -59,13 +63,24 @@ function ToolBar({
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    var inputSearch = document.getElementById("search-param");
+    if (inputSearch != null) {
+      inputSearch.value = searchQuery;
+      inputSearch.focus();
+    }
+
+  }, [filteredParams, searchQuery]);
+
   const getAdditionalInfo = async () => {
     var response = await fetch(`http://localhost:${PORT}/additional_info`).then(
       (res) => res.json()
     );
-    setAdditionalInfo(response.info);
     setHasExtra(response.hasExtra);
     setHasMain(response.hasMain);
+
+    setAdditionalInfo(response.info);
+    response.info.forEach((item) => { if (item.name === "Initial Parameters") { setFilteredParams(item.info); } })
   };
 
   const getCurrentFile = async () => {
@@ -76,11 +91,11 @@ function ToolBar({
     else
       setCurrentFile(
         "Current File: " +
-          response.file[0] +
-          " \nFile Size: " +
-          formatFileSize(response.file[1]) +
-          " \nLast Modified: " +
-          response.file[2]
+        response.file[0] +
+        " \nFile Size: " +
+        formatFileSize(response.file[1]) +
+        " \nLast Modified: " +
+        response.file[2]
       );
 
     setAppVersion(response.appVersion);
@@ -224,28 +239,31 @@ function ToolBar({
     );
   }
 
-  const InfoTable = ({ data }) => {
-    const headers = Object.keys(data.info[0]);
-    return (
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            {headers.map((header) => (
-              <th key={header}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.info.map((item) => (
-            <tr key={generateUUID()}>
+  const InfoTable = ({ list }) => {
+    if (list.length > 0) {
+      const headers = Object.keys(list[0]);
+      return (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
               {headers.map((header) => (
-                <td key={`${generateUUID()}-${header}`}>{item[header]}</td>
+                <th key={header}>{header}</th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </Table>
-    );
+          </thead>
+          <tbody>
+            {list.map((item) => (
+              <tr key={generateUUID()}>
+                {headers.map((header) => (
+                  <td key={`${generateUUID()}-${header}`}>{item[header]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
+    }
+
   };
 
   const runSequence = async (sequenceName) => {
@@ -303,6 +321,15 @@ function ToolBar({
 
     getSequences();
     setShowCreateMessage(false);
+  };
+
+  const paramSearch = (query, dict) => {
+    const value = query.target.value;
+    setSearchQuery(value);
+    const keyword = value.toLowerCase();
+    const paramList = dict.info;
+    const foundParams = paramList.filter(obj => obj.name.toLowerCase().includes(keyword));
+    setFilteredParams(foundParams);
   };
 
   return (
@@ -393,11 +420,20 @@ function ToolBar({
                 })}
               </Container>
             </Tab>
-            {additionalInfo.map((info) => (
-              <Tab key={generateUUID()} eventKey={info.name} title={info.name}>
+            {additionalInfo.map((tabContent) => (
+              <Tab key={generateUUID()} eventKey={tabContent.name} title={tabContent.name}>
                 <br className="break" />
                 <Container>
-                  <InfoTable data={info} />
+                  {tabContent.search &&
+                    <>
+                      <Form.Control id="search-param" size="lg" type="text" placeholder="Param Name" onChange={(value) => paramSearch(value, tabContent)} />
+                      <br />
+                      <InfoTable list={filteredParams} />
+                    </>
+                  }
+                  {!tabContent.search &&
+                    <InfoTable list={tabContent.info} />
+                  }
                 </Container>
               </Tab>
             ))}
