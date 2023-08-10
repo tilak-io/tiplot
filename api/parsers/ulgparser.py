@@ -78,11 +78,11 @@ class ULGParser(Parser):
         columns_to_include = [col for col in messages_df.columns if col != 'timestamp_tiplot']
         filtered_df = messages_df[columns_to_include]
         self.datadict['logged_messages'] = messages_df
-        self.additionalInfo.append({"name": "Logged Messages", "info": filtered_df.to_dict('records')})
+        self.additionalInfo.append({"name": "Logged Messages", "info": filtered_df.to_dict('records'), "search": False})
 
 
-        parameters_dict = [{"name": name, "value": value} for name, value in self.ulg.initial_parameters.items()]
-        self.additionalInfo.append({"name": "Initial Parameters", "info": parameters_dict})
+        parameters_dict = [{"index": idx, "name": name, "value": value} for idx, (name, value) in enumerate(self.ulg.initial_parameters.items())]
+        self.additionalInfo.append({"name": "Initial Parameters", "info": parameters_dict, "search": True})
 
     def initDefaultEntity(self):
         self.default_entity = CesiumEntity(name='ulg default entity',
