@@ -84,6 +84,9 @@ class ULGParser(Parser):
         parameters_dict = [{"index": idx, "name": name, "value": value} for idx, (name, value) in enumerate(self.ulg.initial_parameters.items())]
         self.additionalInfo.append({"name": "Initial Parameters", "info": parameters_dict, "search": True})
 
+        version_info = [{"name": key, "value": value} for key, value in self.ulg.msg_info_dict.items()]
+        self.additionalInfo.append({"name": "Version", "info": version_info, "search": False})
+
     def initDefaultEntity(self):
         self.default_entity = CesiumEntity(name='ulg default entity',
                               color="#ffffff",
