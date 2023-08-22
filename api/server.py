@@ -403,7 +403,21 @@ def create_sequence_file():
 
     return {"ok": ok, "err": err}
     
-
+@app.route('/open_sequence_file', methods=['POST'])
+def open_sequence_file():
+    body = request.get_json()
+    sequence_name = body['sequence']
+    sequence_file = sequences_dir + sequence_name
+    try:
+        command = body['editorBinary'].split(" ")
+        command.append(sequence_file)
+        subprocess.Popen(command) # run the command asyncronously
+        ok = True
+        err = "no error"
+    except:
+        err = traceback.format_exc()
+        ok = False
+    return {"ok": ok, "err": err}
 
 @socketio.on("disconnect")
 def disconnected():

@@ -13,6 +13,7 @@ export const defaultSettings = {
   dampingFactor: 0.8,
   fov: 75,
   textYValue: 0,
+  externalEditor: "/usr/bin/code"
 };
 
 function Settings() {
@@ -72,6 +73,19 @@ function Settings() {
       <ToolBar page="settings" />
       <Container className="settings-page">
         <Form>
+          <fieldset>
+            <legend>• General ⚙️</legend>
+            <InputGroup>
+              <InputGroup.Text>External Editor</InputGroup.Text>
+              <Form.Control
+                onChange={handleChange}
+                id="externalEditor"
+                type="text"
+                min={1}
+                aria-label="ExternalEditor"
+              />
+            </InputGroup>
+          </fieldset>
           <fieldset>
             <legend>• View Layouts 🪟</legend>
             <Form.Check

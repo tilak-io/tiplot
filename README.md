@@ -28,6 +28,7 @@ TiPlot is an open-source visualisation tool for flight logs. With TiPlot, you ca
 - 3D viewer for displaying the paths of your UAVs.
 - Add multiple UAVs to compare flights.
 - Sync the 3D view with a specific timestamp by hovering over it.
+- Perform customized operations on data currently being processed.
 - Ability to send a data dictionary and entities to be displayed in the 3D view over TCP port `5555` from a Python script or a Jupyter notebook.
 - Layouts are automatically saved after every change.
 - Drag and drop plots to reposition them.
@@ -41,7 +42,7 @@ TiPlot is an open-source visualisation tool for flight logs. With TiPlot, you ca
 
 ### Prebuilt AppImage
 
-To install TiPlot using the prebuilt AppImage, follow these steps:
+To run TiPlot using the prebuilt AppImage, follow these steps:
 
 1. Download the latest AppImage from the [releases page](https://github.com/tilak-io/tiplot/releases/latest).
 2. Make the AppImage executable by running:
@@ -116,6 +117,43 @@ Note that `datadict` is the data dictionary returned by the parser.
 
 For more info check out the Jupyter notebooks in the [templates](https://github.com/tilak-io/tiplot/blob/main/templates) folder.
 
+## Running Sequences and Custom Operations
+
+In this guide, we will walk you through the process of creating and executing sequences, which are Python functions containing a set of operations to manipulate log data. These sequences can be customized to suit your specific needs. Follow these steps to get started:
+
+1. **Set Preferred Editor**: Ensure that you have configured your preferred code editor in the tool settings by navigating to `Tools > Settings > General > External Editor`. If you intend to use a terminal-based editor such as Vim or Nano, make sure to specify the appropriate command to launch the terminal. (i.e: `kitty nvim` for kitty, `gnome-terminal -- nvim` for ubuntu's default terminal, `xterm -e nvim` for xterm...)
+
+2. **Create a New Sequence**: To begin, create a new sequence by navigating to `Tools > Sequences > Add New Sequence`.
+
+3. **Provide a Descriptive Name**: Give your sequence a meaningful and descriptive name that reflects its purpose.
+
+4. **Edit the Sequence**: Upon creating a new sequence, your preferred code editor will open with a template function. You can now define the operations you want to perform on the log data.
+
+Here's an example of a sequence that transforms log data from the NED (North-East-Down) representation to the ENU (East-North-Up) representation for a topic called `vehicle_local_position_enu`:
+
+```python
+def handle_data(datadict):
+    import numpy as np
+    new = datadict
+    # Coordinate transformation matrix from NED to ENU
+    NED_to_ENU = np.array([
+        [0, 1, 0],  # East (ENU X) corresponds to North (NED Y)
+        [1, 0, 0],  # North (ENU Y) corresponds to East (NED X)
+        [0, 0, -1]  # Up (ENU Z) corresponds to -Down (NED Z)
+    ])
+    # Apply the coordinate transformation to the 'x', 'y', and 'z' columns
+    new['vehicle_local_position_enu'] = new['vehicle_local_position'].copy()
+    xyz_ned = new['vehicle_local_position_enu'][['x', 'y', 'z']].values
+    xyz_enu = np.dot(xyz_ned, NED_to_ENU.T)  # Transpose the transformation matrix for NED to ENU
+    new['vehicle_local_position_enu'][['x', 'y', 'z']] = xyz_enu
+    return new
+```
+
+***NOTE: the imports should be inside the function***
+
+Feel free to adapt and customize your sequence function to perform the operations that are relevant to your data processing needs.
+
+Happy sequencing 🎉!
 
 ## Contributing
 We welcome contributions to TiPlot. If you would like to contribute, please follow these steps:

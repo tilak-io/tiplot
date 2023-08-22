@@ -1,25 +1,27 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
-  Container,
-  Nav,
-  Navbar,
-  NavDropdown,
-  Modal,
   Button,
+  Container,
+  Form,
+  Modal,
+  Nav,
+  NavDropdown,
+  Navbar,
   Tab,
-  Tabs,
   Table,
-  Form
+  Tabs
 } from "react-bootstrap";
 import { DropdownSubmenu, NavDropdownMenu } from "react-bootstrap-submenu";
-import { FaToggleOn, FaToggleOff, FaInfoCircle } from "react-icons/fa";
-import { FcRadarPlot, FcScatterPlot, FcHeatMap } from "react-icons/fc";
 import "react-bootstrap-submenu/dist/index.css";
-import logo from "../static/img/logo.png";
-import { generateUUID } from "three/src/math/MathUtils";
-import { PORT } from "../static/js/constants";
+import { FaInfoCircle, FaToggleOff, FaToggleOn } from "react-icons/fa";
+import { FcHeatMap, FcRadarPlot, FcScatterPlot } from "react-icons/fc";
+import { LuEdit, LuPlay } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { generateUUID } from "three/src/math/MathUtils";
+import logo from "../static/img/logo.png";
+import { PORT } from "../static/js/constants";
+import { defaultSettings } from "../views/Settings";
 
 function ToolBar({
   page,
@@ -287,9 +289,19 @@ function ToolBar({
       rows.push(
         <NavDropdown.Item
           key={generateUUID()}
-          onClick={() => runSequence(seq_name)}
+          style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
         >
-          {seq_name}
+          <div>{seq_name}</div>
+          &nbsp;
+          <div className="form-group">
+            <Button variant="outline-success"
+              onClick={() => runSequence(seq_name)}
+            ><LuPlay /></Button>
+            &nbsp;
+            <Button variant="outline-outline"
+              onClick={() => openFileWithEditor(seq_name)}
+            ><LuEdit /></Button>
+          </div>
         </NavDropdown.Item>
       );
     });
@@ -316,12 +328,31 @@ function ToolBar({
       }
     ).then((res) => res.json());
 
-    if (response.ok) toast.success(`"${name}" created successfully`);
-    else toast.error(response.err);
+    if (response.ok) {
+      toast.success(`"${name}" created successfully`);
+      openFileWithEditor(`${name}.py`);
+    }
+    else {
+      toast.error(response.err);
+    }
 
     getSequences();
     setShowCreateMessage(false);
   };
+
+  const openFileWithEditor = async (sequenceName) => {
+    const general_settings = parseLocalStorage("general_settings");
+    const externalEditor =
+      general_settings.externalEditor ?? defaultSettings["externalEditor"];
+    const response = await fetch(`http://localhost:${PORT}/open_sequence_file`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ sequence: sequenceName, editorBinary: externalEditor }),
+    }).then((res) => res.json());
+    if (!response.ok) toast.error(response.err);
+  }
 
   const paramSearch = (query, dict) => {
     const value = query.target.value;
