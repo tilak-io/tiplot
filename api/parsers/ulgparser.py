@@ -2,6 +2,7 @@ from pyulog import ULog
 from pandas import DataFrame
 from cesium_entity import CesiumEntity
 import math
+import numpy as np
 from .parser import Parser
 
 class ULGParser(Parser):
@@ -36,16 +37,23 @@ class ULGParser(Parser):
         if "vehicle_attitude" in datadict: 
             a=datadict['vehicle_attitude']
             result = []
-            for i in a.to_dict('records'):
-                result.append(self.euler_from_quaternion(
-                    i['q[0]'],
-                    i['q[1]'],
-                    i['q[2]'],
-                    i['q[3]'],))
-            r = DataFrame(result)
-            a['pitch'] = r['pitch']
-            a['roll'] = r['roll']
-            a['yaw'] = r['yaw']
+            if('q[0]' in a and \
+                    'q[1]' in a and \
+                    'q[2]' in a and \
+                    'q[3]' in a):
+                for i in a.to_dict('records'):
+                    result.append(self.euler_from_quaternion(
+                        i['q[0]'],
+                        i['q[1]'],
+                        i['q[2]'],
+                        i['q[3]'],))
+                r = DataFrame(result)
+                a['pitch'] = r['pitch']
+                a['roll'] = r['roll']
+                a['yaw'] = r['yaw']
+                a['pitch_deg'] = r['pitch']*180.0/np.pi
+                a['roll_deg'] = r['roll']*180.0/np.pi
+                a['yaw_deg'] = r['yaw']*180.0/np.pi
 
     def parse(self,filename):
         self.ulg = ULog(filename)

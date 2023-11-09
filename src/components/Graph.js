@@ -195,7 +195,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
             margin: {
               t: 10,
               b: 25,
-              l: 50,
+              l: 100,
               r: 25,
             },
             xaxis: {
@@ -206,7 +206,8 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
               exponentformat: "e",
             },
             yaxis: {
-              exponentformat: "e",
+              exponentformat: "none",
+              tickformat:".8f"
             },
             // hovermode: "x unified",
             hovermode: "x",
