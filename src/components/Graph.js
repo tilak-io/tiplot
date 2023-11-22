@@ -10,6 +10,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [data, setData] = useState([]);
+  const [exponentData, setExponentData] = useState("none");
 
   useEffect(() => {
     getInitialData();
@@ -21,10 +22,16 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   }, []);
 
   useEffect(() => {
-    setTimeout(function () {
-      plotData.autoRange();
-    }, 200);
     // eslint-disable-next-line
+    const max_x = Math.max(...data.map(xarray=>{
+	return xarray.x[xarray.x.length-1];
+    }));
+    if(max_x>1e5){
+        setExponentData("e");
+    }
+    else{
+        setExponentData("none");
+    }
   }, [data]);
 
   const getInitialData = async () => {
@@ -133,9 +140,6 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     }
     select.style.maxHeight = "36px";
 
-    setTimeout(function () {
-      plotData.autoRange();
-    }, 200);
   };
 
   const stretchSelect = () => {
@@ -203,7 +207,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
               spikecolor: "#000",
               spikemode: "across+marker",
               spikethickness: 1,
-              exponentformat: "e",
+              exponentformat: exponentData,
             },
             yaxis: {
               exponentformat: "e",
