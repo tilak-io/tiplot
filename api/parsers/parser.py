@@ -8,7 +8,11 @@ class Parser:
         self.entities = []
         self.datadict = {}
         self.additionalInfo = []
+        self.extension = None
 
+    def canParse(self,filename):
+        file_extension = filename.split('.')[-1]
+        return (file_extension == self.extension)
 
     def parse(self,filename):
         print("Parsing file:" + filename)

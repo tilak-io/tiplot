@@ -12,6 +12,7 @@ class CSVParser(Parser):
         self.name = "csv_parser"
         self.initDefaultEntitiy()
         self.initEntities()
+        self.extension = 'csv'
 
     def parse(self,filename):
         csv = read_csv(filename, low_memory=False)

@@ -10,6 +10,7 @@ class DJIParser(Parser):
         self.name = "dji_parser"
         self.initDefaultEntitiy()
         self.initEntities()
+        self.extenstion = 'dat'
 
     def quaternionToEuler(self,q):
     

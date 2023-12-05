@@ -11,6 +11,7 @@ class ULGParser(Parser):
         self.ulg = None
         self.initDefaultEntity()
         self.initEntities()
+        self.extension = 'ulg'
 
     def euler_from_quaternion(self, w, x, y, z):
         angles = {}

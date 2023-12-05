@@ -2,6 +2,7 @@ from pandas import DataFrame
 from cesium_entity import CesiumEntity
 from .parser import Parser
 from pymavlink import mavutil
+from os import path
 
 class ArduParser(Parser):
     def __init__(self):
@@ -9,6 +10,24 @@ class ArduParser(Parser):
         self.name = "ardu_parser"
         self.initDefaultEntity()
         self.initEntities()
+        self.extension = 'bin'
+
+    def canParse(self, filename):
+        file_extension = filename.split('.')[-1]
+
+        if(file_extension is not self.extension):
+            return False
+
+        # Try to parse the file
+        try:
+            mlog = mavutil.mavlink_connection(filename)
+            m = mlog.recv_match()
+            if(m is not None):
+                return True
+            else:
+                return False
+        except:
+            return False
 
     def parse(self,filename):
         mlog = mavutil.mavlink_connection(filename)

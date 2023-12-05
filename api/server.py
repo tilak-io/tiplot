@@ -44,12 +44,12 @@ current_parser = None
 current_file = None
 current_ext = None
 
-extension_to_parser = {
-    'ulg': ULGParser,
-    'csv': CSVParser,
-    'dat': DJIParser,
-    'bin': ArduParser,
-    'tlog': TLOGParser,
+parser_registry = {
+    ULGParser(),
+    CSVParser(),
+    DJIParser(),
+    ArduParser(),
+    TLOGParser(),
 }
 
 def choose_parser(file, logs_dir, isExtra=False):
@@ -57,18 +57,17 @@ def choose_parser(file, logs_dir, isExtra=False):
     global current_parser, current_ext
     full_path = logs_dir + file
 
-    _, file_extension = path.splitext(full_path)
-    file_extension = file_extension.lower()[1:]  # remove the leading '.'
-    current_ext = file_extension
-
-    # Look up the parser class in the dictionary using the file extension as the key
-    parser_cls = extension_to_parser.get(file_extension)
-    if parser_cls is None:
+    parser = None
+    # Find a valid parser in registry
+    possible_parsers = [p for p in parser_registry if p.canParse(full_path)]
+    if(len(possible_parsers)>0):
+        # Take the first valid parser
+        parser = possible_parsers[0]
+    if parser is None:
         return False
-        # raise ValueError(f"Unsupported file extension: {file_extension}")
+
 
     # Create an instance of the parser class and use it to parse the file
-    parser = parser_cls()
     try:
         datadict, entities, additional_info = parser.parse(full_path)
         if isExtra:

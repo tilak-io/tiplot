@@ -10,6 +10,7 @@ class TLOGParser(Parser):
         self.name = "tlog_parser"
         self.initDefaultEntity()
         self.initEntities()
+        self.extension = 'tlog'
 
     def parse(self,filename):
         mlog = mavutil.mavlink_connection(filename)
