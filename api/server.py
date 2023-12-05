@@ -21,6 +21,7 @@ from parsers.csvparser import CSVParser
 from parsers.djiparser import DJIParser 
 from parsers.arduparser import ArduParser 
 from parsers.tlogparser import TLOGParser 
+from parsers.sixarmsbinparser import SixArmsBinParser
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -50,6 +51,7 @@ parser_registry = {
     DJIParser(),
     ArduParser(),
     TLOGParser(),
+    SixArmsBinParser(),
 }
 
 def choose_parser(file, logs_dir, isExtra=False):
