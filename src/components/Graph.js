@@ -10,6 +10,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [data, setData] = useState([]);
+  const [exponentformat, setExponentformat] = useState('e');
 
   useEffect(() => {
     getInitialData();
@@ -117,6 +118,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     ) {
       plotData.autoScaleVerticalAxis(event);
     }
+    updateYAxisLayout(event);
   };
 
   const handleInput = (value, event) => {
@@ -152,6 +154,27 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     const labels = selectedOptions.map((e) => e.label);
     return labels.includes(option.label);
   };
+
+  const updateYAxisLayout = (event) => {
+
+    const plot = document.getElementById(`plot-${id}`);
+    console.log(plot);
+    const range = plot.layout.yaxis.range;
+    console.log(plot.layout.yaxis.range);
+
+    if(range.length>0){
+      const yMax = Math.max(Math.abs(range[0]),Math.abs(range[1]));
+      console.log(yMax);
+      if(yMax<1000.){
+          setExponentformat("none");
+      }
+      else{
+          setExponentformat("e");
+      }
+    }
+    console.log(exponentformat);
+  }
+
 
   return (
     <div className="plot-container">
@@ -206,8 +229,8 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
               exponentformat: "e",
             },
             yaxis: {
-              exponentformat: "none",
-              tickformat:".8f"
+              exponentformat: exponentformat,
+             ...(exponentformat === "none" && {tickformat:".8f"})
             },
             // hovermode: "x unified",
             hovermode: "x",
