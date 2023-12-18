@@ -122,7 +122,7 @@ export default class Entity {
     const loader = new GLTFLoader();
     loader.load(
       `http://localhost:${PORT}/model`,
-      function (gltf) {
+      function(gltf) {
         instance.mesh = gltf.scene;
         instance.mesh.children[0].children[0].material.transparent = true;
         instance.mesh.children[0].children[0].material.opacity = instance.alpha;
@@ -137,7 +137,7 @@ export default class Entity {
         scene.add(instance.mesh);
       },
       undefined,
-      function (error) {
+      function(error) {
         console.log(error);
         console.log("failed to load drone, setting up default cube");
         const geometry = new THREE.BoxGeometry(2, 0.5, 0.3);
@@ -161,11 +161,8 @@ export default class Entity {
       this.ref_y = e.props[0].y;
       this.ref_z = e.props[0].z;
     } else {
-      const [x, y] = getXY(e.props[0].longitude, e.props[0].lattitude);
-      // const z = -e.props[0].altitude;
-      this.ref_x = x;
-      this.ref_y = y;
-      // this.ref_z = z;
+      this.ref_x = 0;
+      this.ref_y = 0;
       this.ref_z = 0;
     }
   }
