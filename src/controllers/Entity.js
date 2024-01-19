@@ -93,7 +93,7 @@ export default class Entity {
 
   addEuler(props) {
     this.rotations.push(
-      new THREE.Euler(props.roll, props.pitch, props.yaw, "XYZ")
+      new THREE.Euler(props.roll, props.pitch, props.yaw, "ZYX")
     );
   }
 
@@ -157,9 +157,10 @@ export default class Entity {
   setReference(e) {
     // we set the first position as the reference
     if (e.useXYZ) {
-      this.ref_x = e.props[0].x;
-      this.ref_y = e.props[0].y;
-      this.ref_z = e.props[0].z;
+       this.ref_x = 0;
+       this.ref_y = 0;
+       this.ref_z = 0;
+      
     } else {
       this.ref_x = 0;
       this.ref_y = 0;
