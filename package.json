@@ -1,6 +1,6 @@
 {
   "name": "tiplot",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "private": true,
   "homepage": "./",
   "proxy": "http://localhost:5000",
