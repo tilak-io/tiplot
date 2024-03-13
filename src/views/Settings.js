@@ -20,6 +20,7 @@ function Settings() {
   useEffect(() => {
     getCurrentSettings();
     getCurrentLayout();
+    getCurrentTrackedEntityType();
     // eslint-disable-next-line
   }, []);
 
@@ -57,14 +58,29 @@ function Settings() {
     localStorage.setItem("view_layout", JSON.stringify(view_layout));
   };
 
+  const handleTrackedEntityChange = (e) => {
+    var tracked_entity_type = localStorage.getItem("tracked_entity_type", "last-tracked");
+    tracked_entity_type = e.target.id;
+    localStorage.setItem("tracked_entity_type", JSON.stringify(tracked_entity_type));
+  };
+
   const getCurrentLayout = () => {
-    var view_layout =
-      JSON.parse(localStorage.getItem("view_layout")) ?? "split-fit";
+    var view_layout = JSON.parse(localStorage.getItem("view_layout")) ?? "split-fit";
     const layouts = ["split-fit", "detached-fit"];
 
     layouts.forEach((layout) => {
       const input = document.getElementById(layout);
       input.checked = view_layout === input.id;
+    });
+  };
+
+  const getCurrentTrackedEntityType = () => {
+    var tracked_entity_type = JSON.parse(localStorage.getItem("tracked_entity_type")) ?? "last-tracked";
+    const types = ["last-tracked", "last-created"];
+
+    types.forEach((t) => {
+      const input = document.getElementById(t);
+      input.checked = tracked_entity_type === input.id;
     });
   };
 
@@ -162,7 +178,23 @@ function Settings() {
               </Col>
             </Row>
           </fieldset>
-
+          <fieldset>
+            <legend>• Entities 🛩️</legend>
+            <Form.Check
+              name="tracked-entity"
+              id="last-created"
+              type="radio"
+              label="Last created"
+              onChange={handleTrackedEntityChange}
+            />
+            <Form.Check
+              name="tracked-entity"
+              id="last-tracked"
+              type="radio"
+              label="Last tracked"
+              onChange={handleTrackedEntityChange}
+            />
+          </fieldset>
           <fieldset>
             <legend>• View Helpers 🌎</legend>
             <Form.Check
