@@ -162,26 +162,27 @@ function GraphOptions({ plotId, id, removeGraph }) {
 
   return (
     <div className="plot-options">
-      <span onClick={() => removeGraph(id)}>
+      <span onClick={() => removeGraph(id)} title="Remove Graph">
         <BsTrash style={{ width: "100%", color: "red" }} />
       </span>
 
       <span
         onClick={toggleLegend}
         style={{ color: showLegend ? "black" : "grey" }}
+        title="Toggle Legend Position"
       >
         <HiOutlineTicket style={{ width: "100%" }} />
       </span>
 
-      <span onClick={toggleScatter}>
+      <span onClick={toggleScatter} title="Toggle Scatter">
         <ToggleScatterIcon style={{ width: "100%" }} />
       </span>
 
-      <span onClick={autoscale}>
+      <span onClick={autoscale} title="Auto Scale">
         <MdZoomOutMap style={{ width: "100%" }} />
       </span>
 
-      <span className="drag-button">
+      <span className="drag-button" title="Move Graph">
         <RiDragMove2Line style={{ width: "100%" }} />
       </span>
 
