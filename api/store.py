@@ -83,6 +83,7 @@ class Store:
                              "color": e.color,
                              "wireframe": e.wireframe,
                              "tracked": e.tracked,
+                             "active": e.active,
                              "pathColor": e.pathColor})
             except Exception as error:
                 err = str(error)

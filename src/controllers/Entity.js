@@ -26,6 +26,7 @@ export default class Entity {
     this.alpha = e.alpha;
     this.wireframe = e.wireframe;
     this.tracked = e.tracked;
+    this.active = e.active;
     this.scale = e.scale;
     this.setReference(e);
     // using a single loop to do all the mapping
@@ -99,7 +100,7 @@ export default class Entity {
 
   //////////////////// Drawing the entity's path
   //
-  loadPath(scene, idx) {
+  loadPath(scene) {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       "position",
@@ -157,10 +158,10 @@ export default class Entity {
   setReference(e) {
     // we set the first position as the reference
     if (e.useXYZ) {
-       this.ref_x = 0;
-       this.ref_y = 0;
-       this.ref_z = 0;
-      
+      this.ref_x = 0;
+      this.ref_y = 0;
+      this.ref_z = 0;
+
     } else {
       this.ref_x = 0;
       this.ref_y = 0;

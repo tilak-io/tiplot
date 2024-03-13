@@ -49,14 +49,19 @@ function View3D({ socket, detached }) {
     const response = await fetch(
       `http://localhost:${PORT}/entities_props`
     ).then((res) => res.json());
-    if (response.ok) response.data.forEach(initEntity);
-    else toast.error(response.error);
+    if (response.ok) {
+      response.data.forEach(item => {
+        if (item.active) initEntity(item);
+      });
+    } else {
+      toast.error(response.error);
+    }
   };
 
-  const initEntity = (e, index) => {
+  const initEntity = (e) => {
     entities.push(new Entity(e));
-    entities[index].loadPath(scene, index);
-    entities[index].loadObj(scene, index);
+    entities[entities.length - 1].loadPath(scene);
+    entities[entities.length - 1].loadObj(scene);
   };
 
   const getTrackedEntity = () => {
@@ -142,7 +147,7 @@ function View3D({ socket, detached }) {
   };
 
   const setupKeyControls = () => {
-    document.onkeydown = function (e) {
+    document.onkeydown = function(e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":
@@ -162,7 +167,7 @@ function View3D({ socket, detached }) {
       }
     };
 
-    document.onkeyup = function (e) {
+    document.onkeyup = function(e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":
