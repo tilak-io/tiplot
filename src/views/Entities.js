@@ -42,6 +42,7 @@ function Entities() {
     const _useRPY = document.getElementById(`useRPY-${eId}`).checked;
     const wireframe = document.getElementById(`wireframe-${eId}`).checked;
     const tracked = document.getElementById(`tracked-${eId}`).checked;
+    const active = document.getElementById(`active-${eId}`).checked;
 
     const position = _useXYZ
       ? {
@@ -80,6 +81,7 @@ function Entities() {
       wireframe: wireframe,
       color: getValue(`color-${eId}`),
       tracked: tracked,
+      active: active,
       scale: parseFloat(getValue(`scale-${eId}`)),
       position: position,
       attitude: attitude,
@@ -93,7 +95,8 @@ function Entities() {
       .then((res) => {
         var tracked_entity_type = JSON.parse(localStorage.getItem("tracked_entity_type")) ?? "last-tracked";
         res.id = uuid();
-        res.tracked = tracked_entity_type === "last-created";
+        res.tracked = tracked_entity_type === "last-created" || current_entities.length === 0;
+        res.active = true;
         setCurrentEntities([...current_entities, res]);
       });
   };
@@ -180,6 +183,7 @@ function Entities() {
             useRPY={e.useRPY}
             useXYZ={e.useXYZ}
             tracked={e.tracked}
+            active={e.active}
             scale={e.scale}
             position={e.position}
             attitude={e.attitude}
