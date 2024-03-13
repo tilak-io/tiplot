@@ -47,6 +47,7 @@ function DetachedLayout({ socket, defaultShowView, ext }) {
           initialKeys={[]}
           updateKeys={updateKeys}
           removeGraph={removeGraph}
+          autoFocusSelect={true}
         />
       </div>
     );
@@ -63,6 +64,7 @@ function DetachedLayout({ socket, defaultShowView, ext }) {
           initialKeys={[]}
           updateKeys={updateKeys}
           removeGraph={removeGraph}
+          autoFocusSelect={true}
         />
       </div>
     );
@@ -79,6 +81,7 @@ function DetachedLayout({ socket, defaultShowView, ext }) {
           initialKeys={[]}
           updateKeys={updateKeys}
           removeGraph={removeGraph}
+          autoFocusSelect={true}
         />
       </div>
     );

@@ -1,15 +1,16 @@
 import Select from "react-select";
 import Plot from "react-plotly.js";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import GraphOptions from "./GraphOptions";
 import PlotData from "../controllers/PlotData";
 
-function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
+function Heatmap({ id, initialKeys, updateKeys, removeGraph, autoFocusSelect = false }) {
   const plotData = new PlotData(id, initialKeys);
   const [options, setOptions] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [data, setData] = useState([]);
+  const selectRef = useRef(null);
 
   useEffect(() => {
     getInitialData();
@@ -18,6 +19,12 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
     new ResizeObserver(stretchHeight).observe(plot);
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (autoFocusSelect && selectRef.current) {
+      selectRef.current.focus();
+    }
+  }, [autoFocusSelect]);
 
   const stretchHeight = () => {
     plotData.stretchHeight();
@@ -98,6 +105,7 @@ function Heatmap({ id, initialKeys, updateKeys, removeGraph }) {
   return (
     <div className="plot-container">
       <Select
+        ref={selectRef}
         id={`select-${id}`}
         className="multiselect"
         isMulti
