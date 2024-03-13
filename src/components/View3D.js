@@ -12,7 +12,6 @@ function View3D({ socket, detached }) {
   var renderer = new THREE.WebGLRenderer({ antialias: true });
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
-  window.scene = scene;
 
   // Scene setup
   camera.up.set(0, 0, -1);
@@ -25,6 +24,8 @@ function View3D({ socket, detached }) {
 
   const ambientLight = new THREE.AmbientLight(0xffffff);
   scene.add(ambientLight);
+  window.camera = camera;
+  window.orbit = orbit;
 
   useEffect(() => {
     // Helpers setup
@@ -42,6 +43,9 @@ function View3D({ socket, detached }) {
     renderer.setAnimationLoop(animation);
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
+    document.getElementById("TOP").addEventListener("click", topView, false);
+    document.getElementById("RIGHT").addEventListener("click", rightView, false);
+    document.getElementById("FRONT").addEventListener("click", frontView, false);
     // eslint-disable-next-line
   }, []);
 
@@ -177,9 +181,67 @@ function View3D({ socket, detached }) {
     };
   };
 
+  const topView = () => {
+    const target = getTrackedEntity();
+    if (!target.mesh) return;
+    stalker.subVectors(camera.position, target.mesh.position);
+    entities.forEach((e) => e.update());
+    orbit.object.position.copy(target.mesh.position).add(new THREE.Vector3(0, 0, -10));
+    orbit.target.copy(target.mesh.position);
+    orbit.update();
+  };
+
+
+  const rightView = () => {
+    const target = getTrackedEntity();
+    if (!target.mesh) return;
+
+    // Define the distance to the right of the target
+    const distanceToRight = 10; // Adjust this value as needed
+
+    // Calculate the offset vector based on the target's orientation
+    const offset = new THREE.Vector3(0, distanceToRight, 0).applyQuaternion(target.mesh.quaternion);
+
+    // Set the camera position to the calculated offset
+    camera.position.copy(target.mesh.position).add(offset);
+
+    // Point the camera towards the target
+    camera.lookAt(target.mesh.position);
+
+    // Update other entities or orbit controls as needed
+    stalker.subVectors(camera.position, target.mesh.position);
+    entities.forEach((e) => e.update());
+    orbit.target.copy(target.mesh.position);
+    orbit.update();
+  };
+
+
+
+
+
+
+
+  const frontView = () => {
+    const target = getTrackedEntity();
+    if (!target.mesh) return;
+    stalker.subVectors(camera.position, target.mesh.position);
+    entities.forEach((e) => e.update());
+    orbit.object.position.x = target.mesh.position.x + 10;
+    orbit.object.position.y = target.mesh.position.y;
+    orbit.object.position.z = target.mesh.position.z;
+    
+    orbit.target.copy(target.mesh.position);
+    orbit.update();
+  };
+
   return (
     <div id="view-3d">
       <div ref={mount} />
+      <div className="scene-overlay">
+      <button id="TOP" className="btn btn-outline-light btn-sm">Top View</button>
+      <button id="RIGHT" className="btn btn-outline-light btn-sm">Right View</button>
+      <button id="FRONT" className="btn btn-outline-light btn-sm">Front View</button>
+      </div>
     </div>
   );
 }
