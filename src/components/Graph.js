@@ -1,15 +1,16 @@
 import Select from "react-select";
 import Plot from "react-plotly.js";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import GraphOptions from "./GraphOptions";
 import PlotData from "../controllers/PlotData";
 
-function Graph({ id, initialKeys, updateKeys, removeGraph }) {
+function Graph({ id, initialKeys, updateKeys, removeGraph, autoFocusSelect = false }) {
   const plotData = new PlotData(id, initialKeys);
   const [options, setOptions] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [data, setData] = useState([]);
+  const selectRef = useRef(null);
 
   useEffect(() => {
     getInitialData();
@@ -21,11 +22,17 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   }, []);
 
   useEffect(() => {
-    setTimeout(function () {
+    setTimeout(function() {
       plotData.autoRange();
     }, 200);
     // eslint-disable-next-line
   }, [data]);
+
+  useEffect(() => {
+    if (autoFocusSelect && selectRef.current) {
+      selectRef.current.focus();
+    }
+  }, [autoFocusSelect]);
 
   const getInitialData = async () => {
     if (initialKeys == null) return;
@@ -133,7 +140,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
     }
     select.style.maxHeight = "36px";
 
-    setTimeout(function () {
+    setTimeout(function() {
       plotData.autoRange();
     }, 200);
   };
@@ -156,6 +163,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
   return (
     <div className="plot-container">
       <Select
+        ref={selectRef}
         id={`select-${id}`}
         className="multiselect"
         isMulti
@@ -207,7 +215,7 @@ function Graph({ id, initialKeys, updateKeys, removeGraph }) {
             },
             yaxis: {
               exponentformat: "none",
-              tickformat:".8f"
+              tickformat: ".8f"
             },
             // hovermode: "x unified",
             hovermode: "x",
