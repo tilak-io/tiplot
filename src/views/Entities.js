@@ -45,31 +45,31 @@ function Entities() {
 
     const position = _useXYZ
       ? {
-          table: getDropdownValue(`positionTable-${eId}`),
-          x: getDropdownValue(`x-${eId}`),
-          y: getDropdownValue(`y-${eId}`),
-          z: getDropdownValue(`z-${eId}`),
-        }
+        table: getDropdownValue(`positionTable-${eId}`),
+        x: getDropdownValue(`x-${eId}`),
+        y: getDropdownValue(`y-${eId}`),
+        z: getDropdownValue(`z-${eId}`),
+      }
       : {
-          table: getDropdownValue(`positionTable-${eId}`),
-          longitude: getDropdownValue(`lon-${eId}`),
-          lattitude: getDropdownValue(`lat-${eId}`),
-          altitude: getDropdownValue(`alt-${eId}`),
-        };
+        table: getDropdownValue(`positionTable-${eId}`),
+        longitude: getDropdownValue(`lon-${eId}`),
+        lattitude: getDropdownValue(`lat-${eId}`),
+        altitude: getDropdownValue(`alt-${eId}`),
+      };
     const attitude = _useRPY
       ? {
-          table: getDropdownValue(`attitudeTable-${eId}`),
-          roll: getDropdownValue(`roll-${eId}`),
-          pitch: getDropdownValue(`pitch-${eId}`),
-          yaw: getDropdownValue(`yaw-${eId}`),
-        }
+        table: getDropdownValue(`attitudeTable-${eId}`),
+        roll: getDropdownValue(`roll-${eId}`),
+        pitch: getDropdownValue(`pitch-${eId}`),
+        yaw: getDropdownValue(`yaw-${eId}`),
+      }
       : {
-          table: getDropdownValue(`attitudeTable-${eId}`),
-          q0: getDropdownValue(`qw-${eId}`),
-          q1: getDropdownValue(`qx-${eId}`),
-          q2: getDropdownValue(`qy-${eId}`),
-          q3: getDropdownValue(`qz-${eId}`),
-        };
+        table: getDropdownValue(`attitudeTable-${eId}`),
+        q0: getDropdownValue(`qw-${eId}`),
+        q1: getDropdownValue(`qx-${eId}`),
+        q2: getDropdownValue(`qy-${eId}`),
+        q3: getDropdownValue(`qz-${eId}`),
+      };
 
     const config = {
       name: getValue(`name-${eId}`),
@@ -91,8 +91,9 @@ function Entities() {
     fetch(`http://localhost:${PORT}/default_entity`)
       .then((res) => res.json())
       .then((res) => {
-        // res.id = parseInt(Math.random() * 10000);
+        var tracked_entity_type = JSON.parse(localStorage.getItem("tracked_entity_type")) ?? "last-tracked";
         res.id = uuid();
+        res.tracked = tracked_entity_type === "last-created";
         setCurrentEntities([...current_entities, res]);
       });
   };
