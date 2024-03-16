@@ -5,7 +5,7 @@ import ToolBar from "../components/ToolBar";
 import EntityConfig from "../components/EntityConfig";
 import { BsPlus } from "react-icons/bs";
 import { Container, Button, Row, Col, Spinner, Alert } from "react-bootstrap";
-import { PORT } from "../static/js/constants";
+import { PORT, COLORS } from "../static/js/constants";
 
 function Entities() {
   const [current_entities, setCurrentEntities] = useState([]);
@@ -46,31 +46,31 @@ function Entities() {
 
     const position = _useXYZ
       ? {
-        table: getDropdownValue(`positionTable-${eId}`),
-        x: getDropdownValue(`x-${eId}`),
-        y: getDropdownValue(`y-${eId}`),
-        z: getDropdownValue(`z-${eId}`),
-      }
+          table: getDropdownValue(`positionTable-${eId}`),
+          x: getDropdownValue(`x-${eId}`),
+          y: getDropdownValue(`y-${eId}`),
+          z: getDropdownValue(`z-${eId}`),
+        }
       : {
-        table: getDropdownValue(`positionTable-${eId}`),
-        longitude: getDropdownValue(`lon-${eId}`),
-        lattitude: getDropdownValue(`lat-${eId}`),
-        altitude: getDropdownValue(`alt-${eId}`),
-      };
+          table: getDropdownValue(`positionTable-${eId}`),
+          longitude: getDropdownValue(`lon-${eId}`),
+          lattitude: getDropdownValue(`lat-${eId}`),
+          altitude: getDropdownValue(`alt-${eId}`),
+        };
     const attitude = _useRPY
       ? {
-        table: getDropdownValue(`attitudeTable-${eId}`),
-        roll: getDropdownValue(`roll-${eId}`),
-        pitch: getDropdownValue(`pitch-${eId}`),
-        yaw: getDropdownValue(`yaw-${eId}`),
-      }
+          table: getDropdownValue(`attitudeTable-${eId}`),
+          roll: getDropdownValue(`roll-${eId}`),
+          pitch: getDropdownValue(`pitch-${eId}`),
+          yaw: getDropdownValue(`yaw-${eId}`),
+        }
       : {
-        table: getDropdownValue(`attitudeTable-${eId}`),
-        q0: getDropdownValue(`qw-${eId}`),
-        q1: getDropdownValue(`qx-${eId}`),
-        q2: getDropdownValue(`qy-${eId}`),
-        q3: getDropdownValue(`qz-${eId}`),
-      };
+          table: getDropdownValue(`attitudeTable-${eId}`),
+          q0: getDropdownValue(`qw-${eId}`),
+          q1: getDropdownValue(`qx-${eId}`),
+          q2: getDropdownValue(`qy-${eId}`),
+          q3: getDropdownValue(`qz-${eId}`),
+        };
 
     const config = {
       name: getValue(`name-${eId}`),
@@ -93,10 +93,17 @@ function Entities() {
     fetch(`http://localhost:${PORT}/default_entity`)
       .then((res) => res.json())
       .then((res) => {
-        var tracked_entity_type = JSON.parse(localStorage.getItem("tracked_entity_type")) ?? "last-tracked";
+        var color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        var tracked_entity_type =
+          JSON.parse(localStorage.getItem("tracked_entity_type")) ??
+          "last-tracked";
         res.id = uuid();
-        res.tracked = tracked_entity_type === "last-created" || current_entities.length === 0;
+        res.tracked =
+          tracked_entity_type === "last-created" ||
+          current_entities.length === 0;
         res.active = true;
+        res.color = color;
+        res.pathColor = color;
         setCurrentEntities([...current_entities, res]);
       });
   };

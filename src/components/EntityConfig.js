@@ -110,7 +110,7 @@ function EntityConfig({
   const handleActiveChange = (e) => {
     const checked = e.target.checked;
     setDisabled(!checked);
-  }
+  };
 
   return (
     <fieldset id={`entity-${eId}`}>
