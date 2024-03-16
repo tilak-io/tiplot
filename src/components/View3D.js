@@ -7,12 +7,15 @@ import { defaultSettings } from "../views/Settings";
 import { PORT } from "../static/js/constants";
 import { toast } from "react-toastify";
 
+import front_view from "../static/vectors/front_view.svg";
+import left_view from "../static/vectors/left_view.svg";
+import top_view from "../static/vectors/top_view.svg";
+
 function View3D({ socket, detached }) {
   const mount = useRef(0);
   var renderer = new THREE.WebGLRenderer({ antialias: true });
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
-  window.scene = scene;
 
   // Scene setup
   camera.up.set(0, 0, -1);
@@ -25,6 +28,8 @@ function View3D({ socket, detached }) {
 
   const ambientLight = new THREE.AmbientLight(0xffffff);
   scene.add(ambientLight);
+  window.camera = camera;
+  window.orbit = orbit;
 
   useEffect(() => {
     // Helpers setup
@@ -42,12 +47,21 @@ function View3D({ socket, detached }) {
     renderer.setAnimationLoop(animation);
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
+    document
+      .getElementById("top-view")
+      .addEventListener("click", topView, false);
+    document
+      .getElementById("left-view")
+      .addEventListener("click", leftView, false);
+    document
+      .getElementById("front-view")
+      .addEventListener("click", frontView, false);
     // eslint-disable-next-line
   }, []);
 
   const getEntitiesProps = async () => {
     const response = await fetch(
-      `http://localhost:${PORT}/entities_props`
+      `http://localhost:${PORT}/entities_props`,
     ).then((res) => res.json());
     if (response.ok) {
       response.data.forEach(item => {
@@ -182,9 +196,44 @@ function View3D({ socket, detached }) {
     };
   };
 
+  const topView = () => {
+    const target = getTrackedEntity();
+    if (!target.mesh) return;
+    let offset = new THREE.Vector3(0, 0, -10);
+    offset.applyQuaternion(target.mesh.quaternion);
+    camera.position.copy(target.mesh.position).add(offset);
+  };
+
+  const leftView = () => {
+    const target = getTrackedEntity();
+    if (!target.mesh) return;
+    let offset = new THREE.Vector3(0, -10, 0);
+    offset.applyQuaternion(target.mesh.quaternion);
+    camera.position.copy(target.mesh.position).add(offset);
+  };
+
+  const frontView = () => {
+    const target = getTrackedEntity();
+    if (!target.mesh) return;
+    let offset = new THREE.Vector3(10, 0, 0);
+    offset.applyQuaternion(target.mesh.quaternion);
+    camera.position.copy(target.mesh.position).add(offset);
+  };
+
   return (
     <div id="view-3d">
       <div ref={mount} />
+      <div className="scene-overlay">
+        <button id="top-view" className="btn btn-secondary btn-sm">
+          <img src={top_view} alt="Top View" width="24" height="24" />
+        </button>
+        <button id="left-view" className="btn btn-secondary btn-sm">
+          <img src={left_view} alt="Right View" width="24" height="24" />
+        </button>
+        <button id="front-view" className="btn btn-secondary btn-sm">
+          <img src={front_view} alt="Front View" width="24" height="24" />
+        </button>
+      </div>
     </div>
   );
 }
