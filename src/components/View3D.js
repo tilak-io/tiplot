@@ -7,6 +7,10 @@ import { defaultSettings } from "../views/Settings";
 import { PORT } from "../static/js/constants";
 import { toast } from "react-toastify";
 
+import front_view from "../static/vectors/front_view.svg";
+import left_view from "../static/vectors/left_view.svg";
+import top_view from "../static/vectors/top_view.svg";
+
 function View3D({ socket, detached }) {
   const mount = useRef(0);
   var renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -43,15 +47,21 @@ function View3D({ socket, detached }) {
     renderer.setAnimationLoop(animation);
 
     renderer.domElement.addEventListener("dblclick", focusEntity, false);
-    document.getElementById("TOP").addEventListener("click", topView, false);
-    document.getElementById("RIGHT").addEventListener("click", rightView, false);
-    document.getElementById("FRONT").addEventListener("click", frontView, false);
+    document
+      .getElementById("top-view")
+      .addEventListener("click", topView, false);
+    document
+      .getElementById("left-view")
+      .addEventListener("click", leftView, false);
+    document
+      .getElementById("front-view")
+      .addEventListener("click", frontView, false);
     // eslint-disable-next-line
   }, []);
 
   const getEntitiesProps = async () => {
     const response = await fetch(
-      `http://localhost:${PORT}/entities_props`
+      `http://localhost:${PORT}/entities_props`,
     ).then((res) => res.json());
     if (response.ok) response.data.forEach(initEntity);
     else toast.error(response.error);
@@ -184,63 +194,40 @@ function View3D({ socket, detached }) {
   const topView = () => {
     const target = getTrackedEntity();
     if (!target.mesh) return;
-    stalker.subVectors(camera.position, target.mesh.position);
-    entities.forEach((e) => e.update());
-    orbit.object.position.copy(target.mesh.position).add(new THREE.Vector3(0, 0, -10));
-    orbit.target.copy(target.mesh.position);
-    orbit.update();
+    let offset = new THREE.Vector3(0, 0, -10);
+    offset.applyQuaternion(target.mesh.quaternion);
+    camera.position.copy(target.mesh.position).add(offset);
   };
 
-
-  const rightView = () => {
+  const leftView = () => {
     const target = getTrackedEntity();
     if (!target.mesh) return;
-
-    // Define the distance to the right of the target
-    const distanceToRight = 10; // Adjust this value as needed
-
-    // Calculate the offset vector based on the target's orientation
-    const offset = new THREE.Vector3(0, distanceToRight, 0).applyQuaternion(target.mesh.quaternion);
-
-    // Set the camera position to the calculated offset
+    let offset = new THREE.Vector3(0, -10, 0);
+    offset.applyQuaternion(target.mesh.quaternion);
     camera.position.copy(target.mesh.position).add(offset);
-
-    // Point the camera towards the target
-    camera.lookAt(target.mesh.position);
-
-    // Update other entities or orbit controls as needed
-    stalker.subVectors(camera.position, target.mesh.position);
-    entities.forEach((e) => e.update());
-    orbit.target.copy(target.mesh.position);
-    orbit.update();
   };
-
-
-
-
-
-
 
   const frontView = () => {
     const target = getTrackedEntity();
     if (!target.mesh) return;
-    stalker.subVectors(camera.position, target.mesh.position);
-    entities.forEach((e) => e.update());
-    orbit.object.position.x = target.mesh.position.x + 10;
-    orbit.object.position.y = target.mesh.position.y;
-    orbit.object.position.z = target.mesh.position.z;
-    
-    orbit.target.copy(target.mesh.position);
-    orbit.update();
+    let offset = new THREE.Vector3(10, 0, 0);
+    offset.applyQuaternion(target.mesh.quaternion);
+    camera.position.copy(target.mesh.position).add(offset);
   };
 
   return (
     <div id="view-3d">
       <div ref={mount} />
       <div className="scene-overlay">
-      <button id="TOP" className="btn btn-outline-light btn-sm">Top View</button>
-      <button id="RIGHT" className="btn btn-outline-light btn-sm">Right View</button>
-      <button id="FRONT" className="btn btn-outline-light btn-sm">Front View</button>
+        <button id="top-view" className="btn btn-secondary btn-sm">
+          <img src={top_view} alt="Top View" width="24" height="24" />
+        </button>
+        <button id="left-view" className="btn btn-secondary btn-sm">
+          <img src={left_view} alt="Right View" width="24" height="24" />
+        </button>
+        <button id="front-view" className="btn btn-secondary btn-sm">
+          <img src={front_view} alt="Front View" width="24" height="24" />
+        </button>
       </div>
     </div>
   );
