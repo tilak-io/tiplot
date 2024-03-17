@@ -1,53 +1,80 @@
-name: Building Executable
-run-name: ${{ github.actor }} is buildling TiPlot 🚀
+name: Building Executables ⚡
+run-name: ${{ github.actor }} is building TiPlot 🚀
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+    paths:
+      - "package.json"
+
 jobs:
   Build-AppImage:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Checkout code 📥
+        uses: actions/checkout@v3
+      - name: Setup Python 🐍
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - run: tree
-      - uses: syphar/restore-virtualenv@v1
+      - name: List files 📄
+        run: tree 🌳
+      - name: Set variables 📝
+        run: |
+          VER=$(grep -E -o '"version": ".*"' package.json | sed -e 's/"version": "//g' | tr -d '"')
+          echo "VERSION=$VER" >> $GITHUB_ENV
+      - name: Create Release 🏗️
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.VERSION }}
+          release_name: Tiplot v${{ env.VERSION }}
+          body: ${{ github.event.head_commit.message }}
+          draft: true
+          prerelease: false
+      - name: Restore virtualenv cache 📦
+        uses: syphar/restore-virtualenv@v1
         id: cache-virtualenv
         with:
           requirement_files: api/requirements.txt
-      - uses: syphar/restore-pip-download-cache@v1
+      - name: Restore pip download cache 📦
+        uses: syphar/restore-pip-download-cache@v1
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-        # the package installation will only be executed when the
-        # requirements-files have changed.
-      - run: pip install -r api/requirements.txt
+      - name: Install Python dependencies 🐍
+        run: pip install -r api/requirements.txt
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-      - name: install node dependecies
+      - name: Install Node dependencies 📦
         run: yarn install
-      - name: build backend
+      - name: Build backend 🔨
         run: yarn build:api
-      - name: build desktop app
+      - name: Build desktop app 💻
+        run: yarn build:electron
         env:
           GH_TOKEN: ${{ github.token }}
           # CI: false # ignore warnings
-        run: yarn build:electron
 
   Build-EXE:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Checkout code 📥
+        uses: actions/checkout@v3
+      - name: Setup Python 🐍
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - run: tree
-      - name: install node dependecies
+      - name: List files 📄
+        run: tree 🌳
+      - name: Install Node dependencies 📦
         run: yarn install
-      - run: pip install -r api/requirements.txt
-      - name: build backend
+      - name: Install Python dependencies 🐍
+        run: pip install -r api/requirements.txt
+      - name: Build backend 🔨
         run: yarn build:api
-      - name: build desktop app
+      - name: Build desktop app 💻
+        run: yarn build:electron
         env:
           GH_TOKEN: ${{ github.token }}
           # CI: false # ignore warnings
-        run: yarn build:electron
