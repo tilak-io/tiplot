@@ -19,6 +19,8 @@ export default class Entity {
 
   constructor(e) {
     const size = e.props.length;
+    this.id = e.id;
+    this.name = e.name;
     this.useXYZ = e.useXYZ;
     this.useRPY = e.useRPY;
     this.pathColor = e.pathColor;
@@ -53,13 +55,13 @@ export default class Entity {
     const point = new THREE.Vector3(
       x - this.ref_x,
       y - this.ref_y,
-      z - this.ref_z
+      z - this.ref_z,
     );
     point.toArray(this.pathPoints, i * 3);
 
     // Entity position
     this.positions.push(
-      new THREE.Vector3(x - this.ref_x, y - this.ref_y, z - this.ref_z)
+      new THREE.Vector3(x - this.ref_x, y - this.ref_y, z - this.ref_z),
     );
   }
 
@@ -71,7 +73,7 @@ export default class Entity {
     const point = new THREE.Vector3(
       props.x - this.ref_x,
       props.y - this.ref_y,
-      props.z - this.ref_z
+      props.z - this.ref_z,
     );
     point.toArray(this.pathPoints, i * 3);
 
@@ -80,21 +82,21 @@ export default class Entity {
       new THREE.Vector3(
         props.x - this.ref_x,
         props.y - this.ref_y,
-        props.z - this.ref_z
-      )
+        props.z - this.ref_z,
+      ),
     );
   }
 
   ///////////////////// Entity Attitude
   addQuaternion(props) {
     this.rotations.push(
-      new THREE.Quaternion(props.q1, props.q2, props.q3, props.q0)
+      new THREE.Quaternion(props.q1, props.q2, props.q3, props.q0),
     );
   }
 
   addEuler(props) {
     this.rotations.push(
-      new THREE.Euler(props.roll, props.pitch, props.yaw, "ZYX")
+      new THREE.Euler(props.roll, props.pitch, props.yaw, "ZYX"),
     );
   }
 
@@ -104,7 +106,7 @@ export default class Entity {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       "position",
-      new THREE.BufferAttribute(this.pathPoints, 3)
+      new THREE.BufferAttribute(this.pathPoints, 3),
     );
 
     var material = new THREE.LineBasicMaterial({
@@ -123,12 +125,12 @@ export default class Entity {
     const loader = new GLTFLoader();
     loader.load(
       `http://localhost:${PORT}/model`,
-      function(gltf) {
+      function (gltf) {
         instance.mesh = gltf.scene;
         instance.mesh.children[0].children[0].material.transparent = true;
         instance.mesh.children[0].children[0].material.opacity = instance.alpha;
         instance.mesh.children[0].children[0].material.color = new THREE.Color(
-          instance.color
+          instance.color,
         );
         instance.mesh.children[0].children[0].material.wireframe =
           instance.wireframe;
@@ -138,16 +140,16 @@ export default class Entity {
         scene.add(instance.mesh);
       },
       undefined,
-      function(error) {
+      function (error) {
         console.log(error);
         console.log("failed to load drone, setting up default cube");
         const geometry = new THREE.BoxGeometry(2, 0.5, 0.3);
         instance.mesh = new THREE.Mesh(
           geometry,
-          new THREE.MeshNormalMaterial()
+          new THREE.MeshNormalMaterial(),
         );
         scene.add(instance.mesh);
-      }
+      },
     );
   }
 
@@ -161,7 +163,6 @@ export default class Entity {
       this.ref_x = 0;
       this.ref_y = 0;
       this.ref_z = 0;
-
     } else {
       this.ref_x = 0;
       this.ref_y = 0;

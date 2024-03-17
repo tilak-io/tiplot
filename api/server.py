@@ -140,6 +140,26 @@ def default_entity():
         default = {}
     return default
 
+@app.route('/set_tracked_entity', methods=['POST'])
+def set_tracked_entity():
+    entity_id = request.get_json('id')
+    config = store.Store.get().getEntities()
+    if not config:
+        return {"ok": False, "msg": "Entity list is empty."}
+    entity_name = ""
+    entity_found = False
+    for entity in config:
+        if entity['id'] == entity_id:
+            entity['tracked'] = True
+            entity_name = entity['name']
+            entity_found = True
+        else:
+            entity['tracked'] = False
+    if not entity_found:
+        return {"ok": False, "msg": f"No entity with ID {entity_id} found."}
+    store.Store.get().setEntities(config)
+    return {"ok": True, "msg": f"\"{entity_name}\" is now tracked."}
+
 @app.route('/write_config', methods=['POST'])
 def write_config():
     configs = request.get_json()

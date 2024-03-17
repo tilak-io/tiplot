@@ -89,7 +89,7 @@ function Entities() {
     return config;
   };
 
-  const addEntity = () => {
+  const addEntity = async () => {
     fetch(`http://localhost:${PORT}/default_entity`)
       .then((res) => res.json())
       .then((res) => {
@@ -98,6 +98,7 @@ function Entities() {
           JSON.parse(localStorage.getItem("tracked_entity_type")) ??
           "last-tracked";
         res.id = uuid();
+        res.name = "Entity #" + res.id.split("-")[1].toUpperCase();
         res.tracked =
           tracked_entity_type === "last-created" ||
           current_entities.length === 0;

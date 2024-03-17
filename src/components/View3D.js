@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import "../static/css/cesium.css";
 import Entity from "../controllers/Entity.js";
 import * as THREE from "three";
@@ -11,8 +11,19 @@ import front_view from "../static/vectors/front_view.svg";
 import left_view from "../static/vectors/left_view.svg";
 import top_view from "../static/vectors/top_view.svg";
 
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import { BiTargetLock } from "react-icons/bi";
+
 function View3D({ socket, detached }) {
+  const [entities, setEntities] = useState([]);
+  const [entityConfig, setEntityConfig] = useState([]);
+
+  const entitiesRef = useRef(entities);
+  const entityConfigRef = useRef(entityConfig);
   const mount = useRef(0);
+
   var renderer = new THREE.WebGLRenderer({ antialias: true });
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, 1, 0.0001, 10000);
@@ -24,7 +35,6 @@ function View3D({ socket, detached }) {
   const orbit = new OrbitControls(camera, renderer.domElement);
 
   const stalker = new THREE.Vector3();
-  const entities = [];
 
   const ambientLight = new THREE.AmbientLight(0xffffff);
   scene.add(ambientLight);
@@ -39,6 +49,8 @@ function View3D({ socket, detached }) {
 
     // Getting the entities
     getEntitiesProps();
+
+    getEntitiesConfig();
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     if (mount.current.childElementCount === 0) {
@@ -59,12 +71,21 @@ function View3D({ socket, detached }) {
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    entitiesRef.current = entities;
+  }, [entities]);
+
+  useEffect(() => {
+    entityConfigRef.current = entityConfig;
+  }, [entityConfig]);
+
   const getEntitiesProps = async () => {
+    setEntities([]);
     const response = await fetch(
       `http://localhost:${PORT}/entities_props`,
     ).then((res) => res.json());
     if (response.ok) {
-      response.data.forEach(item => {
+      response.data.forEach((item) => {
         if (item.active) initEntity(item);
       });
     } else {
@@ -72,32 +93,62 @@ function View3D({ socket, detached }) {
     }
   };
 
+  const getEntitiesConfig = async () => {
+    fetch(`http://localhost:${PORT}/entities_config`)
+      .then((res) => res.json())
+      .then((res) => {
+        setEntityConfig(res.config);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+
   const initEntity = (e) => {
-    entities.push(new Entity(e));
-    entities[entities.length - 1].loadPath(scene);
-    entities[entities.length - 1].loadObj(scene);
+    const newEntity = new Entity(e);
+    newEntity.loadPath(scene);
+    newEntity.loadObj(scene);
+    setEntities((prevEntities) => [...prevEntities, newEntity]);
   };
 
   const getTrackedEntity = () => {
-    var tracked = entities[0]; // by default, the first entity is the tracked one
-    entities.forEach((e) => {
-      if (e.tracked) tracked = e;
-    });
-    return tracked;
+    const trackedName = entityConfigRef.current.find((e) => e.tracked)?.name;
+    return (
+      entitiesRef.current.find((e) => e.name === trackedName) ||
+      entitiesRef.current[0]
+    );
+  };
+
+  const setTrackedEntity = (id) => {
+    fetch(`http://localhost:${PORT}/set_tracked_entity`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: id,
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.ok) {
+          toast.success(res.msg);
+          getEntitiesConfig();
+          stalker.clear();
+        } else {
+          toast.error(res.msg);
+        }
+      });
   };
 
   const updateEntities = () => {
     const target = getTrackedEntity();
     if (!target.mesh) return;
     stalker.subVectors(camera.position, target.mesh.position);
-    entities.forEach((e) => e.update());
+    entitiesRef.current.forEach((e) => e.update());
     orbit.object.position.copy(target.mesh.position).add(stalker);
     orbit.target.copy(target.mesh.position);
     orbit.update();
   };
 
   const animation = (tick) => {
-    if (entities.length === 0) return;
+    if (entitiesRef.current.length === 0) return;
     updateEntities();
     resizeCanvasToDisplaySize();
     renderer.render(scene, camera);
@@ -161,7 +212,7 @@ function View3D({ socket, detached }) {
   };
 
   const setupKeyControls = () => {
-    document.onkeydown = function(e) {
+    document.onkeydown = function (e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":
@@ -181,7 +232,7 @@ function View3D({ socket, detached }) {
       }
     };
 
-    document.onkeyup = function(e) {
+    document.onkeyup = function (e) {
       const target = getTrackedEntity();
       switch (e.code) {
         case "ArrowRight":
@@ -220,6 +271,26 @@ function View3D({ socket, detached }) {
     camera.position.copy(target.mesh.position).add(offset);
   };
 
+  const DropdownTrackedEntity = () => (
+    <DropdownButton
+      as={ButtonGroup}
+      size="sm"
+      variant="secondary"
+      title={<BiTargetLock />}
+    >
+      {entityConfig.map((entity, index) => (
+        <Dropdown.Item
+          eventKey={index + 1}
+          key={index}
+          active={entity.tracked}
+          onClick={() => setTrackedEntity(entity.id, entities)}
+        >
+          {entity.name}
+        </Dropdown.Item>
+      ))}
+    </DropdownButton>
+  );
+
   return (
     <div id="view-3d">
       <div ref={mount} />
@@ -233,6 +304,7 @@ function View3D({ socket, detached }) {
         <button id="front-view" className="btn btn-secondary btn-sm">
           <img src={front_view} alt="Front View" width="24" height="24" />
         </button>
+        <DropdownTrackedEntity />
       </div>
     </div>
   );

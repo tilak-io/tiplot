@@ -74,7 +74,7 @@ class Store:
                 raw = merged[columns]
                 renamed = raw.rename(columns=mapped_columns).to_dict('records')
                 data.append({"id": e.id,
-                             "entity_name": e.name,
+                             "name": e.name,
                              "alpha": e.alpha,
                              "scale": e.scale,
                              "useRPY": e.useRPY,
