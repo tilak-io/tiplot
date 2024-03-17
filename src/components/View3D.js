@@ -15,6 +15,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { BiTargetLock } from "react-icons/bi";
+import { FaDotCircle } from "react-icons/fa";
 
 function View3D({ socket, detached }) {
   const [entities, setEntities] = useState([]);
@@ -285,7 +286,12 @@ function View3D({ socket, detached }) {
           disabled={!entity.active}
           onClick={() => setTrackedEntity(entity.id, entities)}
         >
-          {entity.name}
+          <div className="d-flex justify-content-between align-items-center w-100">
+            <span>
+              <FaDotCircle style={{ marginRight: 10, color: entity.color }} />
+              {entity.name}
+            </span>
+          </div>
         </Dropdown.Item>
       ))}
     </DropdownButton>
