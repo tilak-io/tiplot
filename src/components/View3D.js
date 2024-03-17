@@ -130,7 +130,6 @@ function View3D({ socket, detached }) {
         if (res.ok) {
           toast.success(res.msg);
           getEntitiesConfig();
-          stalker.clear();
         } else {
           toast.error(res.msg);
         }
@@ -283,6 +282,7 @@ function View3D({ socket, detached }) {
           eventKey={index + 1}
           key={index}
           active={entity.tracked}
+          disabled={!entity.active}
           onClick={() => setTrackedEntity(entity.id, entities)}
         >
           {entity.name}
