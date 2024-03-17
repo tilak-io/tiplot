@@ -7,6 +7,7 @@ class CesiumEntity:
                  color="white",
                  wireframe=False,
                  tracked=True,
+                 active=True,
                  pathColor="blue",
                  alpha=1,
                  useRPY=False,
@@ -24,6 +25,7 @@ class CesiumEntity:
         self.useRPY = useRPY
         self.useXYZ = useXYZ
         self.tracked = tracked
+        self.active = active
         self.scale = scale
         self.viewModel = viewModel
         self.id = CesiumEntity.next_id
@@ -76,6 +78,11 @@ class CesiumEntity:
         else:
             tracked = True
 
+        if "active" in json:
+            active = json['active']
+        else:
+            active = True
+
         if "scale" in json:
             scale = json['scale']
         else:
@@ -92,6 +99,7 @@ class CesiumEntity:
                    useRPY=useRPY,
                    useXYZ=useXYZ,
                    tracked=tracked,
+                   active=active,
                    scale=scale,
                    viewModel=viewModel)
 
@@ -105,6 +113,7 @@ class CesiumEntity:
                 "useXYZ": self.useXYZ,
                 "useRPY": self.useRPY,
                 "tracked": self.tracked,
+                "active": self.active,
                 "scale": self.scale,
                 "position": self.position,
                 "attitude": self.attitude

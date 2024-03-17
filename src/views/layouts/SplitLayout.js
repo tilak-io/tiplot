@@ -53,6 +53,7 @@ function SplitLayout({ socket, defaultShowView, ext }) {
           initialKeys={[]}
           updateKeys={updateKeys}
           removeGraph={removeGraph}
+          autoFocusSelect={true}
         />
       </div>
     );
@@ -69,6 +70,7 @@ function SplitLayout({ socket, defaultShowView, ext }) {
           initialKeys={[]}
           updateKeys={updateKeys}
           removeGraph={removeGraph}
+          autoFocusSelect={true}
         />
       </div>
     );
@@ -85,6 +87,7 @@ function SplitLayout({ socket, defaultShowView, ext }) {
           initialKeys={[]}
           updateKeys={updateKeys}
           removeGraph={removeGraph}
+          autoFocusSelect={true}
         />
       </div>
     );

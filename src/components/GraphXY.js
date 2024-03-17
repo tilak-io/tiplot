@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Select from "react-select";
 import Plot from "react-plotly.js";
 import PlotData from "../controllers/PlotData";
 import GraphOptions from "./GraphOptions";
 
-function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
+function GraphXY({ id, updateKeys, initialKeys, removeGraph, autoFocusSelect = false }) {
   const plotData = new PlotData(id, initialKeys);
   const [options_x, setOptionsX] = useState([]);
   const [options_y, setOptionsY] = useState([]);
   const [selected_x, setSelectedX] = useState(null);
   const [selected_y, setSelectedY] = useState(null);
   const [data, setData] = useState([]);
+  const selectRef = useRef(null);
 
   useEffect(() => {
     getInitialData();
@@ -19,6 +20,12 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
     new ResizeObserver(stretchHeight).observe(plot);
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (autoFocusSelect && selectRef.current) {
+      selectRef.current.focus();
+    }
+  }, [autoFocusSelect]);
 
   const getInitialData = async () => {
     if (initialKeys == null) return;
@@ -74,6 +81,7 @@ function GraphXY({ id, updateKeys, initialKeys, removeGraph }) {
   return (
     <div className="plot-container">
       <Select
+        ref={selectRef}
         className="multiselect"
         options={options_x}
         onChange={handleChangeX}

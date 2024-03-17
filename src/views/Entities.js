@@ -5,7 +5,7 @@ import ToolBar from "../components/ToolBar";
 import EntityConfig from "../components/EntityConfig";
 import { BsPlus } from "react-icons/bs";
 import { Container, Button, Row, Col, Spinner, Alert } from "react-bootstrap";
-import { PORT } from "../static/js/constants";
+import { PORT, COLORS } from "../static/js/constants";
 
 function Entities() {
   const [current_entities, setCurrentEntities] = useState([]);
@@ -42,6 +42,7 @@ function Entities() {
     const _useRPY = document.getElementById(`useRPY-${eId}`).checked;
     const wireframe = document.getElementById(`wireframe-${eId}`).checked;
     const tracked = document.getElementById(`tracked-${eId}`).checked;
+    const active = document.getElementById(`active-${eId}`).checked;
 
     const position = _useXYZ
       ? {
@@ -80,6 +81,7 @@ function Entities() {
       wireframe: wireframe,
       color: getValue(`color-${eId}`),
       tracked: tracked,
+      active: active,
       scale: parseFloat(getValue(`scale-${eId}`)),
       position: position,
       attitude: attitude,
@@ -87,12 +89,22 @@ function Entities() {
     return config;
   };
 
-  const addEntity = () => {
+  const addEntity = async () => {
     fetch(`http://localhost:${PORT}/default_entity`)
       .then((res) => res.json())
       .then((res) => {
-        // res.id = parseInt(Math.random() * 10000);
+        var color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        var tracked_entity_type =
+          JSON.parse(localStorage.getItem("tracked_entity_type")) ??
+          "last-tracked";
         res.id = uuid();
+        res.name = "Entity #" + res.id.split("-")[1].toUpperCase();
+        res.tracked =
+          tracked_entity_type === "last-created" ||
+          current_entities.length === 0;
+        res.active = true;
+        res.color = color;
+        res.pathColor = color;
         setCurrentEntities([...current_entities, res]);
       });
   };
@@ -179,6 +191,7 @@ function Entities() {
             useRPY={e.useRPY}
             useXYZ={e.useXYZ}
             tracked={e.tracked}
+            active={e.active}
             scale={e.scale}
             position={e.position}
             attitude={e.attitude}

@@ -14,6 +14,7 @@ function EntityConfig({
   useXYZ,
   useRPY,
   tracked,
+  active,
   scale,
   position,
   attitude,
@@ -24,12 +25,15 @@ function EntityConfig({
   const [options, setOptions] = useState([]);
   const [positionOptions, setPositionOptions] = useState([]);
   const [attitudeOptions, setAttitudeOptions] = useState([]);
+  const [disabled, setDisabled] = useState(true);
+
   const mockPlot = new PlotData(0, null);
 
   useEffect(() => {
     getOptions();
     getTables();
     hideUnusedFields();
+    setDisabled(!active);
     // eslint-disable-next-line
   }, []);
 
@@ -103,6 +107,11 @@ function EntityConfig({
     coordinatesContainer.style.display = useXYZ ? "none" : "block";
   };
 
+  const handleActiveChange = (e) => {
+    const checked = e.target.checked;
+    setDisabled(!checked);
+  };
+
   return (
     <fieldset id={`entity-${eId}`}>
       <Row>
@@ -122,6 +131,7 @@ function EntityConfig({
               placeholder="Name"
               id={`name-${eId}`}
               defaultValue={name}
+              disabled={disabled}
             />
           </InputGroup>
         </Col>
@@ -133,6 +143,7 @@ function EntityConfig({
               placeholder="Color"
               id={`color-${eId}`}
               defaultValue={color}
+              disabled={disabled}
             />
           </InputGroup>
         </Col>
@@ -147,6 +158,7 @@ function EntityConfig({
               step={0.1}
               id={`alpha-${eId}`}
               defaultValue={alpha}
+              disabled={disabled}
             />
           </InputGroup>
         </Col>
@@ -160,6 +172,7 @@ function EntityConfig({
               step={0.1}
               id={`scale-${eId}`}
               defaultValue={scale}
+              disabled={disabled}
             />
           </InputGroup>
         </Col>
@@ -174,6 +187,7 @@ function EntityConfig({
               placeholder="Path Color"
               id={`pathColor-${eId}`}
               defaultValue={pathColor}
+              disabled={disabled}
             />
           </InputGroup>
         </Col>
@@ -184,6 +198,7 @@ function EntityConfig({
             label="Wireframe"
             id={`wireframe-${eId}`}
             defaultChecked={wireframe}
+            disabled={disabled}
           />
         </Col>
 
@@ -194,6 +209,17 @@ function EntityConfig({
             id={`tracked-${eId}`}
             name="tracked"
             defaultChecked={tracked}
+            disabled={disabled}
+          />
+        </Col>
+
+        <Col>
+          <Form.Check
+            type="switch"
+            label="Active"
+            id={`active-${eId}`}
+            defaultChecked={active}
+            onChange={handleActiveChange}
           />
         </Col>
       </Row>
@@ -206,6 +232,7 @@ function EntityConfig({
         placeholder="Position table"
         onChange={handlePositionTableSelect}
         defaultValue={{ label: position["table"] }}
+        isDisabled={disabled}
       />
       <Form.Check
         id={`useXYZ-${eId}`}
@@ -213,6 +240,7 @@ function EntityConfig({
         label="use X/Y/Z"
         defaultChecked={useXYZ}
         onChange={handlePositionTypeChanged}
+        disabled={disabled}
       />
       <Form.Group id={`XYZ-${eId}`}>
         <Row>
@@ -222,6 +250,7 @@ function EntityConfig({
               placeholder="X"
               id={`x-${eId}`}
               defaultValue={{ label: position["x"] ?? "Select X" }}
+              isDisabled={disabled}
             />
           </Col>
           <Col>
@@ -230,6 +259,7 @@ function EntityConfig({
               placeholder="Y"
               id={`y-${eId}`}
               defaultValue={{ label: position["y"] ?? "Select Y" }}
+              isDisabled={disabled}
             />
           </Col>
           <Col>
@@ -238,6 +268,7 @@ function EntityConfig({
               placeholder="Z"
               id={`z-${eId}`}
               defaultValue={{ label: position["z"] ?? "Select Z" }}
+              isDisabled={disabled}
             />
           </Col>
         </Row>
@@ -253,6 +284,7 @@ function EntityConfig({
               defaultValue={{
                 label: position["longitude"] ?? "Select Longitude",
               }}
+              isDisabled={disabled}
             />
           </Col>
           <Col>
@@ -263,6 +295,7 @@ function EntityConfig({
               defaultValue={{
                 label: position["lattitude"] ?? "Select Latitude",
               }}
+              isDisabled={disabled}
             />
           </Col>
           <Col>
@@ -273,6 +306,7 @@ function EntityConfig({
               defaultValue={{
                 label: position["altitude"] ?? "Select Altitude",
               }}
+              isDisabled={disabled}
             />
           </Col>
         </Row>
@@ -286,6 +320,7 @@ function EntityConfig({
         placeholder="Position table"
         onChange={handleAttitudeTableSelect}
         defaultValue={{ label: attitude["table"] }}
+        isDisabled={disabled}
       />
 
       <Form.Check
@@ -294,6 +329,7 @@ function EntityConfig({
         label="use roll/pitch/yaw"
         defaultChecked={useRPY}
         onChange={handleAttitudeTypeChanged}
+        disabled={disabled}
       />
       <Form.Group id={`RPY-${eId}`}>
         <Row>
@@ -303,6 +339,7 @@ function EntityConfig({
               placeholder="Roll"
               id={`roll-${eId}`}
               defaultValue={{ label: attitude["roll"] ?? "Select Roll" }}
+              isDisabled={disabled}
             />
           </Col>
           <Col>
@@ -311,6 +348,7 @@ function EntityConfig({
               placeholder="Pitch"
               id={`pitch-${eId}`}
               defaultValue={{ label: attitude["pitch"] ?? "Select Pitch" }}
+              isDisabled={disabled}
             />
           </Col>
           <Col>
@@ -319,6 +357,7 @@ function EntityConfig({
               placeholder="Yaw"
               id={`yaw-${eId}`}
               defaultValue={{ label: attitude["yaw"] ?? "Select Yaw" }}
+              isDisabled={disabled}
             />
           </Col>
         </Row>
@@ -331,6 +370,7 @@ function EntityConfig({
               placeholder="Qx"
               id={`qx-${eId}`}
               defaultValue={{ label: attitude["q1"] ?? "Select Qx" }}
+              isDisabled={disabled}
             />
           </Col>
           <Col>
@@ -339,6 +379,7 @@ function EntityConfig({
               placeholder="Qy"
               id={`qy-${eId}`}
               defaultValue={{ label: attitude["q2"] ?? "Select Qy" }}
+              isDisabled={disabled}
             />
           </Col>
           <Col>
@@ -347,6 +388,7 @@ function EntityConfig({
               placeholder="Qz"
               id={`qz-${eId}`}
               defaultValue={{ label: attitude["q3"] ?? "Select Qz" }}
+              isDisabled={disabled}
             />
           </Col>
           <Col>
@@ -355,6 +397,7 @@ function EntityConfig({
               placeholder="Qw"
               id={`qw-${eId}`}
               defaultValue={{ label: attitude["q0"] ?? "Select Qw" }}
+              isDisabled={disabled}
             />
           </Col>
         </Row>
