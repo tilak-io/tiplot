@@ -19,7 +19,7 @@ import { LuEdit, LuPlay } from "react-icons/lu";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { generateUUID } from "three/src/math/MathUtils";
-import logo from "../static/img/logo.png";
+import fullLogo from "../static/img/fullLogo.png";
 import { PORT } from "../static/js/constants";
 import { defaultSettings } from "../views/Settings";
 
@@ -481,8 +481,8 @@ function ToolBar({
         <Container>
           <Navbar.Brand target="_blank" href="https://tilak.io">
             <img
-              src={logo}
-              width="30"
+              src={fullLogo}
+              width="170"
               height="30"
               className="d-inline-block align-top"
               alt="TiPlot"
