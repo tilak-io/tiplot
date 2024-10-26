@@ -54,7 +54,8 @@ class Store:
                 if (e.position['table'] == e.attitude['table']):
                     merged = pd.DataFrame.from_dict(self.datadict[e.position['table']])
                 else:
-                    merged = pd.merge_asof(self.datadict[e.position['table']], self.datadict[e.attitude['table']], on='timestamp_tiplot').ffill().bfill()
+                    merged = pd.merge_asof(self.datadict[e.position['table']], self.datadict[e.attitude['table']], on='timestamp_tiplot', suffixes=('', '_drop')).ffill().bfill()
+                    merged = merged.loc[:, ~merged.columns.str.endswith('_drop')]
                 if e.useXYZ:
                     position_columns = [e.position['x'], e.position['y'], e.position['z']]
                     position_columns_mapped = { e.position['x']: 'x', e.position['y']: 'y', e.position['z']: 'z'}

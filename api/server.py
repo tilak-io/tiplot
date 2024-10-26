@@ -323,7 +323,7 @@ def add_log():
 @app.route('/entities_props')
 def get_entities_props():
     props, err, ok = store.Store.get().getEntitiesProps()
-    res = {"data": props, "err": err, "ok": ok}
+    res = {"data": props, "error": err, "ok": ok}
     return res
 
 @app.route('/current_file')
