@@ -14,27 +14,31 @@ class ULGParser(Parser):
         self.initEntities()
 
     def euler_from_quaternion(self, w, x, y, z):
-        norm = math.sqrt(w*w + x*x + y*y + z*z)
-        w, x, y, z = w / norm, x / norm, y / norm, z / norm
-
         angles = {}
-        #roll(x-axis rotation)
-        sinr_cosp = 2 * (w * x + y * z)
-        cosr_cosp = 1 - 2 * (x * x + y * y)
-        angles['roll'] = math.atan2(sinr_cosp, cosr_cosp)
+        norm = math.sqrt(w*w + x*x + y*y + z*z)
+        if (norm):
+            w, x, y, z = w / norm, x / norm, y / norm, z / norm
 
-        #pitch (y-axis rotation)
-        sinp = math.sqrt(1+2*(w*y - x*z))
-        cosp = math.sqrt(1-2*(w*y - x*z))
-        angles['pitch'] = 2*math.atan2(sinp,cosp) - math.pi/2
+            #roll(x-axis rotation)
+            sinr_cosp = 2 * (w * x + y * z)
+            cosr_cosp = 1 - 2 * (x * x + y * y)
+            angles['roll'] = math.atan2(sinr_cosp, cosr_cosp)
 
-        # yaw (z-axis rotation)
-        siny_cosp = 2 * (w * z + x * y)
-        cosy_cosp = 1 - 2 * (y * y + z * z)
-        angles['yaw'] = math.atan2(siny_cosp, cosy_cosp)
+            #pitch (y-axis rotation)
+            sinp = math.sqrt(1+2*(w*y - x*z))
+            cosp = math.sqrt(1-2*(w*y - x*z))
+            angles['pitch'] = 2*math.atan2(sinp,cosp) - math.pi/2
+
+            # yaw (z-axis rotation)
+            siny_cosp = 2 * (w * z + x * y)
+            cosy_cosp = 1 - 2 * (y * y + z * z)
+            angles['yaw'] = math.atan2(siny_cosp, cosy_cosp)
+        else:
+            angles = {}
+            angles['roll'] = 0
+            angles['pitch'] = 0
+            angles['yaw'] = 0
         return angles
-
-
 
     def add_euler(self,datadict):
         if "vehicle_attitude" in datadict: 
