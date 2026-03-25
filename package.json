@@ -29,6 +29,9 @@
       "icon": "src/static/img/logo.png",
       "category": "Utility"
     },
+    "appImage": {
+      "executableArgs": ["--no-sandbox"]
+    },
     "win": {
       "icon": "src/static/img/logo.png"
     }
